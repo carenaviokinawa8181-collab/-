@@ -6,7 +6,7 @@
 <title>デイサービス 空き状況</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
- 
+
   :root {
     --bg: #f4f7fb;
     --white: #ffffff;
@@ -23,16 +23,16 @@
     --border: #e2e8f0;
     --shadow: 0 2px 20px rgba(0,0,0,0.07);
   }
- 
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   body {
     font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
   }
- 
+
   /* HEADER */
   .header {
     background: var(--primary);
@@ -48,7 +48,7 @@
     border-radius: 20px; padding: 5px 12px;
     font-size: 11px; white-space: nowrap;
   }
- 
+
   /* LEGEND */
   .legend {
     background: var(--primary-light);
@@ -58,10 +58,10 @@
   .legend-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
   .legend-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; }
- 
+
   /* MAIN */
   main { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
- 
+
   /* LOADING */
   .loading {
     text-align: center; padding: 60px 20px; color: var(--muted);
@@ -72,21 +72,21 @@
     animation: spin 0.8s linear infinite; margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
- 
+
   /* ERROR */
   .error-box {
     background: #fff5f5; border: 1px solid #fed7d7;
     border-radius: 14px; padding: 20px; text-align: center;
     color: var(--red); display: none;
   }
- 
+
   /* FACILITY CARD */
   .facilities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
   }
- 
+
   .facility-card {
     background: var(--white);
     border-radius: 16px;
@@ -99,7 +99,7 @@
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
- 
+
   .card-header {
     padding: 14px 16px 12px;
     border-bottom: 1px solid var(--border);
@@ -110,7 +110,7 @@
   .status-ok { background: var(--green-bg); color: var(--green); }
   .status-few { background: var(--orange-bg); color: var(--orange); }
   .status-full { background: var(--red-bg); color: var(--red); }
- 
+
   /* DAYS TABLE */
   .days-table { width: 100%; padding: 12px 16px; }
   .days-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
@@ -131,12 +131,12 @@
   .sym-few { background: var(--orange-bg); color: var(--orange); }
   .sym-full { background: var(--red-bg); color: var(--red); }
   .sym-closed { background: #f1f5f9; color: #cbd5e1; font-size: 12px; }
- 
+
   .day-num {
     font-size: 11px; font-weight: 700; margin-top: 3px;
     color: var(--muted);
   }
- 
+
   /*備考 */
   .card-備考 {
     margin: 0 16px 12px;
@@ -148,7 +148,7 @@
     font-weight: 500;
     line-height: 1.6;
   }
- 
+
   /* CARD FOOTER */
   .card-footer {
     padding: 10px 16px 14px;
@@ -164,7 +164,7 @@
     transition: opacity 0.2s;
   }
   .reserve-btn:hover { opacity: 0.85; }
- 
+
   /* SETUP NOTICE */
   .setup-notice {
     background: #fffbeb; border: 1px solid #fde68a;
@@ -178,7 +178,7 @@
     border-radius: 4px; padding: 2px 6px; font-size: 12px;
     word-break: break-all;
   }
- 
+
   /* DEMO MODE */
   .demo-banner {
     background: #1e293b; color: #e2e8f0;
@@ -186,7 +186,7 @@
     font-size: 12px; margin-bottom: 16px;
     display: flex; align-items: center; gap: 8px;
   }
- 
+
   /* MAP BUTTON */
   .map-btn {
     background: #10b981; color: white;
@@ -197,7 +197,7 @@
     transition: opacity 0.2s; margin-right: 6px;
   }
   .map-btn:hover { opacity: 0.85; }
- 
+
   /* MAP MODAL */
   .map-modal {
     display: none;
@@ -235,7 +235,7 @@
 </style>
 </head>
 <body>
- 
+
 <div class="header">
   <div class="header-inner">
     <div class="header-top">
@@ -247,7 +247,7 @@
     </div>
   </div>
 </div>
- 
+
 <div class="legend">
   <div class="legend-inner">
     <span style="font-size:12px;font-weight:700;color:#718096;">凡例：</span>
@@ -269,7 +269,7 @@
     </div>
   </div>
 </div>
- 
+
 <!-- MAP MODAL -->
 <div class="map-modal" id="map-modal" onclick="if(event.target===this)closeMap()">
   <div class="map-modal-inner">
@@ -282,7 +282,7 @@
     </div>
   </div>
 </div>
- 
+
 <main>
   <!-- セットアップ案内（URLを設定したら非表示になる） -->
   <div class="setup-notice" id="setup-notice">
@@ -293,36 +293,36 @@
     設定方法は一緒にお渡しした手順書をご確認ください。<br>
     URLを設定するまではサンプルデータが表示されます。
   </div>
- 
+
   <div class="demo-banner" id="demo-banner">
     📋 現在サンプルデータを表示しています。Apps Script URLを設定すると実際のデータが表示されます。
   </div>
- 
+
   <div class="loading" id="loading">
     <div class="spinner"></div>
     <div>データを読み込んでいます...</div>
   </div>
- 
+
   <div class="error-box" id="error-box">
     ⚠️ データの読み込みに失敗しました。<br>
     URLの設定を確認してください。
   </div>
- 
+
   <div class="facilities-grid" id="facilities-grid"></div>
 </main>
- 
+
 <script>
 // ============================================
 // ★ここにApps ScriptのデプロイURLを貼り付けてください
 // ============================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkVfjR20hOuH0NlD7_UZPXPce10TAlmXiEkNBC9kKzL1LHJ943gDbbY8AevHDV70Ry/exec';
- 
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec';
+
 // 予約フォームのURL
 const YOYAKU_URL = 'https://forms.gle/VFXsJY45mEaCePvT6';
- 
+
 // 送迎範囲マップURL（全施設共通）
 const MAP_URL = 'https://www.google.com/maps/d/embed?mid=150fy2MNmW7SP0lj-YThHoX27aMyyUps';
- 
+
 // ============================================
 // サンプルデータ（URLが未設定の場合に表示）
 // ============================================
@@ -352,27 +352,27 @@ const SAMPLE_DATA = {
     },
   ]
 };
- 
+
 const DAYS = ['月','火','水','木','金','土'];
- 
+
 function getSymClass(sym) {
   if (!sym || sym === '休' || sym === '-') return 'sym-closed';
   if (sym === '○') return 'sym-ok';
   if (sym === '△') return 'sym-few';
   return 'sym-full';
 }
- 
+
 function getOverallStatus(symbols) {
   const vals = Object.values(symbols);
   if (vals.includes('○')) return { label: '空きあり', cls: 'status-ok' };
   if (vals.includes('△')) return { label: '残りわずか', cls: 'status-few' };
   return { label: '満員', cls: 'status-full' };
 }
- 
+
 function renderFacilities(data) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('update-time').textContent = '更新：' + data.lastUpdated;
- 
+
   const grid = document.getElementById('facilities-grid');
   grid.innerHTML = data.facilities.map((f, idx) => {
     const status = getOverallStatus(f.symbols);
@@ -388,12 +388,12 @@ function renderFacilities(data) {
         ${displayNum !== '' ? `<div class="day-num">${displayNum}名</div>` : '<div class="day-num">－</div>'}
       </div>`;
     }).join('');
- 
+
     const bikoHTML = f.備考 ? `<div class="card-備考">📌 ${f.備考}</div>` : '';
     const yoyakuBtn = YOYAKU_URL
       ? `<a href="${YOYAKU_URL}" target="_blank" class="reserve-btn">予約する</a>`
       : `<button class="reserve-btn" onclick="alert('予約URLを設定してください')">予約する</button>`;
- 
+
     return `<div class="facility-card" style="animation-delay:${idx * 0.07}s">
       <div class="card-header">
         <div class="card-name">${f.name}</div>
@@ -413,7 +413,7 @@ function renderFacilities(data) {
     </div>`;
   }).join('');
 }
- 
+
 function loadData() {
   if (!APPS_SCRIPT_URL) {
     // URLが未設定→サンプルデータを表示
@@ -422,11 +422,11 @@ function loadData() {
     renderFacilities(SAMPLE_DATA);
     return;
   }
- 
+
   // URLが設定済み→セットアップ案内・デモバナーを非表示
   document.getElementById('setup-notice').style.display = 'none';
   document.getElementById('demo-banner').style.display = 'none';
- 
+
   fetch(APPS_SCRIPT_URL)
     .then(res => res.json())
     .then(data => renderFacilities(data))
@@ -436,19 +436,19 @@ function loadData() {
       console.error(err);
     });
 }
- 
+
 loadData();
- 
+
 // 5分ごとに自動更新
 setInterval(loadData, 5 * 60 * 1000);
- 
+
 // 地図ポップアップ
 function openMap(facilityName, mapUrl) {
   document.getElementById('map-modal-title').textContent = '🗺 ' + facilityName + ' 送迎範囲';
   document.getElementById('map-iframe').src = mapUrl;
   document.getElementById('map-modal').classList.add('active');
 }
- 
+
 function closeMap() {
   document.getElementById('map-modal').classList.remove('active');
   document.getElementById('map-iframe').src = '';
