@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HM2ZV5WPTP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HM2ZV5WPTP');
+</script>
 <title>デイサービス 空き状況</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
@@ -198,6 +206,64 @@
   }
   .map-btn:hover { opacity: 0.85; }
 
+  /* INFO BUTTON */
+  .info-btn {
+    background: #6366f1; color: white;
+    border: none; border-radius: 20px;
+    padding: 7px 16px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    text-decoration: none; display: inline-block;
+    transition: opacity 0.2s;
+  }
+  .info-btn:hover { opacity: 0.85; }
+
+  /* INFO MODAL */
+  .info-modal {
+    display: none;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .info-modal.active { display: flex; }
+  .info-modal-inner {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    width: 100%; max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .info-modal-header {
+    padding: 14px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: white;
+  }
+  .info-modal-title { font-size: 15px; font-weight: 900; }
+  .info-close-btn {
+    background: #f1f5f9; border: none;
+    border-radius: 50%; width: 32px; height: 32px;
+    font-size: 16px; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .info-modal-body { padding: 16px; }
+  .info-row {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; line-height: 1.6;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label {
+    font-weight: 700; color: var(--primary);
+    min-width: 100px; font-size: 12px;
+  }
+  .info-value { color: var(--text); flex: 1; }
+
   /* MAP MODAL */
   .map-modal {
     display: none;
@@ -267,6 +333,17 @@
       <div class="legend-badge" style="background:#f1f5f9;color:#cbd5e1;">休</div>
       <span style="color:#718096;">休業日</span>
     </div>
+  </div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="info-modal" id="info-modal" onclick="if(event.target===this)closeInfo()">
+  <div class="info-modal-inner">
+    <div class="info-modal-header">
+      <div class="info-modal-title" id="info-modal-title">📋 事業所情報</div>
+      <button class="info-close-btn" onclick="closeInfo()">✕</button>
+    </div>
+    <div class="info-modal-body" id="info-modal-body"></div>
   </div>
 </div>
 
@@ -369,7 +446,10 @@ function getOverallStatus(symbols) {
   return { label: '満員', cls: 'status-full' };
 }
 
+let allFacilities = [];
+
 function renderFacilities(data) {
+  allFacilities = data.facilities;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('update-time').textContent = '更新：' + data.lastUpdated;
 
@@ -406,6 +486,7 @@ function renderFacilities(data) {
       <div class="card-footer">
         <div class="card-updated">${f.更新日 ? '更新：' + f.更新日 : ''}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+          <button class="info-btn" onclick="openInfo(${idx})">📋 詳細</button>
           ${f.mapUrl ? `<button class="map-btn" onclick="openMap('${f.name}', '${f.mapUrl}')">🗺 送迎範囲</button>` : ''}
           ${yoyakuBtn}
         </div>
@@ -441,6 +522,38 @@ loadData();
 
 // 5分ごとに自動更新
 setInterval(loadData, 5 * 60 * 1000);
+
+// 事業所情報ポップアップ
+function openInfo(idx) {
+  const f = allFacilities[idx];
+  if (!f) return;
+  document.getElementById('info-modal-title').textContent = '📋 ' + f.name;
+  const info = f.info || {};
+  const rows = [
+    ['📍 住所', info.address],
+    ['📞 電話番号', info.tel],
+    ['🕐 営業時間', info.hours],
+    ['📅 定休日', info.holiday],
+    ['💊 対応医療行為', info.medical],
+  ].filter(([, val]) => val);
+
+  if (rows.length === 0) {
+    document.getElementById('info-modal-body').innerHTML =
+      '<p style="color:#718096;text-align:center;padding:20px;">情報がまだ登録されていません</p>';
+  } else {
+    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val]) =>
+      `<div class="info-row">
+        <div class="info-label">${label}</div>
+        <div class="info-value">${val}</div>
+      </div>`
+    ).join('');
+  }
+  document.getElementById('info-modal').classList.add('active');
+}
+
+function closeInfo() {
+  document.getElementById('info-modal').classList.remove('active');
+}
 
 // 地図ポップアップ
 function openMap(facilityName, mapUrl) {
