@@ -16,10 +16,10 @@
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
   :root {
-    --bg: #f4f7fb;
+    --bg: #f0f7f2;
     --white: #ffffff;
-    --primary: #1a6eb5;
-    --primary-light: #e8f1fb;
+    --primary: #2db84b;
+    --primary-light: #e6f7eb;
     --green: #1a9e5c;
     --green-bg: #e6f7ee;
     --orange: #d97706;
@@ -43,18 +43,18 @@
 
   /* HEADER */
   .header {
-    background: var(--primary);
+    background: #1a6eb5;
     padding: 20px 20px 16px;
     color: white;
   }
   .header-inner { max-width: 900px; margin: 0 auto; }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
-  .header h1 { font-size: clamp(16px, 4vw, 22px); font-weight: 900; letter-spacing: 0.5px; }
-  .header-sub { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+  .header h1 { font-size: clamp(16px, 4vw, 22px); font-weight: 900; letter-spacing: 0.5px; color: white; }
+  .header-sub { font-size: 12px; opacity: 0.8; margin-top: 4px; color: rgba(255,255,255,0.8); }
   .update-badge {
     background: rgba(255,255,255,0.2);
     border-radius: 20px; padding: 5px 12px;
-    font-size: 11px; white-space: nowrap;
+    font-size: 11px; white-space: nowrap; color: white;
   }
 
   /* LEGEND */
@@ -135,10 +135,10 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 16px; font-weight: 900;
   }
-  .sym-ok { background: var(--green-bg); color: var(--green); }
-  .sym-few { background: var(--orange-bg); color: var(--orange); }
-  .sym-full { background: var(--red-bg); color: var(--red); }
-  .sym-closed { background: #f1f5f9; color: #cbd5e1; font-size: 12px; }
+  .sym-ok { background: #c6f0d4; color: #15803d; }
+  .sym-few { background: #fed7aa; color: #c2410c; }
+  .sym-full { background: #fecaca; color: #b91c1c; }
+  .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 12px; }
 
   .day-num {
     font-size: 11px; font-weight: 700; margin-top: 3px;
@@ -164,7 +164,7 @@
   }
   .card-updated { font-size: 11px; color: var(--muted); }
   .reserve-btn {
-    background: var(--primary); color: white;
+    background: #1a6eb5; color: white;
     border: none; border-radius: 20px;
     padding: 7px 16px; font-size: 12px; font-weight: 700;
     cursor: pointer; font-family: inherit;
@@ -571,13 +571,7 @@ function closeMap() {
 }
 </script>
 <!-- FOOTER -->
-<footer style="background:#1e293b;padding:16px 20px;margin-top:40px;">
+<footer style="background:#1a6eb5;padding:16px 20px;margin-top:40px;">
   <div style="max-width:900px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
-    <div style="color:rgba(255,255,255,0.8);font-size:13px;font-weight:500;">ケアナビ沖縄</div>
-    <div style="color:rgba(255,255,255,0.6);font-size:13px;">📧 carenaviokinawa8181@gmail.com</div>
-    <div style="color:rgba(255,255,255,0.6);font-size:13px;">📞 050-1792-8181</div>
-  </div>
-</footer>
-
-</body>
-</html>
+    <div style="color:#ffffff;font-size:13px;font-weight:500;">ケアナビ沖縄</div>
+    <div style="color:#ffffff;font-size:13px;font-weight:500;">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="096a687b6c67687f6066626067687e6831383138496e64686065276a6664">[email&#160;protected]<
