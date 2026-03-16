@@ -121,7 +121,7 @@
 
   /* DAYS TABLE */
   .days-table { width: 100%; padding: 12px 16px; }
-  .days-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .days-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .day-cell { text-align: center; }
   .day-label {
     font-size: 10px; font-weight: 700; color: var(--muted);
@@ -411,29 +411,29 @@ const SAMPLE_DATA = {
   facilities: [
     {
       name: 'Aデイサービス',
-      vacancies: { 月:1, 火:4, 水:5, 木:5, 金:2, 土:5 },
-      symbols:   { 月:'△', 火:'○', 水:'○', 木:'○', 金:'△', 土:'○' },
+      vacancies: { 月:1, 火:4, 水:5, 木:5, 金:2, 土:5, 日:0 },
+      symbols:   { 月:'△', 火:'○', 水:'○', 木:'○', 金:'△', 土:'○', 日:'休' },
       備考: '急ぎ対応可',
       更新日: '2026/02/25 22:00'
     },
     {
       name: 'Bデイサービス',
-      vacancies: { 月:5, 火:3, 水:5, 木:1, 金:5, 土:5 },
-      symbols:   { 月:'○', 火:'△', 水:'○', 木:'△', 金:'○', 土:'○' },
+      vacancies: { 月:5, 火:3, 水:5, 木:1, 金:5, 土:5, 日:0 },
+      symbols:   { 月:'○', 火:'△', 水:'○', 木:'△', 金:'○', 土:'○', 日:'休' },
       備考: '見学可能',
       更新日: '2026/02/25 22:00'
     },
     {
       name: 'Cデイサービス',
-      vacancies: { 月:0, 火:5, 水:5, 木:0, 金:5, 土:5 },
-      symbols:   { 月:'×', 火:'○', 水:'○', 木:'×', 金:'○', 土:'○' },
+      vacancies: { 月:0, 火:5, 水:5, 木:0, 金:5, 土:5, 日:0 },
+      symbols:   { 月:'×', 火:'○', 水:'○', 木:'×', 金:'○', 土:'○', 日:'休' },
       備考: '2/3〜2/5対応不可',
       更新日: '2026/02/25 22:00'
     },
   ]
 };
 
-const DAYS = ['月','火','水','木','金','土'];
+const DAYS = ['月','火','水','木','金','土','日'];
 
 function getSymClass(sym) {
   if (!sym || sym === '休' || sym === '-') return 'sym-closed';
@@ -454,21 +454,18 @@ let allFacilities = [];
 function renderFacilities(data) {
   allFacilities = data.facilities;
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('update-time').textContent = '更新：' + data.lastUpdated;
+  document.getElementById('update-time').textContent = '空き状況更新：' + data.lastUpdated;
 
   const grid = document.getElementById('facilities-grid');
   grid.innerHTML = data.facilities.map((f, idx) => {
     const status = getOverallStatus(f.symbols);
     const daysHTML = DAYS.map(d => {
       const sym = f.symbols[d] || '休';
-      const num = f.vacancies[d];
       const symClass = getSymClass(sym);
       const dayClass = d === '土' ? 'sat' : d === '日' ? 'sun' : '';
-      const displayNum = (num !== '' && num !== undefined && num !== null && sym !== '休' && sym !== '-') ? num : '';
       return `<div class="day-cell">
         <div class="day-label ${dayClass}">${d}</div>
         <div class="day-symbol ${symClass}">${sym || '休'}</div>
-        ${displayNum !== '' ? `<div class="day-num">${displayNum}名</div>` : '<div class="day-num">－</div>'}
       </div>`;
     }).join('');
 
@@ -487,8 +484,7 @@ function renderFacilities(data) {
       </div>
       ${bikoHTML}
       <div class="card-footer">
-        <div class="card-updated">${f.更新日 ? '更新：' + f.更新日 : ''}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;width:100%;">
           <button class="info-btn" onclick="openInfo(${idx})">📋 詳細</button>
           ${f.mapUrl ? `<button class="map-btn" onclick="openMap('${f.name}', '${f.mapUrl}')">🗺 送迎範囲</button>` : ''}
           ${yoyakuBtn}
@@ -574,9 +570,4 @@ function closeMap() {
 <footer style="background:#0f4a7a;padding:16px 20px;margin-top:40px;">
   <div style="max-width:900px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
     <div style="color:#ffffff;font-size:13px;font-weight:500;">ケアナビ沖縄</div>
-    <div style="color:#ffffff;font-size:13px;font-weight:500;">📧 carenaviokinawa8181@gmail.com</div>
-    <div style="color:#ffffff;font-size:13px;font-weight:500;">📞 050-1792-8181</div>
-  </div>
-</footer>
-</body>
-</html>
+    <div style="color:#ffffff;font-size:13px;font-weight:500;">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f2c2e3d2a212e3926202426212e382e777e777e0f28222e2623612c2022">[email&#160;protected]<
