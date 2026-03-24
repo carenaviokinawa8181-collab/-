@@ -534,18 +534,20 @@ function openInfo(idx) {
     ['🕐 営業時間', info.hours],
     ['📅 定休日', info.holiday],
     ['💊 対応医療行為', info.medical],
+    ['🚫 受け入れNG条件', info.ng],
   ].filter(([, val]) => val);
 
   if (rows.length === 0) {
     document.getElementById('info-modal-body').innerHTML =
       '<p style="color:#718096;text-align:center;padding:20px;">情報がまだ登録されていません</p>';
   } else {
-    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val]) =>
-      `<div class="info-row">
-        <div class="info-label">${label}</div>
-        <div class="info-value">${val}</div>
-      </div>`
-    ).join('');
+    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val]) => {
+      const isNg = label.includes('NG');
+      return `<div class="info-row">
+        <div class="info-label" style="${isNg ? 'color:#dc2626;' : ''}">${label}</div>
+        <div class="info-value" style="${isNg ? 'color:#dc2626;font-weight:700;' : ''}">${val}</div>
+      </div>`;
+    }).join('');
   }
   document.getElementById('info-modal').classList.add('active');
 }
