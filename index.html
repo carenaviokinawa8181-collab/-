@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HM2ZV5WPTP"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -57,23 +56,28 @@
     font-size: 11px; white-space: nowrap; color: white;
   }
 
-  /* LEGEND */
+  /* LEGEND（数字なし・記号のみ） */
   .legend {
     background: var(--primary-light);
     border-bottom: 1px solid var(--border);
     padding: 10px 20px;
   }
-  .legend-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .legend-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+  }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
-  .legend-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; }
+  .legend-badge {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900;
+  }
 
   /* MAIN */
   main { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
 
   /* LOADING */
-  .loading {
-    text-align: center; padding: 60px 20px; color: var(--muted);
-  }
+  .loading { text-align: center; padding: 60px 20px; color: var(--muted); }
   .spinner {
     width: 40px; height: 40px; border: 3px solid var(--border);
     border-top-color: var(--primary); border-radius: 50%;
@@ -97,206 +101,144 @@
 
   .facility-card {
     background: var(--white);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow); border: 1px solid var(--border);
     animation: fadeUp 0.4s ease both;
   }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .card-header {
-    padding: 14px 16px 12px;
-    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
   }
   .card-name { font-size: 15px; font-weight: 900; }
   .card-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-  .status-ok { background: var(--green-bg); color: var(--green); }
-  .status-few { background: var(--orange-bg); color: var(--orange); }
-  .status-full { background: var(--red-bg); color: var(--red); }
+  .status-ok   { background: var(--green-bg);  color: var(--green); }
+  .status-few  { background: var(--orange-bg); color: var(--orange); }
+  .status-full { background: var(--red-bg);    color: var(--red); }
 
   /* DAYS TABLE */
   .days-table { width: 100%; padding: 12px 16px; }
   .days-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .day-cell { text-align: center; }
-  .day-label {
-    font-size: 10px; font-weight: 700; color: var(--muted);
-    margin-bottom: 4px;
-  }
+  .day-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
   .day-label.sat { color: #2563eb; }
   .day-label.sun { color: var(--red); }
   .day-symbol {
     width: 38px; height: 38px; margin: 0 auto;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
     font-size: 16px; font-weight: 900;
   }
-  .sym-ok { background: #c6f0d4; color: #15803d; }
-  .sym-few { background: #fed7aa; color: #c2410c; }
-  .sym-full { background: #fecaca; color: #b91c1c; }
+  .sym-ok     { background: #c6f0d4; color: #15803d; }
+  .sym-few    { background: #fed7aa; color: #c2410c; }
+  .sym-full   { background: #fecaca; color: #b91c1c; }
   .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 12px; }
 
-  .day-num {
-    font-size: 11px; font-weight: 700; margin-top: 3px;
-    color: var(--muted);
-  }
-
-  /*備考 */
-  .card-備考 {
+  /* 備考 */
+  .card-biko {
     margin: 0 16px 12px;
-    background: var(--primary-light);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 12px;
-    color: var(--primary);
-    font-weight: 500;
-    line-height: 1.6;
+    background: var(--primary-light); border-radius: 8px;
+    padding: 8px 12px; font-size: 12px; color: var(--primary);
+    font-weight: 500; line-height: 1.6;
   }
 
   /* CARD FOOTER */
   .card-footer {
     padding: 10px 16px 14px;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px;
   }
-  .card-updated { font-size: 11px; color: var(--muted); }
+
+  /* BUTTONS */
   .reserve-btn {
-    background: #1a6eb5; color: white;
-    border: none; border-radius: 20px;
-    padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit;
-    text-decoration: none; display: inline-block;
+    background: #1a6eb5; color: white; border: none;
+    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
     transition: opacity 0.2s;
   }
   .reserve-btn:hover { opacity: 0.85; }
-
-  /* SETUP NOTICE */
-  .setup-notice {
-    background: #fffbeb; border: 1px solid #fde68a;
-    border-radius: 14px; padding: 16px 18px;
-    margin-bottom: 20px; font-size: 13px; line-height: 1.8;
-    color: #92400e;
-  }
-  .setup-notice strong { display: block; font-size: 14px; margin-bottom: 6px; }
-  .setup-notice code {
-    background: #fff; border: 1px solid #fde68a;
-    border-radius: 4px; padding: 2px 6px; font-size: 12px;
-    word-break: break-all;
-  }
-
-  /* DEMO MODE */
-  .demo-banner {
-    background: #1e293b; color: #e2e8f0;
-    border-radius: 10px; padding: 10px 14px;
-    font-size: 12px; margin-bottom: 16px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  /* MAP BUTTON */
   .map-btn {
-    background: #10b981; color: white;
-    border: none; border-radius: 20px;
-    padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit;
-    text-decoration: none; display: inline-block;
-    transition: opacity 0.2s; margin-right: 6px;
+    background: #10b981; color: white; border: none;
+    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
+    transition: opacity 0.2s;
   }
   .map-btn:hover { opacity: 0.85; }
-
-  /* INFO BUTTON */
   .info-btn {
-    background: #6366f1; color: white;
-    border: none; border-radius: 20px;
-    padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit;
-    text-decoration: none; display: inline-block;
+    background: #6366f1; color: white; border: none;
+    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
     transition: opacity 0.2s;
   }
   .info-btn:hover { opacity: 0.85; }
 
-  /* INFO MODAL */
+  /* INFO MODAL（NG条件含む） */
   .info-modal {
-    display: none;
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
   }
   .info-modal.active { display: flex; }
   .info-modal-inner {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    width: 100%; max-width: 500px;
-    max-height: 80vh;
-    overflow-y: auto;
+    background: white; border-radius: 16px; overflow: hidden;
+    width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
   .info-modal-header {
-    padding: 14px 16px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; background: white;
+    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); position: sticky; top: 0; background: white;
   }
   .info-modal-title { font-size: 15px; font-weight: 900; }
   .info-close-btn {
-    background: #f1f5f9; border: none;
-    border-radius: 50%; width: 32px; height: 32px;
-    font-size: 16px; cursor: pointer; font-family: inherit;
-    display: flex; align-items: center; justify-content: center;
+    background: #f1f5f9; border: none; border-radius: 50%;
+    width: 32px; height: 32px; font-size: 16px; cursor: pointer;
+    font-family: inherit; display: flex; align-items: center; justify-content: center;
   }
   .info-modal-body { padding: 16px; }
   .info-row {
     display: flex; gap: 12px; padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px; line-height: 1.6;
+    border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.6;
   }
   .info-row:last-child { border-bottom: none; }
-  .info-label {
-    font-weight: 700; color: var(--primary);
-    min-width: 100px; font-size: 12px;
-  }
+  .info-label { font-weight: 700; color: var(--primary); min-width: 110px; font-size: 12px; }
   .info-value { color: var(--text); flex: 1; }
+  .info-value.ng { color: var(--red); font-weight: 700; }
 
   /* MAP MODAL */
   .map-modal {
-    display: none;
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
   }
   .map-modal.active { display: flex; }
   .map-modal-inner {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    width: 100%; max-width: 700px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    background: white; border-radius: 16px; overflow: hidden;
+    width: 100%; max-width: 700px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
   .map-modal-header {
-    padding: 14px 16px;
-    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
     border-bottom: 1px solid var(--border);
   }
   .map-modal-title { font-size: 15px; font-weight: 900; }
   .map-close-btn {
-    background: #f1f5f9; border: none;
-    border-radius: 50%; width: 32px; height: 32px;
-    font-size: 16px; cursor: pointer; font-family: inherit;
-    display: flex; align-items: center; justify-content: center;
+    background: #f1f5f9; border: none; border-radius: 50%;
+    width: 32px; height: 32px; font-size: 16px; cursor: pointer;
+    font-family: inherit; display: flex; align-items: center; justify-content: center;
   }
-  .map-modal-body iframe {
-    width: 100%; height: 400px; border: none; display: block;
+  .map-modal-body iframe { width: 100%; height: 400px; border: none; display: block; }
+
+  /* SETUP NOTICE */
+  .setup-notice {
+    background: #fffbeb; border: 1px solid #fde68a;
+    border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
+    font-size: 13px; line-height: 1.8; color: #92400e;
+  }
+  .setup-notice strong { display: block; font-size: 14px; margin-bottom: 6px; }
+  .setup-notice code {
+    background: #fff; border: 1px solid #fde68a;
+    border-radius: 4px; padding: 2px 6px; font-size: 12px; word-break: break-all;
   }
 </style>
 </head>
@@ -306,7 +248,8 @@
   <div class="header-inner">
     <div class="header-top">
       <div style="display:flex;align-items:center;gap:12px;">
-        <img src="logo.jpg" alt="ケアナビ沖縄" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.8);">
+        <img src="logo.jpg" alt="ケアナビ沖縄"
+          style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.8);">
         <div>
           <h1>🏥 デイサービス 空き状況</h1>
           <div class="header-sub">ケアマネ・ご家族向け 最新空き情報</div>
@@ -317,29 +260,30 @@
   </div>
 </div>
 
+<!-- 凡例（数字なし・記号のみ） -->
 <div class="legend">
   <div class="legend-inner">
     <span style="font-size:12px;font-weight:700;color:#718096;">凡例：</span>
     <div class="legend-item">
-      <div class="legend-badge" style="background:#e6f7ee;color:#1a9e5c;">○</div>
-      <span style="color:#1a9e5c;">空きあり（3名以上）</span>
+      <div class="legend-badge" style="background:#c6f0d4;color:#15803d;">○</div>
+      <span style="color:#1a9e5c;">空きあり</span>
     </div>
     <div class="legend-item">
-      <div class="legend-badge" style="background:#fef3e2;color:#d97706;">△</div>
-      <span style="color:#d97706;">残りわずか（1〜2名）</span>
+      <div class="legend-badge" style="background:#fed7aa;color:#c2410c;">△</div>
+      <span style="color:#d97706;">残りわずか</span>
     </div>
     <div class="legend-item">
-      <div class="legend-badge" style="background:#fee2e2;color:#dc2626;">×</div>
+      <div class="legend-badge" style="background:#fecaca;color:#b91c1c;">×</div>
       <span style="color:#dc2626;">満員</span>
     </div>
     <div class="legend-item">
-      <div class="legend-badge" style="background:#f1f5f9;color:#cbd5e1;">休</div>
+      <div class="legend-badge" style="background:#f1f5f9;color:#94a3b8;">休</div>
       <span style="color:#718096;">休業日</span>
     </div>
   </div>
 </div>
 
-<!-- INFO MODAL -->
+<!-- INFO MODAL（NG条件含む詳細） -->
 <div class="info-modal" id="info-modal" onclick="if(event.target===this)closeInfo()">
   <div class="info-modal-inner">
     <div class="info-modal-header">
@@ -364,18 +308,10 @@
 </div>
 
 <main>
-  <!-- セットアップ案内（URLを設定したら非表示になる） -->
-  <div class="setup-notice" id="setup-notice">
+  <div class="setup-notice" id="setup-notice" style="display:none;">
     <strong>⚙️ Apps Script URLの設定が必要です</strong>
-    このHTMLファイルの上部にある<br>
     <code>const APPS_SCRIPT_URL = 'ここにURLを貼り付け';</code><br>
-    の部分に、Google Apps ScriptのデプロイURLを貼り付けてください。<br><br>
-    設定方法は一緒にお渡しした手順書をご確認ください。<br>
-    URLを設定するまではサンプルデータが表示されます。
-  </div>
-
-  <div class="demo-banner" id="demo-banner">
-    📋 現在サンプルデータを表示しています。Apps Script URLを設定すると実際のデータが表示されます。
+    の部分にGoogle Apps ScriptのデプロイURLを貼り付けてください。
   </div>
 
   <div class="loading" id="loading">
@@ -384,57 +320,27 @@
   </div>
 
   <div class="error-box" id="error-box">
-    ⚠️ データの読み込みに失敗しました。<br>
-    URLの設定を確認してください。
+    ⚠️ データの読み込みに失敗しました。URLの設定を確認してください。
   </div>
 
   <div class="facilities-grid" id="facilities-grid"></div>
 </main>
 
 <script>
-// ============================================
-// ★ここにApps ScriptのデプロイURLを貼り付けてください
-// ============================================
+// ============================================================
+// ★ Apps Script のデプロイURL
+// ============================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec';
 
-// 予約フォームのURL
+// 予約フォームURL
 const YOYAKU_URL = 'https://forms.gle/VFXsJY45mEaCePvT6';
 
-// 送迎範囲マップURL（全施設共通）
-const MAP_URL = 'https://www.google.com/maps/d/embed?mid=150fy2MNmW7SP0lj-YThHoX27aMyyUps';
-
-// ============================================
-// サンプルデータ（URLが未設定の場合に表示）
-// ============================================
-const SAMPLE_DATA = {
-  lastUpdated: '2026/03/11 09:00',
-  facilities: [
-    {
-      name: 'Aデイサービス',
-      vacancies: { 月:1, 火:4, 水:5, 木:5, 金:2, 土:5, 日:0 },
-      symbols:   { 月:'△', 火:'○', 水:'○', 木:'○', 金:'△', 土:'○', 日:'休' },
-      備考: '急ぎ対応可',
-      更新日: '2026/02/25 22:00'
-    },
-    {
-      name: 'Bデイサービス',
-      vacancies: { 月:5, 火:3, 水:5, 木:1, 金:5, 土:5, 日:0 },
-      symbols:   { 月:'○', 火:'△', 水:'○', 木:'△', 金:'○', 土:'○', 日:'休' },
-      備考: '見学可能',
-      更新日: '2026/02/25 22:00'
-    },
-    {
-      name: 'Cデイサービス',
-      vacancies: { 月:0, 火:5, 水:5, 木:0, 金:5, 土:5, 日:0 },
-      symbols:   { 月:'×', 火:'○', 水:'○', 木:'×', 金:'○', 土:'○', 日:'休' },
-      備考: '2/3〜2/5対応不可',
-      更新日: '2026/02/25 22:00'
-    },
-  ]
-};
-
+// 曜日順
 const DAYS = ['月','火','水','木','金','土','日'];
 
+let allFacilities = [];
+
+// 記号→CSSクラス
 function getSymClass(sym) {
   if (!sym || sym === '休' || sym === '-') return 'sym-closed';
   if (sym === '○') return 'sym-ok';
@@ -442,39 +348,54 @@ function getSymClass(sym) {
   return 'sym-full';
 }
 
+// 全体の空き状況バッジ
 function getOverallStatus(symbols) {
   const vals = Object.values(symbols);
-  if (vals.includes('○')) return { label: '空きあり', cls: 'status-ok' };
-  if (vals.includes('△')) return { label: '残りわずか', cls: 'status-few' };
+  if (vals.includes('○'))  return { label: '空きあり',   cls: 'status-ok' };
+  if (vals.includes('△'))  return { label: '残りわずか', cls: 'status-few' };
   return { label: '満員', cls: 'status-full' };
 }
 
-let allFacilities = [];
-
+// ============================================================
+// 施設カードを描画
+// ============================================================
 function renderFacilities(data) {
   allFacilities = data.facilities;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('update-time').textContent = '空き状況更新：' + data.lastUpdated;
 
   const grid = document.getElementById('facilities-grid');
+  if (!data.facilities || data.facilities.length === 0) {
+    grid.innerHTML = '<p style="text-align:center;color:#718096;padding:40px;">施設情報がまだ登録されていません</p>';
+    return;
+  }
+
   grid.innerHTML = data.facilities.map((f, idx) => {
     const status = getOverallStatus(f.symbols);
+
     const daysHTML = DAYS.map(d => {
       const sym = f.symbols[d] || '休';
       const symClass = getSymClass(sym);
-      const dayClass = d === '土' ? 'sat' : d === '日' ? 'sun' : '';
+      const dayClass = d==='土' ? 'sat' : d==='日' ? 'sun' : '';
       return `<div class="day-cell">
         <div class="day-label ${dayClass}">${d}</div>
-        <div class="day-symbol ${symClass}">${sym || '休'}</div>
+        <div class="day-symbol ${symClass}">${sym}</div>
       </div>`;
     }).join('');
 
-    const bikoHTML = f.備考 ? `<div class="card-備考">📌 ${f.備考}</div>` : '';
+    const bikoHTML = f.備考
+      ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
+
     const yoyakuBtn = YOYAKU_URL
       ? `<a href="${YOYAKU_URL}" target="_blank" class="reserve-btn">予約する</a>`
-      : `<button class="reserve-btn" onclick="alert('予約URLを設定してください')">予約する</button>`;
+      : '';
 
-    return `<div class="facility-card" style="animation-delay:${idx * 0.07}s">
+    // 地図ボタン（mapUrlがある場合のみ表示）
+    const mapBtn = f.mapUrl
+      ? `<button class="map-btn" onclick="openMap('${f.name.replace(/'/g,"\\'")}', '${f.mapUrl.replace(/'/g,"\\'")}')">🗺 送迎範囲</button>`
+      : '';
+
+    return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
       <div class="card-header">
         <div class="card-name">${f.name}</div>
         <div class="card-status ${status.cls}">${status.label}</div>
@@ -484,28 +405,23 @@ function renderFacilities(data) {
       </div>
       ${bikoHTML}
       <div class="card-footer">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;width:100%;">
-          <button class="info-btn" onclick="openInfo(${idx})">📋 詳細</button>
-          ${f.mapUrl ? `<button class="map-btn" onclick="openMap('${f.name}', '${f.mapUrl}')">🗺 送迎範囲</button>` : ''}
-          ${yoyakuBtn}
-        </div>
+        <button class="info-btn" onclick="openInfo(${idx})">📋 詳細・NG条件</button>
+        ${mapBtn}
+        ${yoyakuBtn}
       </div>
     </div>`;
   }).join('');
 }
 
+// ============================================================
+// データ読み込み
+// ============================================================
 function loadData() {
-  if (!APPS_SCRIPT_URL) {
-    // URLが未設定→サンプルデータを表示
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('ここに')) {
     document.getElementById('setup-notice').style.display = 'block';
-    document.getElementById('demo-banner').style.display = 'flex';
-    renderFacilities(SAMPLE_DATA);
+    document.getElementById('loading').style.display = 'none';
     return;
   }
-
-  // URLが設定済み→セットアップ案内・デモバナーを非表示
-  document.getElementById('setup-notice').style.display = 'none';
-  document.getElementById('demo-banner').style.display = 'none';
 
   fetch(APPS_SCRIPT_URL)
     .then(res => res.json())
@@ -518,36 +434,36 @@ function loadData() {
 }
 
 loadData();
+setInterval(loadData, 5 * 60 * 1000); // 5分ごとに自動更新
 
-// 5分ごとに自動更新
-setInterval(loadData, 5 * 60 * 1000);
-
-// 事業所情報ポップアップ
+// ============================================================
+// 詳細モーダル（NG条件含む）
+// ============================================================
 function openInfo(idx) {
   const f = allFacilities[idx];
   if (!f) return;
   document.getElementById('info-modal-title').textContent = '📋 ' + f.name;
+
   const info = f.info || {};
   const rows = [
-    ['📍 住所', info.address],
-    ['📞 電話番号', info.tel],
-    ['🕐 営業時間', info.hours],
-    ['📅 定休日', info.holiday],
-    ['💊 対応医療行為', info.medical],
-    ['🚫 受け入れNG条件', info.ng],
+    ['📍 住所',       info.address,  false],
+    ['📞 電話番号',   info.tel,      false],
+    ['🕐 営業時間',   info.hours,    false],
+    ['📅 定休日',     info.holiday,  false],
+    ['💊 対応医療行為', info.medical, false],
+    ['🚫 受け入れNG条件', info.ng,   true],  // NG条件は赤字
   ].filter(([, val]) => val);
 
   if (rows.length === 0) {
     document.getElementById('info-modal-body').innerHTML =
-      '<p style="color:#718096;text-align:center;padding:20px;">情報がまだ登録されていません</p>';
+      '<p style="color:#718096;text-align:center;padding:20px;">詳細情報はまだ登録されていません</p>';
   } else {
-    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val]) => {
-      const isNg = label.includes('NG');
-      return `<div class="info-row">
-        <div class="info-label" style="${isNg ? 'color:#dc2626;' : ''}">${label}</div>
-        <div class="info-value" style="${isNg ? 'color:#dc2626;font-weight:700;' : ''}">${val}</div>
-      </div>`;
-    }).join('');
+    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val, isNg]) =>
+      `<div class="info-row">
+        <div class="info-label" style="${isNg?'color:#dc2626;':''}">${label}</div>
+        <div class="info-value ${isNg?'ng':''}">${val}</div>
+      </div>`
+    ).join('');
   }
   document.getElementById('info-modal').classList.add('active');
 }
@@ -556,7 +472,9 @@ function closeInfo() {
   document.getElementById('info-modal').classList.remove('active');
 }
 
-// 地図ポップアップ
+// ============================================================
+// 地図モーダル
+// ============================================================
 function openMap(facilityName, mapUrl) {
   document.getElementById('map-modal-title').textContent = '🗺 ' + facilityName + ' 送迎範囲';
   document.getElementById('map-iframe').src = mapUrl;
@@ -568,12 +486,12 @@ function closeMap() {
   document.getElementById('map-iframe').src = '';
 }
 </script>
-<!-- FOOTER -->
+
 <footer style="background:#0f4a7a;padding:16px 20px;margin-top:40px;">
   <div style="max-width:900px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
-    <div style="color:#ffffff;font-size:13px;font-weight:500;">ケアナビ沖縄</div>
-    <div style="color:#ffffff;font-size:13px;font-weight:500;">📧 carenaviokinawa8181@gmail.com</div>
-    <div style="color:#ffffff;font-size:13px;font-weight:500;">📞 050-1792-8181</div>
+    <div style="color:#fff;font-size:13px;font-weight:500;">ケアナビ沖縄</div>
+    <div style="color:#fff;font-size:13px;">📧 carenaviokinawa8181@gmail.com</div>
+    <div style="color:#fff;font-size:13px;">📞 050-1791-8181</div>
   </div>
 </footer>
 </body>
