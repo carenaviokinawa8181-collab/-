@@ -409,17 +409,39 @@ function renderFacilities(data) {
       ? `<a href="${f.pdfUrl}" target="_blank" class="pdf-btn">📄 施設紹介PDF</a>`
       : '';
 
+    // プラン判定（F列：有料なら全機能表示）
+    const isPaid = f.plan === '有料';
+
+    // 有料プランのみ表示するボタン
+    const pdfBtn = (isPaid && f.pdfUrl)
+      ? `<a href="${f.pdfUrl}" target="_blank" class="pdf-btn">📄 施設紹介PDF</a>`
+      : '';
+    const mapBtn = (isPaid && f.mapUrl)
+      ? `<button class="map-btn" onclick="openMap('${f.name.replace(/'/g,"\'")}', '${f.mapUrl.replace(/'/g,"\'")}')">🗺 送迎範囲</button>`
+      : '';
+    const infoBtn = isPaid
+      ? `<button class="info-btn" onclick="openInfo(${idx})">📋 詳細・NG条件</button>`
+      : '';
+
+    // 有料バッジ（有料プランのカードに表示）
+    const planBadge = isPaid
+      ? `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:#fff3cd;color:#856404;border:1px solid #ffc107;">💳 有料プラン</span>`
+      : '';
+
     return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
       <div class="card-header">
         <div class="card-name">${f.name}</div>
-        <div class="card-status ${status.cls}">${status.label}</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${planBadge}
+          <div class="card-status ${status.cls}">${status.label}</div>
+        </div>
       </div>
       <div class="days-table">
         <div class="days-row">${daysHTML}</div>
       </div>
       ${bikoHTML}
       <div class="card-footer">
-        <button class="info-btn" onclick="openInfo(${idx})">📋 詳細・NG条件</button>
+        ${infoBtn}
         ${pdfBtn}
         ${mapBtn}
         ${yoyakuBtn}
