@@ -400,15 +400,6 @@ function renderFacilities(data) {
       : '';
 
     // 地図ボタン（mapUrlがある場合のみ表示）
-    const mapBtn = f.mapUrl
-      ? `<button class="map-btn" onclick="openMap('${f.name.replace(/'/g,"\\'")}', '${f.mapUrl.replace(/'/g,"\\'")}')">🗺 送迎範囲</button>`
-      : '';
-
-    // PDFボタン（pdfUrlがある場合のみ表示）
-    const pdfBtn = f.pdfUrl
-      ? `<a href="${f.pdfUrl}" target="_blank" class="pdf-btn">📄 施設紹介PDF</a>`
-      : '';
-
     // プラン判定（F列：有料なら全機能表示）
     const isPaid = f.plan === '有料';
 
