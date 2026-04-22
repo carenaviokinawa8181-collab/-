@@ -1,521 +1,1236 @@
-<!DOCTYPE html>
+// ============================================================
+//  ケアナビ沖縄 GAS v9 完全修正版
+//
+//  【確認済み列構成】事業所情報シート
+//  C:事業所名 D:所在地（住所） E:電話番号/FAX F:利用者定員
+//  G:営業時間・サービス提供時間 H:定休日 I:1回利用時の費用
+//  J:見学・体験利用の有無 K:送迎の有無 L:利用可能な利用者
+//  M:入浴の有無 N:車椅子対応 O:認知症対応 Q:食事提供
+//  R:対応可能な医療行為 S:スタッフ体制 T:人気の行事・レクリエーション
+//  U:1日の流れ V:事業所の強み・特徴 W:こんな利用者におすすめ
+//  X:一言メッセージ AE:施設写真① AF:施設写真② AG:施設写真③
+//
+//  【事業所管理シート】A:事業所名 B:掲載状況（ON/OFF） C:マップURL
+//
+//  【修正内容】
+//  ✅ シート名を「事業所情報」に修正
+//  ✅ 掲載状況「ON/OFF」判定を「掲載状況」列に対応
+//  ✅ 電話・料金・定休日・営業時間の列名完全一致
+//  ✅ PDF：A5横1ページに完全収める（2ページ跨ぎ解消）
+//  ✅ PDF：施設名を白抜き・影付きで見やすく
+//  ✅ PDF：受け入れNG条件を削除
+//  ✅ 詳細情報はForm_Responses3（事業所情報シート）から取得
+//  ✅ マップURLは事業所管理のC列のみで管理
+// ============================================================
+
+const CFG = {
+  OUTPUT_FOLDER_ID:  '1BDJXD_ETChutM_oKwB5EEeqFYzmF3_Gn',
+  PDF_SHEET:         '事業所情報',
+  VACANCY_SHEET:     'デイサービスの空き状況・自動集計',
+  FACILITY_SHEET:    '事業所管理',
+  YOYAKU_FORM_ID:    '1FAIpQLSf_n7VmXF7_z0StEfF_nFUJx14iSgJEp-dKXBpZdeosVgBn1Q',
+  FACILITY_FORM_ID:  '',   // 事業所登録フォームID（編集URL /d/【ここ】/edit）
+  VACANCY_FORM_ID:   '',   // 空き状況入力フォームID（編集URL /d/【ここ】/edit）
+  ADMIN_EMAIL:       'carenaviokinawa8181@gmail.com',
+  ADMIN_NAME:        'ケアナビ沖縄',
+  ADMIN_TEL:         '050-1791-8181',
+  VACANCY_OK:        3,
+  VACANCY_FEW:       1,
+};
+
+// ロゴ（base64）
+const LOGO_B64 = 'data:image/jpeg;base64,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';
+
+// ============================================================
+// doGet：WEBサイトにJSON返却
+// ============================================================
+function doGet(e) {
+  try {
+    return ContentService
+      .createTextOutput(JSON.stringify(getVacancyData()))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({error: err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ============================================================
+// 全角→半角変換
+// ============================================================
+function toHalf(str) {
+  return String(str||'').replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0)-0xFEE0));
+}
+
+// ============================================================
+// 空き人数→○△×記号
+// ============================================================
+function numToSym(val) {
+  const s = toHalf(String(val==null?'':val)).trim();
+  if(!s||s==='-'||s==='休'||s==='−') return '休';
+  const n = parseInt(s,10);
+  if(isNaN(n)) return ['○','△','×','休'].includes(s)?s:'休';
+  return n>=CFG.VACANCY_OK?'○':n>=CFG.VACANCY_FEW?'△':'×';
+}
+
+// ============================================================
+// 空き状況データ取得（空き状況シートから）
+// ============================================================
+function getVacancyData() {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.VACANCY_SHEET);
+  const now   = Utilities.formatDate(new Date(),'Asia/Tokyo','yyyy/MM/dd HH:mm');
+  if(!sheet) return {lastUpdated:now,facilities:[]};
+
+  const data    = sheet.getDataRange().getValues();
+  if(data.length<=1) return {lastUpdated:now,facilities:[]};
+
+  const headers = data[0].map(h=>String(h||'').trim());
+  function fc(candidates) {
+    for(const c of candidates){
+      const i=headers.findIndex(h=>h===c||h.includes(c));
+      if(i!==-1)return i;
+    }
+    return -1;
+  }
+  const colTs  = fc(['タイムスタンプ','Timestamp']);
+  const colN   = fc(['施設名','事業所名','施設','事業所']);
+  const colMon = fc(['月曜日','月曜','月']);
+  const colTue = fc(['火曜日','火曜','火']);
+  const colWed = fc(['水曜日','水曜','水']);
+  const colThu = fc(['木曜日','木曜','木']);
+  const colFri = fc(['金曜日','金曜','金']);
+  const colSat = fc(['土曜日','土曜','土']);
+  const colSun = fc(['日曜日','日曜','日']);
+  const colCom = fc(['コメント','特記','備考']);
+  if(colN===-1) return {lastUpdated:now,facilities:[]};
+
+  const activeNames = getActiveFacilityNames();
+  const latest = {};
+  for(let i=1;i<data.length;i++){
+    const row=data[i];
+    const name=String(row[colN]||'').trim();
+    if(!name) continue;
+    if(activeNames.length>0&&!activeNames.includes(name)) continue;
+    const ts=colTs!==-1?row[colTs]:i;
+    if(!latest[name]||ts>latest[name]._ts){row._ts=ts;latest[name]=row;}
+  }
+
+  const facilities=Object.entries(latest).map(([name,row])=>{
+    const mgmt=getFacilityMgmt(name);
+    return {
+      name,
+      symbols:{
+        月:colMon!==-1?numToSym(row[colMon]):'休',
+        火:colTue!==-1?numToSym(row[colTue]):'休',
+        水:colWed!==-1?numToSym(row[colWed]):'休',
+        木:colThu!==-1?numToSym(row[colThu]):'休',
+        金:colFri!==-1?numToSym(row[colFri]):'休',
+        土:colSat!==-1?numToSym(row[colSat]):'休',
+        日:colSun!==-1?numToSym(row[colSun]):'休',
+      },
+      備考:colCom!==-1?String(row[colCom]||'').trim():'',
+      更新日:colTs!==-1&&row[colTs]?Utilities.formatDate(new Date(row[colTs]),'Asia/Tokyo','yyyy/MM/dd HH:mm'):'',
+      mapUrl:mgmt.mapUrl,
+      pdfUrl:mgmt.pdfUrl,
+      plan:  mgmt.plan,     // F列：プラン（無料/有料）
+      info:getFacilityDetail(name),
+    };
+  });
+
+  return {lastUpdated:now,facilities};
+}
+
+// ============================================================
+// 事業所管理シートからマップURL・PDF URLを取得
+// A=事業所名 B=掲載状況 C=マップURL D=PDF URL（自動入力）
+// ============================================================
+function getMapUrl(name) {
+  return getFacilityMgmt(name).mapUrl;
+}
+
+function getPdfUrl(name) {
+  return getFacilityMgmt(name).pdfUrl;
+}
+
+function getFacilityMgmt(name) {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet) return {mapUrl:'',pdfUrl:'',email:''};
+  const data  = sheet.getDataRange().getValues();
+  const start = String(data[0][0]).trim()==='事業所名'?1:0;
+  const row   = data.slice(start).find(r=>String(r[0]).trim()===name);
+  if(!row) return {mapUrl:'',pdfUrl:'',email:''};
+  return {
+    mapUrl: String(row[2]||'').trim(), // C列：マップURL
+    pdfUrl: String(row[3]||'').trim(), // D列：PDF URL
+    email:  String(row[4]||'').trim(), // E列：メールアドレス
+    plan:   String(row[5]||'無料').trim(), // F列：プラン（無料/有料）
+  };
+}
+
+// 事業所管理のE列にメールアドレスを保存
+function saveFacilityEmail(name, email) {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet||!email) return;
+  const data  = sheet.getDataRange().getValues();
+  const hasH  = String(data[0][0]).trim()==='事業所名';
+  const start = hasH?1:0;
+  for(let i=start; i<data.length; i++){
+    if(String(data[i][0]).trim()===name){
+      sheet.getRange(i+1,5).setValue(email); // E列
+      return;
+    }
+  }
+}
+
+// 事業所管理シートのD列にPDF URLを保存
+function savePdfUrlToSheet(name, pdfUrl) {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet) return;
+  const data  = sheet.getDataRange().getValues();
+  const hasH  = String(data[0][0]).trim()==='事業所名';
+  const start = hasH?1:0;
+  for(let i=start; i<data.length; i++){
+    if(String(data[i][0]).trim()===name){
+      sheet.getRange(i+1, 4).setValue(pdfUrl); // D列
+      return;
+    }
+  }
+  // 見つからない場合は新規行追加
+  sheet.appendRow([name, 'ON', '', pdfUrl]);
+}
+
+// ============================================================
+// 事業所情報シートから詳細情報取得（詳細ポップアップ用）
+// ※NG条件も含む
+// ============================================================
+function getFacilityDetail(name) {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.PDF_SHEET);
+  const empty = {address:'',tel:'',hours:'',holiday:'',medical:'',ng:''};
+  if(!sheet) return empty;
+  const data    = sheet.getDataRange().getValues();
+  const headers = data[0].map(h=>String(h||'').trim());
+  const colName = headers.indexOf('事業所名');
+  if(colName===-1) return empty;
+  const row = data.slice(1).find(r=>String(r[colName]||'').trim()===name);
+  if(!row) return empty;
+  const col={};
+  headers.forEach((h,i)=>{col[h]=i;});
+  const get=(...keys)=>{for(const k of keys){if(col[k]!==undefined&&row[col[k]])return String(row[col[k]]).trim();}return '';};
+  return {
+    address: get('所在地（住所）','住所'),
+    tel:     get('電話番号/FAX','電話番号'),
+    hours:   get('営業時間・サービス提供時間','営業時間'),
+    holiday: get('定休日'),
+    medical: get('対応可能な医療行為','医療行為'),
+    ng:      get('受け入れNG条件','NG条件'),
+  };
+}
+
+// ============================================================
+// 事業所管理シートから掲載中の事業所名リスト取得
+// B列が「掲載状況」「ON/OFF」どちらにも対応
+// ============================================================
+function getActiveFacilityNames() {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet) return [];
+  const data  = sheet.getDataRange().getValues();
+  if(data.length<=1) return [];
+  const hasHeader = String(data[0][0]).trim()==='事業所名';
+  const start = hasHeader?1:0;
+  return data.slice(start)
+    .filter(row=>{
+      const s=String(row[1]||'').trim().toUpperCase();
+      return s==='ON'||s==='掲載中'||s==='○'||s==='';
+    })
+    .map(row=>String(row[0]||'').trim())
+    .filter(Boolean);
+}
+
+// ============================================================
+// メニュー追加
+// ============================================================
+function onOpen(){
+  SpreadsheetApp.getUi()
+    .createMenu('📄 PDF作成')
+    .addItem('✅ 選択中の事業所をPDF作成','createSelectedPDF')
+    .addItem('📋 全事業所をまとめてPDF作成','createAllPDFs')
+    .addSeparator()
+    .addItem('🗺 マップURLを埋め込み用に一括変換','convertAllMapUrls')
+    .addItem('⚡ C列編集で自動変換トリガーを設定','installOnEditTrigger')
+    .addItem('🏥 仮予約・空き状況フォームを今すぐ更新','updateAllFormsManual')
+    .addItem('⚙️ フォーム③の自動トリガーを設定','setupFacilityFormTrigger')
+    .addItem('📬 仮予約フォームのトリガーを設定','setupYoyakuFormTrigger')
+    .addItem('📧 仮予約通知メールのトリガーを設定','setupYoyakuFormTrigger')
+    .addSeparator()
+    .addItem('💳 プラン一覧を確認','checkPlanStatus')
+    .addItem('🔄 選択行のプランを切り替え（無料⇔有料）','togglePlanForSelected')
+    .addItem('🔄 空き状況データを確認','checkVacancyData')
+    .addItem('📁 保存先フォルダを開く','openFolder')
+    .addToUi();
+}
+
+// ============================================================
+// マップURL変換機能
+// C列にGoogleマップURLを入力→埋め込み用URLに自動変換
+//
+// 対応URL形式:
+//   https://www.google.com/maps/d/edit?mid=XXXX  → embed形式
+//   https://www.google.com/maps/d/viewer?mid=XXXX → embed形式
+//   https://mymaps.google.com/... → embed形式
+//   すでにembed形式 → そのまま
+// ============================================================
+function convertMapUrl(rawUrl) {
+  if(!rawUrl||!rawUrl.trim()) return '';
+  const url = rawUrl.trim();
+  // すでにembed形式
+  if(url.includes('/embed')) return url;
+  // mid=パラメータを抽出
+  const midMatch = url.match(/[?&]mid=([^&]+)/);
+  if(midMatch) return 'https://www.google.com/maps/d/embed?mid=' + midMatch[1];
+  // /d/IDの形式
+  const dMatch = url.match(/maps\/d\/([a-zA-Z0-9_-]+)/);
+  if(dMatch) return 'https://www.google.com/maps/d/embed?mid=' + dMatch[1];
+  return url;
+}
+
+// C列を一括変換（メニューから実行）
+function convertAllMapUrls() {
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet){SpreadsheetApp.getUi().alert('⚠️ 事業所管理シートが見つかりません。');return;}
+  const data = sheet.getDataRange().getValues();
+  const hasH = String(data[0][0]).trim()==='事業所名';
+  let count  = 0;
+  for(let i=hasH?1:0; i<data.length; i++){
+    const raw = String(data[i][2]||'').trim();
+    if(!raw) continue;
+    const converted = convertMapUrl(raw);
+    if(converted && converted!==raw){
+      sheet.getRange(i+1,3).setValue(converted);
+      count++;
+    }
+  }
+  SpreadsheetApp.getUi().alert(count>0
+    ? '✅ '+count+'件のマップURLを埋め込み用に変換しました！'
+    : '✅ すべて変換済みまたは変換不要です。'
+  );
+}
+
+// C列を編集したら自動変換（onEditトリガー用）
+function onEditFacilitySheet(e){
+  try{
+    if(!e||!e.range) return;
+    const sheet = e.range.getSheet();
+    if(sheet.getName()!==CFG.FACILITY_SHEET) return;
+    if(e.range.getColumn()!==3) return;
+    const raw = String(e.value||'').trim();
+    if(!raw||raw.includes('/embed')) return;
+    const converted = convertMapUrl(raw);
+    if(converted && converted!==raw) e.range.setValue(converted);
+  }catch(err){Logger.log(err);}
+}
+
+// onEditトリガーをインストール（1回だけ実行）
+function installOnEditTrigger(){
+  ScriptApp.getProjectTriggers().forEach(t=>{
+    if(t.getHandlerFunction()==='onEditFacilitySheet') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('onEditFacilitySheet')
+    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    .onEdit()
+    .create();
+  SpreadsheetApp.getUi().alert('✅ C列にURLを入力すると自動で埋め込み用URLに変換されます！');
+}
+
+// ============================================================
+// プラン状況を確認（メニューから実行）
+// ============================================================
+function checkPlanStatus(){
+  const ss    = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet){SpreadsheetApp.getUi().alert('⚠️ 事業所管理シートが見つかりません。');return;}
+
+  const data  = sheet.getDataRange().getValues();
+  const hasH  = String(data[0][0]).trim()==='事業所名';
+  const start = hasH?1:0;
+  const rows  = data.slice(start).filter(r=>String(r[0]).trim());
+
+  let msg = '【事業所プラン一覧】
+
+';
+  let freeCount = 0, paidCount = 0;
+
+  rows.forEach(row=>{
+    const name   = String(row[0]||'').trim();
+    const status = String(row[1]||'').trim();
+    const plan   = String(row[5]||'無料').trim();
+    if(!name) return;
+    const planMark = plan==='有料'?'💳':'🆓';
+    const onMark   = status==='ON'?'✅':'⬜';
+    msg += onMark+' '+planMark+' '+name+'
+';
+    if(plan==='有料') paidCount++;
+    else freeCount++;
+  });
+
+  msg += '
+─────────────
+';
+  msg += '🆓 無料：'+freeCount+'件
+';
+  msg += '💳 有料：'+paidCount+'件
+';
+  msg += '
+F列を「有料」に変更すると
+PDF・地図・詳細ボタンが表示されます。';
+
+  SpreadsheetApp.getUi().alert(msg);
+}
+
+// F列のプランを変更するショートカット（選択行を有料/無料に切り替え）
+function togglePlanForSelected(){
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CFG.FACILITY_SHEET);
+  if(!sheet){SpreadsheetApp.getUi().alert('⚠️ 事業所管理シートが見つかりません。');return;}
+  const row    = sheet.getActiveCell().getRow();
+  if(row<=1){SpreadsheetApp.getUi().alert('⚠️ 2行目以降の事業所行を選択してください。');return;}
+  const name   = String(sheet.getRange(row,1).getValue()).trim();
+  const current= String(sheet.getRange(row,6).getValue()).trim();
+  const newPlan= current==='有料'?'無料':'有料';
+  sheet.getRange(row,6).setValue(newPlan);
+  // 有料セルは金色、無料は薄緑で色分け
+  if(newPlan==='有料'){
+    sheet.getRange(row,6).setBackground('#fff3cd').setFontColor('#856404').setFontWeight('bold');
+  } else {
+    sheet.getRange(row,6).setBackground('#d4edda').setFontColor('#155724').setFontWeight('normal');
+  }
+  SpreadsheetApp.getUi().alert('✅ 「'+name+'」のプランを
+'+current+' → '+newPlan+' に変更しました。
+
+デプロイを更新するとWEBに反映されます。');
+}
+
+function checkVacancyData(){
+  const data=getVacancyData();
+  let msg='施設数：'+data.facilities.length+'件\n更新：'+data.lastUpdated+'\n\n';
+  data.facilities.forEach(f=>{
+    msg+='【'+f.name+'】 マップ:'+(f.mapUrl?'あり':'なし')+'\n';
+    msg+='月:'+f.symbols['月']+' 火:'+f.symbols['火']+' 水:'+f.symbols['水']+
+         ' 木:'+f.symbols['木']+' 金:'+f.symbols['金']+' 土:'+f.symbols['土']+' 日:'+f.symbols['日']+'\n\n';
+  });
+  SpreadsheetApp.getUi().alert(msg||'データなし');
+}
+
+// ============================================================
+// 仮予約フォームの事業所リストを更新（OFF→フォームから削除）
+// ============================================================
+function _updateYoyakuForm(){
+  if(!CFG.YOYAKU_FORM_ID) return false;
+  try{
+    const names=getActiveFacilityNames();
+    if(!names.length) return false;
+    const form =FormApp.openById(CFG.YOYAKU_FORM_ID);
+    const items=form.getItems();
+    let target=null;
+    for(const item of items){
+      const t=item.getTitle();
+      const y=item.getType();
+      if((t.includes('事業所')||t.includes('施設')||t.includes('デイ')||t.includes('希望'))&&
+         (y===FormApp.ItemType.LIST||y===FormApp.ItemType.MULTIPLE_CHOICE||y===FormApp.ItemType.CHECKBOX)){
+        target=item;break;
+      }
+    }
+    if(!target) return false;
+    const type=target.getType();
+    if(type===FormApp.ItemType.LIST) target.asListItem().setChoiceValues(names);
+    else if(type===FormApp.ItemType.MULTIPLE_CHOICE) target.asMultipleChoiceItem().setChoiceValues(names);
+    else target.asCheckboxItem().setChoiceValues(names);
+    return true;
+  }catch(e){Logger.log(e);return false;}
+}
+
+function updateAllFormsManual(){
+  const r1 = _updateYoyakuForm();
+  const r2 = _updateVacancyForm();
+  const names = getActiveFacilityNames();
+  SpreadsheetApp.getUi().alert(
+    '仮予約フォーム：' + (r1?'✅ 更新':'❌ 失敗') + '\n' +
+    '空き状況フォーム：' + (r2?'✅ 更新':'❌ 未設定または失敗（VACANCY_FORM_IDを確認）') + '\n\n' +
+    '掲載中（'+names.length+'件）：\n'+names.join('\n')
+  );
+}
+
+function updateYoyakuFormManual(){
+  if(!CFG.YOYAKU_FORM_ID){
+    SpreadsheetApp.getUi().alert('⚠️ YOYAKU_FORM_ID が未設定です。\n仮予約フォームの編集URL /d/【ここ】/edit の部分をコピーして設定してください。');
+    return;
+  }
+  const result=_updateYoyakuForm();
+  const names=getActiveFacilityNames();
+  SpreadsheetApp.getUi().alert(
+    result
+      ? '✅ 更新しました（'+names.length+'件）：\n'+names.join('\n')
+      : '❌ 失敗しました。フォームIDとシートを確認してください。'
+  );
+}
+
+function setupFacilityFormTrigger(){
+  if(!CFG.FACILITY_FORM_ID){SpreadsheetApp.getUi().alert('⚠️ FACILITY_FORM_ID が未設定です。');return;}
+  ScriptApp.getProjectTriggers().forEach(t=>{if(t.getHandlerFunction()==='onFacilityFormSubmit')ScriptApp.deleteTrigger(t);});
+  ScriptApp.newTrigger('onFacilityFormSubmit').forForm(FormApp.openById(CFG.FACILITY_FORM_ID)).onFormSubmit().create();
+  SpreadsheetApp.getUi().alert('✅ トリガーを設定しました！');
+}
+
+function onFacilityFormSubmit(e){
+  try{
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // ── 事業所管理シートを確認・作成
+    let mgmtSheet = ss.getSheetByName(CFG.FACILITY_SHEET);
+    if(!mgmtSheet){
+      mgmtSheet = ss.insertSheet(CFG.FACILITY_SHEET);
+      mgmtSheet.appendRow(['事業所名','掲載状況','マップURL','PDF URL','メールアドレス','プラン']);
+      mgmtSheet.getRange(1,1,1,6).setBackground('#1a3a5c').setFontColor('#fff').setFontWeight('bold');
+      mgmtSheet.setColumnWidths(1,6,[180,120,300,300,200,80]);
+    }
+
+    // ── フォーム回答を全項目取得
+    const answers = {};
+    e.response.getItemResponses().forEach(a => {
+      answers[a.getItem().getTitle()] = a.getResponse();
+    });
+    Logger.log('フォーム回答キー: ' + Object.keys(answers).join(', '));
+
+    // 事業所名を取得（「事業所名」を含む質問を探す）
+    const facilityName = (Object.entries(answers).find(([k]) =>
+      k.includes('事業所名') || k.includes('施設名')
+    ) || [])[1] || '';
+
+    if(!facilityName){
+      Logger.log('事業所名が取得できませんでした。回答: ' + JSON.stringify(answers));
+      return;
+    }
+
+    // ── 事業所管理シートに追加（既存なら更新、新規なら追加）
+    // マップURLと既存のPDF URLは上書きしない
+    const mgmtData = mgmtSheet.getDataRange().getValues();
+    const hasH     = String(mgmtData[0][0]).trim() === '事業所名';
+    const startRow = hasH ? 1 : 0;
+    const existIdx = mgmtData.slice(startRow).findIndex(r => String(r[0]).trim() === facilityName);
+
+    if(existIdx !== -1){
+      // 既存行：掲載状況をONに（マップURL・PDF URLは保持）
+      const targetRowNum = existIdx + startRow + 1;
+      mgmtSheet.getRange(targetRowNum, 1).setValue(facilityName);
+      mgmtSheet.getRange(targetRowNum, 2).setValue('ON');
+      Logger.log('事業所管理：既存行を更新 → ' + facilityName);
+    } else {
+      // 新規追加
+      mgmtSheet.appendRow([facilityName, 'ON', '', '', '', '無料']); // F列：初期値は無料
+      Logger.log('事業所管理：新規追加 → ' + facilityName);
+    }
+
+    // ── メールアドレスを取得してE列に保存
+    // フォーム内の「メールアドレス」入力項目から取得（B列相当）
+    // 候補キーを複数用意して柔軟に対応
+    const EMAIL_KEYS = ['メールアドレス','連絡先メールアドレス','メール','Email','email','連絡先メール','担当者メール'];
+    let facilityEmail = '';
+    for(const key of EMAIL_KEYS){
+      if(answers[key] && String(answers[key]).trim()){
+        facilityEmail = String(answers[key]).trim();
+        Logger.log('メール取得元: ' + key + ' → ' + facilityEmail);
+        break;
+      }
+    }
+    // フォームの回答者メール（Googleアカウント）も候補に
+    if(!facilityEmail){
+      const respondentEmail = e.response.getRespondentEmail ? e.response.getRespondentEmail() : '';
+      if(respondentEmail) facilityEmail = respondentEmail;
+    }
+
+    // E列に保存
+    if(facilityEmail){
+      saveFacilityEmail(facilityName, facilityEmail);
+      Logger.log('E列にメール保存: ' + facilityEmail);
+    } else {
+      Logger.log('⚠️ メールアドレスが取得できませんでした: ' + facilityName);
+    }
+
+    // ── 事業所情報シートから最新行を取得してPDF作成
+    const pdfSheet = ss.getSheetByName(CFG.PDF_SHEET);
+    if(pdfSheet){
+      const pdfData    = pdfSheet.getDataRange().getValues();
+      const pdfHeaders = pdfData[0].map(h => String(h||'').trim());
+      const nameCol    = pdfHeaders.findIndex(h => h === '事業所名');
+      if(nameCol !== -1){
+        let targetRow = null;
+        for(let i = pdfData.length - 1; i >= 1; i--){
+          if(String(pdfData[i][nameCol]||'').trim() === facilityName){
+            targetRow = pdfData[i]; break;
+          }
+        }
+        if(targetRow){
+          Logger.log('PDF作成開始: ' + facilityName);
+          const info   = buildInfo(pdfHeaders, targetRow);
+          const pdfUrl = savePDFAndGetUrl(info);
+          if(pdfUrl){
+            savePdfUrlToSheet(facilityName, pdfUrl);
+            Logger.log('PDF作成完了: ' + facilityName);
+          } else {
+            Logger.log('PDF作成失敗: ' + facilityName);
+          }
+        } else {
+          Logger.log('事業所情報シートに該当行なし: ' + facilityName);
+        }
+      }
+    }
+
+    // ── 仮予約・空き状況フォームの事業所リストを更新
+    _updateYoyakuForm();
+    _updateVacancyForm();
+
+    // ── 事業所へ登録確認メール送信
+    if(facilityEmail){
+      try{
+        GmailApp.sendEmail(
+          facilityEmail,
+          '【ケアナビ沖縄】事業所情報のご登録ありがとうございます',
+          '',
+          {
+            htmlBody:
+              '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
+              '<h2 style="color:#1a6eb5;border-bottom:2px solid #1a6eb5;padding-bottom:10px;">ご登録ありがとうございます</h2>' +
+              '<p><b>' + facilityName + '</b> 御担当者様</p>' +
+              '<p>ケアナビ沖縄に事業所情報をご登録いただきありがとうございます。</p>' +
+              '<p>内容を確認後、WEBサイトへの掲載手続きを進めさせていただきます。<br>' +
+              '掲載が完了しましたら改めてご連絡いたします。</p>' +
+              '<hr style="margin:20px 0;">' +
+              '<p style="color:#666;font-size:12px;">ケアナビ沖縄<br>' +
+              'TEL：050-1791-8181　MAIL：carenaviokinawa8181@gmail.com</p>' +
+              '</div>',
+            name: 'ケアナビ沖縄'
+          }
+        );
+        Logger.log('登録確認メール送信完了: ' + facilityEmail);
+      }catch(mailErr){
+        Logger.log('メール送信エラー: ' + mailErr.message);
+      }
+    }
+
+    // ── 運営へ通知
+    try{
+      GmailApp.sendEmail(
+        CFG.ADMIN_EMAIL,
+        '【新規登録】' + facilityName,
+        '',
+        {
+          htmlBody:
+            '<p>新規事業所が登録されました。</p>' +
+            '<p><b>事業所名：</b>' + facilityName + '</p>' +
+            '<p><b>メール：</b>' + (facilityEmail || '<span style="color:red;">未取得（フォーム項目名を確認）</span>') + '</p>' +
+            '<p>事業所管理シートのB列をONにすると掲載されます。</p>',
+          name: 'ケアナビ沖縄 自動通知'
+        }
+      );
+    }catch(e2){ Logger.log('運営通知エラー: ' + e2.message); }
+
+    Logger.log('フォーム送信処理完了: ' + facilityName);
+  } catch(err){
+    Logger.log('onFacilityFormSubmitエラー: ' + err.message + '\n' + err.stack);
+  }
+}
+
+// 事業所登録完了メール
+function sendFacilityRegistrationEmail(facilityName, facilityEmail) {
+  const subject = '【ケアナビ沖縄】掲載登録を受け付けました - ' + facilityName;
+  const body = [
+    facilityName + ' 担当者様',
+    '',
+    'ケアナビ沖縄への掲載登録ありがとうございます。',
+    '内容確認後、掲載開始のご連絡をいたします。',
+    '',
+    'ご不明な点はお気軽にご連絡ください。',
+    '',
+    '─────────────────',
+    CFG.ADMIN_NAME,
+    'TEL: ' + CFG.ADMIN_TEL,
+    'MAIL: ' + CFG.ADMIN_EMAIL,
+    '─────────────────'
+  ].join('\n');
+
+  if(facilityEmail && facilityEmail.includes('@')){
+    try{ GmailApp.sendEmail(facilityEmail, subject, body); }
+    catch(e){ Logger.log('事業所メール送信エラー: '+e.message); }
+  }
+  try{
+    GmailApp.sendEmail(CFG.ADMIN_EMAIL,
+      '【新規登録】' + facilityName,
+      facilityName + 'が登録されました。\n事業所メール: ' + (facilityEmail||'未入力')
+    );
+  }catch(e){ Logger.log('運営通知エラー: '+e.message); }
+}
+
+// 仮予約受信時に事業所＆運営にメール通知
+function onYoyakuFormSubmit(e) {
+  try{
+    const answers = {};
+    e.response.getItemResponses().forEach(a => { answers[a.getItem().getTitle()] = a.getResponse(); });
+
+    const facilityName = (Object.entries(answers).find(([k]) =>
+      k.includes('事業所') || k.includes('施設') || k.includes('希望')
+    ) || [])[1] || '不明';
+
+    const now = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd HH:mm');
+    const detail = Object.entries(answers).map(([k,v]) => k + ': ' + v).join('\n');
+
+    const subject = '【仮予約】' + facilityName + ' への仮予約が届きました（' + now + '）';
+    const body = [
+      '以下の仮予約が届きました。受け入れ可否をご判断の上、ケアマネジャーへご連絡ください。',
+      '',
+      '受付日時: ' + now,
+      '─────────────────',
+      detail,
+      '─────────────────',
+      '',
+      '※この仮予約は確定ではありません。事業所側でご判断ください。',
+      '',
+      CFG.ADMIN_NAME + '　' + CFG.ADMIN_TEL
+    ].join('\n');
+
+    GmailApp.sendEmail(CFG.ADMIN_EMAIL, subject, body);
+
+    const facilityEmail = getFacilityEmail(facilityName);
+    if(facilityEmail){ GmailApp.sendEmail(facilityEmail, subject, body); }
+
+    Logger.log('仮予約通知完了: ' + facilityName);
+  }catch(err){ Logger.log('onYoyakuFormSubmitエラー: ' + err.message); }
+}
+
+// 事業所メールアドレスを取得
+function getFacilityEmail(facilityName) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(CFG.PDF_SHEET);
+  if(!sheet) return '';
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0].map(h => String(h||'').trim());
+  const nameCol = headers.findIndex(h => h === '事業所名');
+  const mailCol = headers.findIndex(h => h.includes('メール') || h.toLowerCase().includes('mail'));
+  if(nameCol===-1 || mailCol===-1) return '';
+  for(let i=data.length-1; i>=1; i--){
+    if(String(data[i][nameCol]||'').trim()===facilityName) return String(data[i][mailCol]||'').trim();
+  }
+  return '';
+}
+
+// 仮予約フォームのトリガー設定
+function setupYoyakuFormTrigger(){
+  if(!CFG.YOYAKU_FORM_ID){SpreadsheetApp.getUi().alert('⚠️ YOYAKU_FORM_ID が未設定です。');return;}
+  ScriptApp.getProjectTriggers().forEach(t=>{
+    if(t.getHandlerFunction()==='onYoyakuFormSubmit') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('onYoyakuFormSubmit').forForm(FormApp.openById(CFG.YOYAKU_FORM_ID)).onFormSubmit().create();
+  SpreadsheetApp.getUi().alert('✅ 仮予約通知のトリガーを設定しました！\n仮予約が届くと運営と事業所にメールが届きます。');
+}
+
+// 空き状況入力フォームの事業所選択肢を更新
+function _updateVacancyForm(){
+  if(!CFG.VACANCY_FORM_ID) return false;
+  try{
+    const names  = getActiveFacilityNames();
+    if(!names.length) return false;
+    const form   = FormApp.openById(CFG.VACANCY_FORM_ID);
+    const items  = form.getItems();
+    let target   = null;
+    for(const item of items){
+      const t = item.getTitle();
+      const y = item.getType();
+      if((t.includes('施設名')||t.includes('事業所')||t.includes('施設'))&&
+         (y===FormApp.ItemType.LIST||y===FormApp.ItemType.MULTIPLE_CHOICE||y===FormApp.ItemType.CHECKBOX)){
+        target=item; break;
+      }
+    }
+    if(!target) return false;
+    const type=target.getType();
+    if(type===FormApp.ItemType.LIST) target.asListItem().setChoiceValues(names);
+    else if(type===FormApp.ItemType.MULTIPLE_CHOICE) target.asMultipleChoiceItem().setChoiceValues(names);
+    else target.asCheckboxItem().setChoiceValues(names);
+    Logger.log('空き状況フォーム更新: '+names.length+'件');
+    return true;
+  }catch(e){Logger.log('_updateVacancyForm error: '+e.message);return false;}
+}
+
+// ============================================================
+// PDF作成
+// ============================================================
+function createSelectedPDF(){
+  const sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CFG.PDF_SHEET);
+  if(!sheet){SpreadsheetApp.getUi().alert('⚠️ シート「'+CFG.PDF_SHEET+'」が見つかりません。');return;}
+  const row=sheet.getActiveCell().getRow();
+  if(row<=1){SpreadsheetApp.getUi().alert('⚠️ 2行目以降を選択してください。');return;}
+  const headers=sheet.getRange(1,1,1,sheet.getLastColumn()).getValues()[0];
+  const rowData=sheet.getRange(row,1,1,sheet.getLastColumn()).getValues()[0];
+  const info=buildInfo(headers,rowData);
+  if(!info['事業所名']){SpreadsheetApp.getUi().alert('⚠️ 事業所名が空です。');return;}
+  const url=savePDF(info);
+  const ui=SpreadsheetApp.getUi();
+  if(url){
+    ui.showModalDialog(
+      HtmlService.createHtmlOutput(
+        '<div style="font-family:sans-serif;padding:10px;">'+
+        '<p style="font-size:14px;margin-bottom:12px;">✅ PDFを作成しました</p>'+
+        '<a href="'+url+'" target="_blank" style="display:block;text-align:center;padding:10px 20px;background:#1a6eb5;color:white;text-decoration:none;border-radius:8px;font-weight:bold;font-size:14px;">📄 PDFを開く・印刷する</a>'+
+        '<p style="font-size:11px;color:#888;margin-top:8px;text-align:center;">Ctrl+P（Cmd+P）で印刷できます</p>'+
+        '</div>'
+      ).setWidth(300).setHeight(140),
+      info['事業所名']+'のPDF'
+    );
+  }else{
+    ui.alert('✅「'+info['事業所名']+'」のPDFを作成しました！');
+  }
+}
+
+function createAllPDFs(){
+  const sheet=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CFG.PDF_SHEET);
+  if(!sheet){SpreadsheetApp.getUi().alert('⚠️ シート「'+CFG.PDF_SHEET+'」が見つかりません。');return;}
+  const data=sheet.getDataRange().getValues();
+  const headers=data[0];
+  const nameCol=headers.findIndex(h=>String(h||'').trim()==='事業所名');
+  if(nameCol===-1){SpreadsheetApp.getUi().alert('⚠️ 事業所名列が見つかりません。');return;}
+  let count=0;
+  for(let i=1;i<data.length;i++){
+    const facilityName=String(data[i][nameCol]||'').trim();
+    if(!facilityName) continue;
+    const info=buildInfo(headers,data[i]);
+    const pdfUrl=savePDFAndGetUrl(info);
+    if(pdfUrl){
+      savePdfUrlToSheet(facilityName, pdfUrl); // D列に自動保存
+    }
+    count++;
+    Utilities.sleep(3000);
+  }
+  SpreadsheetApp.getUi().alert('✅ '+count+'件のPDFを作成しました！
+事業所管理シートのD列にURLが保存されました。');
+}
+
+function openFolder(){
+  SpreadsheetApp.getUi().showModalDialog(
+    HtmlService.createHtmlOutput('<script>window.open("https://drive.google.com/drive/folders/'+CFG.OUTPUT_FOLDER_ID+'");google.script.host.close();<\/script>'),
+    'フォルダを開いています...'
+  );
+}
+
+function buildInfo(headers,row){
+  const o={};
+  headers.forEach((h,i)=>{o[h]=row[i]!=null?String(row[i]):'';});
+  return o;
+}
+
+function savePDF(info){
+  return savePDFAndGetUrl(info);
+}
+
+function savePDFAndGetUrl(info){
+  const html   =buildHTML(info);
+  const folder =DriveApp.getFolderById(CFG.OUTPUT_FOLDER_ID);
+  const fname  =info['事業所名']+'_デイサービス紹介.pdf';
+  const ex     =folder.getFilesByName(fname);
+  while(ex.hasNext())ex.next().setTrashed(true);
+  const tmp    =DriveApp.createFile('__tmp__.html',html,MimeType.HTML);
+  const blob   =tmp.getAs(MimeType.PDF).setName(fname);
+  const file   =folder.createFile(blob);
+  tmp.setTrashed(true);
+  // 公開共有設定にして誰でも閲覧可能にする
+  try{
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return file.getUrl();
+  }catch(e){
+    return null;
+  }
+}
+
+function getImg(url){
+  if(!url||!url.trim()) return null;
+  try{
+    const raw = url.trim();
+
+    // ── ファイルIDを抽出（複数のURL形式に対応）
+    let fileId = null;
+
+    // 形式1: /file/d/ID/view または /d/ID/
+    const m1 = raw.match(/\/(?:file\/)?d\/([a-zA-Z0-9_-]+)/);
+    if(m1) fileId = m1[1];
+
+    // 形式2: open?id=ID または id=ID
+    if(!fileId){
+      const m2 = raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      if(m2) fileId = m2[1];
+    }
+
+    // 形式3: Googleフォームのアップロード URLパターン
+    // https://drive.google.com/open?id=XXXX
+    if(!fileId && raw.includes('drive.google.com')){
+      const m3 = raw.match(/([a-zA-Z0-9_-]{25,})/);
+      if(m3) fileId = m3[1];
+    }
+
+    if(fileId){
+      // DriveAppで直接取得（最も確実な方法）
+      try{
+        const file = DriveApp.getFileById(fileId);
+        const blob = file.getBlob();
+        return 'data:'+(blob.getContentType()||'image/jpeg')+';base64,'+Utilities.base64Encode(blob.getBytes());
+      }catch(driveErr){
+        Logger.log('DriveApp取得失敗、URLフェッチに切り替え: '+driveErr.message);
+        // DriveAppで取得できない場合はURLフェッチで試みる
+        const fetchUrl = 'https://drive.google.com/uc?export=download&id='+fileId;
+        const res = UrlFetchApp.fetch(fetchUrl, {muteHttpExceptions:true, followRedirects:true});
+        if(res.getResponseCode()===200){
+          const b = res.getBlob();
+          return 'data:'+(b.getContentType()||'image/jpeg')+';base64,'+Utilities.base64Encode(b.getBytes());
+        }
+      }
+    } else {
+      // IDが抽出できない場合は直接URLフェッチ
+      const res = UrlFetchApp.fetch(raw, {muteHttpExceptions:true, followRedirects:true});
+      if(res.getResponseCode()===200){
+        const b = res.getBlob();
+        return 'data:'+(b.getContentType()||'image/jpeg')+';base64,'+Utilities.base64Encode(b.getBytes());
+      }
+    }
+
+    Logger.log('写真取得失敗: '+raw);
+    return null;
+  }catch(e){
+    Logger.log('getImgエラー: '+e.message+' URL: '+url);
+    return null;
+  }
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escN(s){return esc(toHalf(s));}
+
+// ============================================================
+// HTMLテンプレート（A5横・高齢者向け・写真3枚均等・文字大きめ）
+// ============================================================
+function buildHTML(d) {
+  function findVal(d,...keys){for(const k of keys){if(d[k]&&String(d[k]).trim())return String(d[k]).trim();}return '';}
+
+  const p1=getImg(findVal(d,'施設写真①','施設写真1','写真①','写真1'));
+  const p2=getImg(findVal(d,'施設写真②','施設写真2','写真②','写真2'));
+  const p3=getImg(findVal(d,'施設写真③','施設写真3','写真③','写真3'));
+
+  function ph(b64,emoji,label){
+    if(b64) return `<img src="${b64}" style="width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0;"/>`;
+    return `<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#e8e0d4,#ddd4c8);"><span style="font-size:28px;opacity:0.3;">${emoji}</span><span style="font-size:9px;color:#a89880;font-weight:700;">${label}</span></div>`;
+  }
+
+  const tel  = toHalf(findVal(d,'電話番号/FAX','電話番号','TEL','電話'));
+  const fee  = toHalf(findVal(d,'1回利用時の費用','1日の費用','利用料金','料金'));
+  const addr = findVal(d,'所在地（住所）','住所','所在地');
+  const hrs  = findVal(d,'営業時間・サービス提供時間','営業時間');
+  const hol  = findVal(d,'定休日','休業日');
+  const msg  = findVal(d,'一言メッセージ','事業所の強み・特徴') || '利用者一人ひとりに寄り添ったケアを提供します';
+  const rec  = findVal(d,'こんな利用者におすすめ','こんな方におすすめ');
+  const str  = findVal(d,'事業所の強み・特徴','強み','特徴');
+  const lec  = findVal(d,'人気の行事・レクリエーション','レクリエーション');
+  const stf  = findVal(d,'スタッフ体制','スタッフ');
+  const flow = findVal(d,'1日の流れ','1日のスケジュール');
+
+  function chip(val,label,bg,bd,col){
+    if(!val) return '';
+    if(!val.includes('あり')&&!val.includes('可')&&!val.includes('対応')&&!val.includes('可能')) return '';
+    return `<span style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:14px;background:${bg};border:1.5px solid ${bd};color:${col};white-space:nowrap;">${label}</span>`;
+  }
+  const chips=[
+    chip(d['入浴の有無'],        '🛁 入浴あり',  '#e8f5e8','#88c888','#1a5a1a'),
+    chip(d['食事提供'],          '🍱 食事提供',  '#f8f0e0','#d0a860','#6a4010'),
+    chip(d['送迎の有無'],        '🚐 送迎あり',  '#e8f0f8','#88b8d8','#1a3a5a'),
+    chip(d['車椅子対応'],        '♿ 車椅子',    '#f0ece8','#c0a888','#5a3a20'),
+    chip(d['認知症対応'],        '🧠 認知症対応','#eef0e8','#a8b888','#2a3a1a'),
+    chip(d['見学・体験利用の有無'],'🌸 見学OK',  '#f8ece8','#d0a090','#6a2010'),
+  ].filter(Boolean).join('');
+
+  function sb(val){
+    if(!val) return '<span style="color:#bbb;font-size:10px;">—</span>';
+    if(val.includes('あり')||val.includes('可能')||val.includes('対応')||val.includes('可'))
+      return `<b style="color:#1a6a1a;font-size:11px;">◎</b> <span style="font-size:10px;">${esc(val)}</span>`;
+    if(val.includes('要相談')||val.includes('場合'))
+      return `<b style="color:#8a5a10;font-size:11px;">△</b> <span style="font-size:10px;">${esc(val)}</span>`;
+    if(val.includes('なし')||val.includes('不可'))
+      return `<b style="color:#aa2020;font-size:11px;">×</b> <span style="font-size:10px;">${esc(val)}</span>`;
+    return `<span style="font-size:10px;">${esc(val)}</span>`;
+  }
+
+  const si=flow.split(/[、，,\n。]/).map(s=>s.trim()).filter(Boolean).slice(0,5);
+  const shHTML=si.map(s=>{
+    const m=s.match(/^(\d{1,2}[:：]\d{2}[〜~－-]?)\s*(.*)$/);
+    return `<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(200,160,100,0.2);">
+      <div style="width:5px;height:5px;border-radius:50%;background:#c8966a;flex-shrink:0;"></div>
+      <span style="font-size:9.5px;font-weight:700;color:#a06830;min-width:38px;">${esc(m?m[1]:'')}</span>
+      <span style="font-size:10px;color:#4a3828;flex:1;">${esc(m?m[2]:s)}</span>
+    </div>`;
+  }).join('');
+
+  const msgS = esc(msg).replace(/\n/g,'<br>');
+  const recS = esc(rec||str).replace(/\n/g,'<br>');
+  const lecS = esc(lec).replace(/\n/g,'<br>');
+  const stfS = esc(stf).replace(/\n/g,'<br>');
+
+  return `<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HM2ZV5WPTP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HM2ZV5WPTP');
-</script>
-<title>デイサービス 空き状況</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+@page{size:210mm 148mm landscape;margin:0;}
+@media print{html,body{width:210mm!important;height:148mm!important;overflow:hidden!important;}}
 
-  :root {
-    --bg: #f0f7f2;
-    --white: #ffffff;
-    --primary: #2db84b;
-    --primary-light: #e6f7eb;
-    --green: #1a9e5c;
-    --green-bg: #e6f7ee;
-    --orange: #d97706;
-    --orange-bg: #fef3e2;
-    --red: #dc2626;
-    --red-bg: #fee2e2;
-    --text: #1a202c;
-    --muted: #718096;
-    --border: #e2e8f0;
-    --shadow: 0 2px 20px rgba(0,0,0,0.07);
-  }
+html,body{
+  width:794px;height:561px;
+  font-family:'Noto Sans JP',sans-serif;
+  display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(160deg,#faf4ea 0%,#f5ede0 50%,#f0ead8 100%);
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── 上段ヘッダー（施設名・キャッチ・チップ）── */
+.top-bar{
+  display:flex;align-items:stretch;flex-shrink:0;
+  background:linear-gradient(135deg,#3a2010,#5a3820);
+  border-bottom:4px solid #b89035;
+  height:88px;
+}
+.top-logo-area{
+  width:88px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  border-right:2px solid rgba(255,200,100,0.3);
+  padding:8px;
+}
+.top-logo{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,200,100,0.5);}
+.top-name-area{
+  flex:1;padding:10px 16px;display:flex;flex-direction:column;justify-content:center;
+}
+.fac-sub{font-size:9px;color:rgba(255,220,150,0.6);letter-spacing:0.2em;font-weight:700;margin-bottom:4px;}
+.fac-name{
+  font-family:'Noto Serif JP',serif;
+  font-size:22px;font-weight:700;  /* ← 大きく */
+  color:#fff;line-height:1.3;letter-spacing:0.04em;
+  text-shadow:0 2px 8px rgba(0,0,0,0.5);
+}
+.top-chips{
+  width:200px;flex-shrink:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:8px 12px;gap:4px;border-left:2px solid rgba(255,200,100,0.2);
+}
 
-  body {
-    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+/* ── 写真3枚横並び（均等サイズ）── */
+.photos-row{
+  display:flex;height:200px;flex-shrink:0;
+  border-bottom:4px solid #b89035;
+}
+.photo-slot{
+  flex:1;position:relative;overflow:hidden;
+  background:#ddd4c8;
+  border-right:3px solid #b89035;
+}
+.photo-slot:last-child{border-right:none;}
+.photo-caption{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(30,14,4,0.7);
+  padding:4px 8px;
+  font-size:9px;font-weight:700;color:rgba(255,220,150,0.9);
+  letter-spacing:0.08em;
+}
 
-  /* HEADER */
-  .header {
-    background: #1a6eb5;
-    padding: 20px 20px 16px;
-    color: white;
-  }
-  .header-inner { max-width: 900px; margin: 0 auto; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
-  .header h1 { font-size: clamp(16px, 4vw, 22px); font-weight: 900; letter-spacing: 0.5px; color: white; }
-  .header-sub { font-size: 12px; opacity: 0.8; margin-top: 4px; color: rgba(255,255,255,0.8); }
-  .update-badge {
-    background: rgba(255,255,255,0.2);
-    border-radius: 20px; padding: 5px 12px;
-    font-size: 11px; white-space: nowrap; color: white;
-  }
+/* ── 下段コンテンツ ── */
+.content-row{
+  display:flex;flex:1;min-height:0;overflow:hidden;
+}
 
-  /* LEGEND（数字なし・記号のみ） */
-  .legend {
-    background: var(--primary-light);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 20px;
-  }
-  .legend-inner {
-    max-width: 900px; margin: 0 auto;
-    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
-  .legend-badge {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 900;
-  }
+/* 左：基本情報・対応状況 */
+.col-l{
+  width:220px;flex-shrink:0;
+  padding:10px 12px;
+  border-right:2px solid #e0c890;
+  display:flex;flex-direction:column;gap:7px;
+  overflow:hidden;
+  background:rgba(253,248,240,0.9);
+}
 
-  /* MAIN */
-  main { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
+/* 中：料金・スケジュール */
+.col-m{
+  flex:1;
+  padding:10px 12px;
+  border-right:2px solid #e0c890;
+  display:flex;flex-direction:column;gap:7px;
+  overflow:hidden;
+  background:rgba(253,248,240,0.9);
+}
 
-  /* LOADING */
-  .loading { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .spinner {
-    width: 40px; height: 40px; border: 3px solid var(--border);
-    border-top-color: var(--primary); border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 0 auto 16px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* 右：おすすめ・レク・連絡先 */
+.col-r{
+  width:200px;flex-shrink:0;
+  padding:10px 12px;
+  display:flex;flex-direction:column;gap:7px;
+  overflow:hidden;
+  background:rgba(253,248,240,0.9);
+}
 
-  /* ERROR */
-  .error-box {
-    background: #fff5f5; border: 1px solid #fed7d7;
-    border-radius: 14px; padding: 20px; text-align: center;
-    color: var(--red); display: none;
-  }
+/* セクション見出し */
+.sh{
+  font-size:9.5px;font-weight:700;color:#8a5a18;
+  letter-spacing:0.12em;
+  padding-bottom:3px;margin-bottom:5px;
+  border-bottom:2px solid #d8b860;
+  display:flex;align-items:center;gap:5px;
+}
+.sh::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#c8966a;flex-shrink:0;}
 
-  /* FACILITY CARD */
-  .facilities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
+/* 基本情報テーブル */
+.it{width:100%;border-collapse:collapse;}
+.it tr{border-bottom:1px solid rgba(200,160,80,0.2);}
+.it tr:last-child{border-bottom:none;}
+.it td{padding:4px 3px;vertical-align:top;}
+.it td:first-child{font-size:8.5px;color:#a08040;font-weight:700;white-space:nowrap;width:52px;padding-top:5px;}
+.it td:last-child{font-size:11px;font-weight:600;color:#2a1808;line-height:1.5;}  /* ← 大きく */
 
-  .facility-card {
-    background: var(--white);
-    border-radius: 16px; overflow: hidden;
-    box-shadow: var(--shadow); border: 1px solid var(--border);
-    animation: fadeUp 0.4s ease both;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* 対応状況 */
+.sg{display:flex;align-items:center;gap:4px;padding:3px 7px;border-radius:5px;background:rgba(255,248,225,0.85);border:1px solid #e8d8a0;margin-bottom:3px;}
+.sl{font-size:8.5px;color:#a07830;font-weight:700;min-width:46px;white-space:nowrap;}
 
-  .card-header {
-    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .card-name { font-size: 15px; font-weight: 900; }
-  .card-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-  .status-ok   { background: var(--green-bg);  color: var(--green); }
-  .status-few  { background: var(--orange-bg); color: var(--orange); }
-  .status-full { background: var(--red-bg);    color: var(--red); }
+/* 料金ボックス */
+.fb{background:linear-gradient(135deg,#fffbee,#fff5d8);border:2px solid #d8b060;border-radius:9px;padding:10px 12px;position:relative;overflow:hidden;flex-shrink:0;}
+.fb::after{content:'🌼';position:absolute;right:6px;bottom:4px;font-size:22px;opacity:0.18;}
+.fb::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c8966a,#e8c050);}
+.fl{font-size:9px;color:#9a7020;font-weight:700;margin-bottom:4px;}
+.fa{font-family:'Noto Serif JP',serif;font-size:24px;font-weight:700;color:#3a2008;line-height:1;}  /* ← 大きく */
+.fu{font-size:10px;color:#a08060;}
+.fn2{font-size:8.5px;color:#b0a070;line-height:1.7;margin-top:4px;}
 
-  /* DAYS TABLE */
-  .days-table { width: 100%; padding: 12px 16px; }
-  .days-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-  .day-cell { text-align: center; }
-  .day-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
-  .day-label.sat { color: #2563eb; }
-  .day-label.sun { color: var(--red); }
-  .day-symbol {
-    width: 38px; height: 38px; margin: 0 auto;
-    border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 900;
-  }
-  .sym-ok     { background: #c6f0d4; color: #15803d; }
-  .sym-few    { background: #fed7aa; color: #c2410c; }
-  .sym-full   { background: #fecaca; color: #b91c1c; }
-  .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 12px; }
+/* おすすめ */
+.rec{flex:1;background:linear-gradient(135deg,#eef7ea,#e4f0e0);border:2px solid #a8c888;border-radius:9px;padding:9px 10px;font-size:10.5px;color:#203820;line-height:1.85;overflow:hidden;position:relative;}  /* ← 大きく */
+.rec::after{content:'🍃';position:absolute;right:6px;bottom:4px;font-size:20px;opacity:0.22;}
 
-  /* 備考 */
-  .card-biko {
-    margin: 0 16px 12px;
-    background: var(--primary-light); border-radius: 8px;
-    padding: 8px 12px; font-size: 12px; color: var(--primary);
-    font-weight: 500; line-height: 1.6;
-  }
+/* レク */
+.rl{background:linear-gradient(135deg,#f4eefc,#ece4f8);border:1.5px solid #b8a0d8;border-radius:8px;padding:7px 10px;font-size:10.5px;color:#2a1848;line-height:1.8;overflow:hidden;position:relative;flex-shrink:0;}  /* ← 大きく */
+.rl::after{content:'🎵';position:absolute;right:6px;bottom:4px;font-size:16px;opacity:0.2;}
 
-  /* CARD FOOTER */
-  .card-footer {
-    padding: 10px 16px 14px;
-    display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px;
-  }
+/* 連絡先ボックス */
+.contact-box{
+  background:linear-gradient(135deg,#2e1808,#4a2c12);
+  border-radius:8px;padding:9px 10px;flex-shrink:0;
+  position:relative;overflow:hidden;
+}
+.contact-box::after{content:'🌾';position:absolute;right:6px;bottom:4px;font-size:18px;opacity:0.18;}
+.ct-tel{font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;color:#ffd080;margin-bottom:3px;}  /* ← 大きく */
+.ct-info{font-size:8.5px;color:rgba(255,210,150,0.6);line-height:1.8;}
 
-  /* BUTTONS */
-  .reserve-btn {
-    background: #1a6eb5; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .reserve-btn:hover { opacity: 0.85; }
-  .map-btn {
-    background: #10b981; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .map-btn:hover { opacity: 0.85; }
-  .info-btn {
-    background: #6366f1; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .info-btn:hover { opacity: 0.85; }
+/* キャッチ */
+.catch-txt{font-family:'Noto Serif JP',serif;font-size:10.5px;font-weight:700;color:#3a2010;line-height:1.7;border-left:4px solid #c8966a;padding-left:8px;}  /* ← 大きく */
 
-  /* INFO MODAL（NG条件含む） */
-  .info-modal {
-    display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-  }
-  .info-modal.active { display: flex; }
-  .info-modal-inner {
-    background: white; border-radius: 16px; overflow: hidden;
-    width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-  .info-modal-header {
-    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border); position: sticky; top: 0; background: white;
-  }
-  .info-modal-title { font-size: 15px; font-weight: 900; }
-  .info-close-btn {
-    background: #f1f5f9; border: none; border-radius: 50%;
-    width: 32px; height: 32px; font-size: 16px; cursor: pointer;
-    font-family: inherit; display: flex; align-items: center; justify-content: center;
-  }
-  .info-modal-body { padding: 16px; }
-  .info-row {
-    display: flex; gap: 12px; padding: 10px 0;
-    border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.6;
-  }
-  .info-row:last-child { border-bottom: none; }
-  .info-label { font-weight: 700; color: var(--primary); min-width: 110px; font-size: 12px; }
-  .info-value { color: var(--text); flex: 1; }
-  .info-value.ng { color: var(--red); font-weight: 700; }
-
-  /* MAP MODAL */
-  .map-modal {
-    display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-  }
-  .map-modal.active { display: flex; }
-  .map-modal-inner {
-    background: white; border-radius: 16px; overflow: hidden;
-    width: 100%; max-width: 700px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-  .map-modal-header {
-    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border);
-  }
-  .map-modal-title { font-size: 15px; font-weight: 900; }
-  .map-close-btn {
-    background: #f1f5f9; border: none; border-radius: 50%;
-    width: 32px; height: 32px; font-size: 16px; cursor: pointer;
-    font-family: inherit; display: flex; align-items: center; justify-content: center;
-  }
-  .map-modal-body iframe { width: 100%; height: 400px; border: none; display: block; }
-
-  /* PDF BUTTON */
-  .pdf-btn {
-    background: #b45309; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .pdf-btn:hover { opacity: 0.85; }
-
-  /* SETUP NOTICE */
-  .setup-notice {
-    background: #fffbeb; border: 1px solid #fde68a;
-    border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
-    font-size: 13px; line-height: 1.8; color: #92400e;
-  }
-  .setup-notice strong { display: block; font-size: 14px; margin-bottom: 6px; }
-  .setup-notice code {
-    background: #fff; border: 1px solid #fde68a;
-    border-radius: 4px; padding: 2px 6px; font-size: 12px; word-break: break-all;
-  }
+/* スタッフ */
+.stf-box{background:linear-gradient(135deg,#f0f4fc,#e8eef8);border:1.5px solid #98b0d8;border-radius:8px;padding:7px 10px;font-size:10.5px;color:#1a2840;line-height:1.8;overflow:hidden;position:relative;flex-shrink:0;}
+.stf-box::after{content:'👥';position:absolute;right:6px;bottom:4px;font-size:16px;opacity:0.2;}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-inner">
-    <div class="header-top">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <img src="logo.jpg" alt="ケアナビ沖縄"
-          style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.8);">
-        <div>
-          <h1>🏥 デイサービス 空き状況</h1>
-          <div class="header-sub">ケアマネ・ご家族向け 最新空き情報</div>
+<!-- ── 上段：施設名・ロゴ・チップ ── -->
+<div class="top-bar">
+  <div class="top-logo-area">
+    <img src="${LOGO_B64}" class="top-logo" alt="ケアナビ沖縄"/>
+  </div>
+  <div class="top-name-area">
+    <div class="fac-sub">通所介護・デイサービス</div>
+    <div class="fac-name">${esc(d['事業所名']||'◯◯デイサービス')}</div>
+  </div>
+  <div class="top-chips">
+    ${chips}
+  </div>
+</div>
+
+<!-- ── 写真3枚（均等・大きく）── -->
+<div class="photos-row">
+  <div class="photo-slot">
+    ${ph(p1,'🏠','外観・施設')}
+    <div class="photo-caption">📷 外観・施設</div>
+  </div>
+  <div class="photo-slot">
+    ${ph(p2,'🍱','食事')}
+    <div class="photo-caption">📷 食事・おやつ</div>
+  </div>
+  <div class="photo-slot">
+    ${ph(p3,'🏃','活動・レク')}
+    <div class="photo-caption">📷 活動・レク</div>
+  </div>
+</div>
+
+<!-- ── 下段3カラム ── -->
+<div class="content-row">
+
+  <!-- 左：基本情報・対応状況 -->
+  <div class="col-l">
+    <div>
+      <div class="sh">基本情報</div>
+      <table class="it">
+        <tr><td>住所</td><td>${esc(addr)||'—'}</td></tr>
+        <tr><td>電話</td><td>${esc(tel)||'—'}</td></tr>
+        <tr><td>営業時間</td><td>${esc(hrs)||'—'}</td></tr>
+        <tr><td>定休日</td><td>${esc(hol)||'—'}</td></tr>
+      </table>
+    </div>
+    <div>
+      <div class="sh">対応状況</div>
+      <div class="sg"><span class="sl">利用者区分</span><span>${sb(d['利用可能な利用者'])}</span></div>
+      <div class="sg"><span class="sl">車椅子</span><span>${sb(d['車椅子対応'])}</span></div>
+      <div class="sg"><span class="sl">認知症</span><span>${sb(d['認知症対応'])}</span></div>
+      <div class="sg"><span class="sl">精神疾患</span><span>${sb(d['精神疾患の利用者'])}</span></div>
+      <div class="sg"><span class="sl">医療行為</span><span style="font-size:9.5px;">${esc((d['対応可能な医療行為']||'').slice(0,22))}</span></div>
+    </div>
+  </div>
+
+  <!-- 中：料金・スケジュール・スタッフ -->
+  <div class="col-m">
+    <div>
+      <div class="sh">料金の目安</div>
+      <div class="fb">
+        <div class="fl">1回のご利用費用</div>
+        <div class="fa">${esc(fee)||'—'}<span class="fu">${fee?' 円〜 / 日':''}</span></div>
+        <div class="fn2">※介護度・加算内容により異なります<br>※食費・日用品費は別途実費</div>
+      </div>
+    </div>
+    ${shHTML?`<div><div class="sh">1日のスケジュール</div><div>${shHTML}</div></div>`:''}
+    ${stfS?`<div><div class="sh">スタッフ体制</div><div class="stf-box">${stfS}</div></div>`:''}
+  </div>
+
+  <!-- 右：キャッチ・おすすめ・レク・連絡先 -->
+  <div class="col-r">
+    <div>
+      <div class="sh">施設からひとこと</div>
+      <div class="catch-txt">${msgS}</div>
+    </div>
+    ${recS?`<div style="flex:1;display:flex;flex-direction:column;min-height:0;"><div class="sh">こんな方におすすめ</div><div class="rec">${recS}</div></div>`:''}
+    ${lecS?`<div><div class="sh">レクリエーション</div><div class="rl">${lecS}</div></div>`:''}
+    <div>
+      <div class="contact-box">
+        <div class="ct-tel">📞 ${esc(tel)||'—'}</div>
+        <div class="ct-info">
+          ${esc(hrs)}${hol?'　'+esc(hol)+'休':''}<br>
+          📍 ${esc(addr)}<br>
+          <span style="color:rgba(255,220,140,0.8);font-weight:700;">ケアナビ沖縄掲載事業所</span>
         </div>
       </div>
-      <div class="update-badge" id="update-time">読み込み中...</div>
     </div>
   </div>
+
 </div>
 
-<!-- 凡例（数字なし・記号のみ） -->
-<div class="legend">
-  <div class="legend-inner">
-    <span style="font-size:12px;font-weight:700;color:#718096;">凡例：</span>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#c6f0d4;color:#15803d;">○</div>
-      <span style="color:#1a9e5c;">空きあり</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#fed7aa;color:#c2410c;">△</div>
-      <span style="color:#d97706;">残りわずか</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#fecaca;color:#b91c1c;">×</div>
-      <span style="color:#dc2626;">満員</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#f1f5f9;color:#94a3b8;">休</div>
-      <span style="color:#718096;">休業日</span>
-    </div>
-  </div>
-</div>
-
-<!-- INFO MODAL（NG条件含む詳細） -->
-<div class="info-modal" id="info-modal" onclick="if(event.target===this)closeInfo()">
-  <div class="info-modal-inner">
-    <div class="info-modal-header">
-      <div class="info-modal-title" id="info-modal-title">📋 事業所情報</div>
-      <button class="info-close-btn" onclick="closeInfo()">✕</button>
-    </div>
-    <div class="info-modal-body" id="info-modal-body"></div>
-  </div>
-</div>
-
-<!-- MAP MODAL -->
-<div class="map-modal" id="map-modal" onclick="if(event.target===this)closeMap()">
-  <div class="map-modal-inner">
-    <div class="map-modal-header">
-      <div class="map-modal-title" id="map-modal-title">🗺 送迎範囲</div>
-      <button class="map-close-btn" onclick="closeMap()">✕</button>
-    </div>
-    <div class="map-modal-body">
-      <iframe id="map-iframe" src="" allowfullscreen></iframe>
-    </div>
-  </div>
-</div>
-
-<main>
-  <div class="setup-notice" id="setup-notice" style="display:none;">
-    <strong>⚙️ Apps Script URLの設定が必要です</strong>
-    <code>const APPS_SCRIPT_URL = 'ここにURLを貼り付け';</code><br>
-    の部分にGoogle Apps ScriptのデプロイURLを貼り付けてください。
-  </div>
-
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div>データを読み込んでいます...</div>
-  </div>
-
-  <div class="error-box" id="error-box">
-    ⚠️ データの読み込みに失敗しました。URLの設定を確認してください。
-  </div>
-
-  <div class="facilities-grid" id="facilities-grid"></div>
-</main>
-
-<script>
-// ============================================================
-// ★ Apps Script のデプロイURL
-// ============================================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec';
-
-// 予約フォームURL
-const YOYAKU_URL = 'https://forms.gle/VFXsJY45mEaCePvT6';
-
-// 曜日順
-const DAYS = ['月','火','水','木','金','土','日'];
-
-let allFacilities = [];
-
-// 記号→CSSクラス
-function getSymClass(sym) {
-  if (!sym || sym === '休' || sym === '-') return 'sym-closed';
-  if (sym === '○') return 'sym-ok';
-  if (sym === '△') return 'sym-few';
-  return 'sym-full';
+</body>
+</html>`;
 }
-
-// 全体の空き状況バッジ
-function getOverallStatus(symbols) {
-  const vals = Object.values(symbols);
-  if (vals.includes('○'))  return { label: '空きあり',   cls: 'status-ok' };
-  if (vals.includes('△'))  return { label: '残りわずか', cls: 'status-few' };
-  return { label: '満員', cls: 'status-full' };
-}
-
-// ============================================================
-// 施設カードを描画
-// ============================================================
-function renderFacilities(data) {
-  allFacilities = data.facilities;
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('update-time').textContent = '空き状況更新：' + data.lastUpdated;
-
-  const grid = document.getElementById('facilities-grid');
-  if (!data.facilities || data.facilities.length === 0) {
-    grid.innerHTML = '<p style="text-align:center;color:#718096;padding:40px;">施設情報がまだ登録されていません</p>';
-    return;
-  }
-
-  grid.innerHTML = data.facilities.map((f, idx) => {
-    const status = getOverallStatus(f.symbols);
-
-    const daysHTML = DAYS.map(d => {
-      const sym = f.symbols[d] || '休';
-      const symClass = getSymClass(sym);
-      const dayClass = d==='土' ? 'sat' : d==='日' ? 'sun' : '';
-      return `<div class="day-cell">
-        <div class="day-label ${dayClass}">${d}</div>
-        <div class="day-symbol ${symClass}">${sym}</div>
-      </div>`;
-    }).join('');
-
-    const bikoHTML = f.備考
-      ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
-
-    const yoyakuBtn = YOYAKU_URL
-      ? `<a href="${YOYAKU_URL}" target="_blank" class="reserve-btn">予約する</a>`
-      : '';
-
-    // 地図ボタン（mapUrlがある場合のみ表示）
-    // プラン判定（F列：有料なら全機能表示）
-    const isPaid = f.plan === '有料';
-
-    // 有料プランのみ表示するボタン
-    const pdfBtn = (isPaid && f.pdfUrl)
-      ? `<a href="${f.pdfUrl}" target="_blank" class="pdf-btn">📄 施設紹介PDF</a>`
-      : '';
-    const mapBtn = (isPaid && f.mapUrl)
-      ? `<button class="map-btn" onclick="openMap('${f.name.replace(/'/g,"\'")}', '${f.mapUrl.replace(/'/g,"\'")}')">🗺 送迎範囲</button>`
-      : '';
-    const infoBtn = isPaid
-      ? `<button class="info-btn" onclick="openInfo(${idx})">📋 詳細・NG条件</button>`
-      : '';
-
-    // 有料バッジ（有料プランのカードに表示）
-    const planBadge = isPaid
-      ? `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:#fff3cd;color:#856404;border:1px solid #ffc107;">💳 有料プラン</span>`
-      : '';
-
-    return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
-      <div class="card-header">
-        <div class="card-name">${f.name}</div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          ${planBadge}
-          <div class="card-status ${status.cls}">${status.label}</div>
-        </div>
-      </div>
-      <div class="days-table">
-        <div class="days-row">${daysHTML}</div>
-      </div>
-      ${bikoHTML}
-      <div class="card-footer">
-        ${infoBtn}
-        ${pdfBtn}
-        ${mapBtn}
-        ${yoyakuBtn}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ============================================================
-// データ読み込み
-// ============================================================
-function loadData() {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('ここに')) {
-    document.getElementById('setup-notice').style.display = 'block';
-    document.getElementById('loading').style.display = 'none';
-    return;
-  }
-
-  fetch(APPS_SCRIPT_URL)
-    .then(res => res.json())
-    .then(data => renderFacilities(data))
-    .catch(err => {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('error-box').style.display = 'block';
-      console.error(err);
-    });
-}
-
-loadData();
-setInterval(loadData, 5 * 60 * 1000); // 5分ごとに自動更新
-
-// ============================================================
-// 詳細モーダル（NG条件含む）
-// ============================================================
-function openInfo(idx) {
-  const f = allFacilities[idx];
-  if (!f) return;
-  document.getElementById('info-modal-title').textContent = '📋 ' + f.name;
-
-  const info = f.info || {};
-  const rows = [
-    ['📍 住所',       info.address,  false],
-    ['📞 電話番号',   info.tel,      false],
-    ['🕐 営業時間',   info.hours,    false],
-    ['📅 定休日',     info.holiday,  false],
-    ['💊 対応医療行為', info.medical, false],
-    ['🚫 受け入れNG条件', info.ng,   true],  // NG条件は赤字
-  ].filter(([, val]) => val);
-
-  if (rows.length === 0) {
-    document.getElementById('info-modal-body').innerHTML =
-      '<p style="color:#718096;text-align:center;padding:20px;">詳細情報はまだ登録されていません</p>';
-  } else {
-    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val, isNg]) =>
-      `<div class="info-row">
-        <div class="info-label" style="${isNg?'color:#dc2626;':''}">${label}</div>
-        <div class="info-value ${isNg?'ng':''}">${val}</div>
-      </div>`
-    ).join('');
-  }
-  document.getElementById('info-modal').classList.add('active');
-}
-
-function closeInfo() {
-  document.getElementById('info-modal').classList.remove('active');
-}
-
-// ============================================================
-// 地図モーダル
-// ============================================================
-function openMap(facilityName, mapUrl) {
-  document.getElementById('map-modal-title').textContent = '🗺 ' + facilityName + ' 送迎範囲';
-  document.getElementById('map-iframe').src = mapUrl;
-  document.getElementById('map-modal').classList.add('active');
-}
-
-function closeMap() {
-  document.getElementById('map-modal').classList.remove('active');
-  document.getElementById('map-iframe').src = '';
-}
-</script>
-
-<footer style="background:#0f4a7a;padding:16px 20px;margin-top:40px;">
-  <div style="max-width:900px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
-    <div style="color:#fff;font-size:13px;font-weight:500;">ケアナビ沖縄</div>
-    <div style="color:#fff;font-size:13px;">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="42212330272c23342b2d292b2c2335237a737a7302252f232b2e6c212d2f">[emai
