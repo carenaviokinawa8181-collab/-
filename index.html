@@ -416,16 +416,13 @@ function renderFacilities(data) {
 
     // 有料バッジ（有料プランのカードに表示）
     const planBadge = isPaid
-      ? `<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:#fff3cd;color:#856404;border:1px solid #ffc107;">💳 有料プラン</span>`
+      ? ``
       : '';
 
     return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
       <div class="card-header">
         <div class="card-name">${f.name}</div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          ${planBadge}
-          <div class="card-status ${status.cls}">${status.label}</div>
-        </div>
+        <div class="card-status ${status.cls}">${status.label}</div>
       </div>
       <div class="days-table">
         <div class="days-row">${daysHTML}</div>
