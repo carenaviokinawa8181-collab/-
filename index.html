@@ -470,23 +470,41 @@ function openInfo(idx) {
   document.getElementById('info-modal-title').textContent = '📋 ' + f.name;
 
   const info = f.info || {};
+  // ── 対応状況をバッジで表示 ──
+  function statusBadge(val) {
+    if(!val) return '<span style="color:#ccc;">—</span>';
+    const ok  = val.includes('あり')||val.includes('可能')||val.includes('対応')||val.includes('可');
+    const mid = val.includes('要相談')||val.includes('場合による');
+    const ng2 = val.includes('なし')||val.includes('不可');
+    const color = ok ? '#2f855a' : mid ? '#b7791f' : ng2 ? '#c53030' : '#4a5568';
+    const bg    = ok ? '#c6f6d5' : mid ? '#fefcbf' : ng2 ? '#fed7d7' : '#e2e8f0';
+    const mark  = ok ? '◎' : mid ? '△' : ng2 ? '×' : '—';
+    return `<span style="background:${bg};color:${color};font-weight:700;padding:2px 8px;border-radius:12px;font-size:12px;">${mark} ${val}</span>`;
+  }
+
   const rows = [
-    ['📍 住所',       info.address,  false],
-    ['📞 電話番号',   info.tel,      false],
-    ['🕐 営業時間',   info.hours,    false],
-    ['📅 定休日',     info.holiday,  false],
-    ['💊 対応医療行為', info.medical, false],
-    ['🚫 受け入れNG条件', info.ng,   true],  // NG条件は赤字
+    ['📍 住所',           info.address,    false, false],
+    ['📞 電話番号',       info.tel,        false, false],
+    ['🕐 営業時間',       info.hours,      false, false],
+    ['📅 定休日',         info.holiday,    false, false],
+    ['👥 利用者区分',     info.users,      false, true ],
+    ['🚐 送迎',           info.transfer,   false, true ],
+    ['♿ 車椅子対応',     info.wheelchair, false, true ],
+    ['🧠 認知症対応',     info.dementia,   false, true ],
+    ['💭 精神疾患対応',   info.mental,     false, true ],
+    ['🛁 入浴',           info.bath,       false, true ],
+    ['💊 対応医療行為',   info.medical,    false, false],
+    ['🚫 受け入れNG条件', info.ng,         true,  false],
   ].filter(([, val]) => val);
 
   if (rows.length === 0) {
     document.getElementById('info-modal-body').innerHTML =
       '<p style="color:#718096;text-align:center;padding:20px;">詳細情報はまだ登録されていません</p>';
   } else {
-    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val, isNg]) =>
+    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val, isNg, isBadge]) =>
       `<div class="info-row">
         <div class="info-label" style="${isNg?'color:#dc2626;':''}">${label}</div>
-        <div class="info-value ${isNg?'ng':''}">${val}</div>
+        <div class="info-value ${isNg?'ng':''}">${isBadge ? statusBadge(val) : val}</div>
       </div>`
     ).join('');
   }
