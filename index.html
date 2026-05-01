@@ -10,7 +10,7 @@
   gtag('js', new Date());
   gtag('config', 'G-HM2ZV5WPTP');
 </script>
-<title>デイサービス 空き状況</title>
+<title>デイサービス 空き状況 | ケアナビ沖縄</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
@@ -32,223 +32,122 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
   /* HEADER */
-  .header {
-    background: #1a6eb5;
-    padding: 20px 20px 16px;
-    color: white;
-  }
+  .header { background: #1a6eb5; padding: 20px 20px 16px; }
   .header-inner { max-width: 900px; margin: 0 auto; }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
   .header h1 { font-size: clamp(16px, 4vw, 22px); font-weight: 900; letter-spacing: 0.5px; color: white; }
   .header-sub { font-size: 12px; opacity: 0.8; margin-top: 4px; color: rgba(255,255,255,0.8); }
-  .update-badge {
-    background: rgba(255,255,255,0.2);
-    border-radius: 20px; padding: 5px 12px;
-    font-size: 11px; white-space: nowrap; color: white;
-  }
+  .update-badge { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 5px 12px; font-size: 11px; white-space: nowrap; color: white; }
 
-  /* LEGEND（数字なし・記号のみ） */
-  .legend {
-    background: var(--primary-light);
-    border-bottom: 1px solid var(--border);
-    padding: 10px 20px;
-  }
-  .legend-inner {
-    max-width: 900px; margin: 0 auto;
-    display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
-  }
+  /* お知らせ */
+  .notices-section { max-width: 900px; margin: 16px auto 0; padding: 0 16px; display: none; }
+  .notice-item { display: flex; align-items: flex-start; gap: 10px; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; font-weight: 500; }
+  .notice-info      { background: #e8f4fd; border-left: 4px solid #3b82f6; color: #1e40af; }
+  .notice-warning   { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+  .notice-important { background: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; }
+  .notice-date { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+
+  /* LEGEND */
+  .legend { background: var(--primary-light); border-bottom: 1px solid var(--border); padding: 10px 20px; }
+  .legend-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
-  .legend-badge {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 900;
-  }
+  .legend-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; }
 
   /* MAIN */
   main { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
 
   /* LOADING */
   .loading { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .spinner {
-    width: 40px; height: 40px; border: 3px solid var(--border);
-    border-top-color: var(--primary); border-radius: 50%;
-    animation: spin 0.8s linear infinite; margin: 0 auto 16px;
-  }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box { background: #fff5f5; border: 1px solid #fed7d7; border-radius: 14px; padding: 20px; text-align: center; color: var(--red); display: none; }
 
-  /* ERROR */
-  .error-box {
-    background: #fff5f5; border: 1px solid #fed7d7;
-    border-radius: 14px; padding: 20px; text-align: center;
-    color: var(--red); display: none;
-  }
-
-  /* FACILITY CARD */
-  .facilities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
-
-  .facility-card {
-    background: var(--white);
-    border-radius: 16px; overflow: hidden;
-    box-shadow: var(--shadow); border: 1px solid var(--border);
-    animation: fadeUp 0.4s ease both;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-header {
-    padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
+  /* CARDS */
+  .facilities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .facility-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .card-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .card-name { font-size: 15px; font-weight: 900; }
   .card-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
   .status-ok   { background: var(--green-bg);  color: var(--green); }
   .status-few  { background: var(--orange-bg); color: var(--orange); }
   .status-full { background: var(--red-bg);    color: var(--red); }
 
-  /* DAYS TABLE */
   .days-table { width: 100%; padding: 12px 16px; }
   .days-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
   .day-cell { text-align: center; }
   .day-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
   .day-label.sat { color: #2563eb; }
   .day-label.sun { color: var(--red); }
-  .day-symbol {
-    width: 38px; height: 38px; margin: 0 auto;
-    border-radius: 10px; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 900;
-  }
+  .day-symbol { width: 38px; height: 38px; margin: 0 auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; }
   .sym-ok     { background: #c6f0d4; color: #15803d; }
   .sym-few    { background: #fed7aa; color: #c2410c; }
   .sym-full   { background: #fecaca; color: #b91c1c; }
   .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 12px; }
 
-  /* 備考 */
-  .card-biko {
-    margin: 0 16px 12px;
-    background: var(--primary-light); border-radius: 8px;
-    padding: 8px 12px; font-size: 12px; color: var(--primary);
-    font-weight: 500; line-height: 1.6;
-  }
-
-  /* CARD FOOTER */
-  .card-footer {
-    padding: 10px 16px 14px;
-    display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px;
-  }
+  .card-biko { margin: 0 16px 12px; background: var(--primary-light); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--primary); font-weight: 500; line-height: 1.6; }
+  .card-footer { padding: 10px 16px 14px; display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px; }
 
   /* BUTTONS */
-  .reserve-btn {
-    background: #1a6eb5; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .reserve-btn:hover { opacity: 0.85; }
-  .map-btn {
-    background: #10b981; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .map-btn:hover { opacity: 0.85; }
-  .info-btn {
-    background: #6366f1; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .info-btn:hover { opacity: 0.85; }
+  .btn { border: none; border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block; transition: opacity 0.2s; color: white; }
+  .btn:hover { opacity: 0.85; }
+  .btn-blue   { background: #1a6eb5; }
+  .btn-green  { background: #10b981; }
+  .btn-indigo { background: #6366f1; }
+  .btn-red    { background: #ef4444; }
+  .btn-brown  { background: #b45309; }
 
-  /* INFO MODAL（NG条件含む） */
-  .info-modal {
-    display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-  }
-  .info-modal.active { display: flex; }
-  .info-modal-inner {
-    background: white; border-radius: 16px; overflow: hidden;
-    width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-  .info-modal-header {
-    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border); position: sticky; top: 0; background: white;
-  }
-  .info-modal-title { font-size: 15px; font-weight: 900; }
-  .info-close-btn {
-    background: #f1f5f9; border: none; border-radius: 50%;
-    width: 32px; height: 32px; font-size: 16px; cursor: pointer;
-    font-family: inherit; display: flex; align-items: center; justify-content: center;
-  }
-  .info-modal-body { padding: 16px; }
-  .info-row {
-    display: flex; gap: 12px; padding: 10px 0;
-    border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.6;
-  }
+  /* MODALS */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.active { display: flex; }
+  .modal-box { background: white; border-radius: 16px; overflow: hidden; width: 100%; max-width: 500px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal-map-box { background: white; border-radius: 16px; overflow: hidden; width: 100%; max-width: 700px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal-head { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: white; z-index: 1; }
+  .modal-head-ng { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #fee2e2; background: #fff5f5; position: sticky; top: 0; z-index: 1; }
+  .modal-title { font-size: 15px; font-weight: 900; }
+  .modal-title-ng { font-size: 15px; font-weight: 900; color: #dc2626; }
+  .modal-close { background: #f1f5f9; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; }
+  .modal-close-ng { background: #fee2e2; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; color: #dc2626; }
+  .modal-body { padding: 16px; }
+
+  .info-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.6; }
   .info-row:last-child { border-bottom: none; }
   .info-label { font-weight: 700; color: var(--primary); min-width: 110px; font-size: 12px; }
   .info-value { color: var(--text); flex: 1; }
-  .info-value.ng { color: var(--red); font-weight: 700; }
 
-  /* MAP MODAL */
-  .map-modal {
-    display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.6);
-    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-  }
-  .map-modal.active { display: flex; }
-  .map-modal-inner {
-    background: white; border-radius: 16px; overflow: hidden;
-    width: 100%; max-width: 700px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-  }
-  .map-modal-header {
-    padding: 14px 16px; display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border);
-  }
-  .map-modal-title { font-size: 15px; font-weight: 900; }
-  .map-close-btn {
-    background: #f1f5f9; border: none; border-radius: 50%;
-    width: 32px; height: 32px; font-size: 16px; cursor: pointer;
-    font-family: inherit; display: flex; align-items: center; justify-content: center;
-  }
-  .map-modal-body iframe { width: 100%; height: 400px; border: none; display: block; }
+  .ng-note { font-size: 12px; color: #718096; margin-bottom: 12px; line-height: 1.6; background: #f8fafc; border-radius: 8px; padding: 8px 12px; }
+  .ng-content { font-size: 14px; font-weight: 700; color: #dc2626; line-height: 1.8; background: #fff5f5; border-radius: 8px; padding: 12px 16px; border-left: 4px solid #ef4444; }
 
-  /* PDF BUTTON */
-  .pdf-btn {
-    background: #b45309; color: white; border: none;
-    border-radius: 20px; padding: 7px 16px; font-size: 12px; font-weight: 700;
-    cursor: pointer; font-family: inherit; text-decoration: none; display: inline-block;
-    transition: opacity 0.2s;
-  }
-  .pdf-btn:hover { opacity: 0.85; }
-
-  /* SETUP NOTICE */
-  .setup-notice {
-    background: #fffbeb; border: 1px solid #fde68a;
-    border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
-    font-size: 13px; line-height: 1.8; color: #92400e;
-  }
-  .setup-notice strong { display: block; font-size: 14px; margin-bottom: 6px; }
-  .setup-notice code {
-    background: #fff; border: 1px solid #fde68a;
-    border-radius: 4px; padding: 2px 6px; font-size: 12px; word-break: break-all;
-  }
+  /* ガイド */
+  .guide-section { max-width: 900px; margin: 0 auto 24px; padding: 0 16px; display: none; }
+  .guide-toggle-btn { width: 100%; background: #fff; border: 2px solid #1a6eb5; border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 700; color: #1a6eb5; cursor: pointer; font-family: inherit; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+  .guide-toggle-btn:hover { background: #e8f0fb; }
+  .guide-toggle-btn .arr { transition: transform 0.3s; font-size: 12px; }
+  .guide-toggle-btn.open .arr { transform: rotate(180deg); }
+  .guide-content { display: none; background: white; border-radius: 0 0 12px 12px; border: 2px solid #1a6eb5; border-top: none; overflow: hidden; }
+  .guide-content.open { display: block; }
+  .guide-tabs { display: flex; border-bottom: 2px solid var(--border); background: #f8fafc; }
+  .gtab { flex: 1; padding: 10px 8px; font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; border: none; background: none; font-family: inherit; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+  .gtab.active { color: #1a6eb5; border-bottom-color: #1a6eb5; background: white; }
+  .gpanel { display: none; padding: 16px; }
+  .gpanel.active { display: block; }
+  .gstep { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .gstep:last-child { border-bottom: none; }
+  .gnum { width: 28px; height: 28px; border-radius: 50%; background: #1a6eb5; color: white; font-size: 13px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .gbody .gtitle { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .gbody .gdesc  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .gbody .gdesc b { color: var(--text); }
+  .ostabs { display: flex; gap: 8px; margin-bottom: 12px; }
+  .ostab { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid var(--border); background: white; font-family: inherit; color: var(--muted); transition: all 0.2s; }
+  .ostab.active { background: #1a6eb5; color: white; border-color: #1a6eb5; }
+  .ospanel { display: none; }
+  .ospanel.active { display: block; }
+  .dicword { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #f8fafc; border-radius: 8px; margin-bottom: 6px; gap: 12px; }
+  .dicread { font-size: 12px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  .dicval  { font-size: 12px; font-weight: 700; color: var(--text); word-break: break-all; }
 </style>
 </head>
 <body>
@@ -257,8 +156,7 @@
   <div class="header-inner">
     <div class="header-top">
       <div style="display:flex;align-items:center;gap:12px;">
-        <img src="logo.jpg" alt="ケアナビ沖縄"
-          style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.8);">
+        <img src="logo.jpg" alt="ケアナビ沖縄" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.8);">
         <div>
           <h1>🏥 デイサービス 空き状況</h1>
           <div class="header-sub">ケアマネ・ご家族向け 最新空き情報</div>
@@ -269,273 +167,317 @@
   </div>
 </div>
 
-<!-- 凡例（数字なし・記号のみ） -->
 <div class="legend">
   <div class="legend-inner">
     <span style="font-size:12px;font-weight:700;color:#718096;">凡例：</span>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#c6f0d4;color:#15803d;">○</div>
-      <span style="color:#1a9e5c;">空きあり</span>
+    <div class="legend-item"><div class="legend-badge" style="background:#c6f0d4;color:#15803d;">○</div><span style="color:#1a9e5c;">空きあり</span></div>
+    <div class="legend-item"><div class="legend-badge" style="background:#fed7aa;color:#c2410c;">△</div><span style="color:#d97706;">残りわずか</span></div>
+    <div class="legend-item"><div class="legend-badge" style="background:#fecaca;color:#b91c1c;">×</div><span style="color:#dc2626;">満員</span></div>
+    <div class="legend-item"><div class="legend-badge" style="background:#f1f5f9;color:#94a3b8;">休</div><span style="color:#718096;">休業日</span></div>
+  </div>
+</div>
+
+<!-- お知らせ -->
+<div class="notices-section" id="notices-section"></div>
+
+<!-- 詳細モーダル -->
+<div class="modal-overlay" id="info-modal" onclick="if(event.target===this)closeInfo()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="info-title">📋 事業所情報</div>
+      <button class="modal-close" onclick="closeInfo()">✕</button>
     </div>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#fed7aa;color:#c2410c;">△</div>
-      <span style="color:#d97706;">残りわずか</span>
+    <div class="modal-body" id="info-body"></div>
+  </div>
+</div>
+
+<!-- NG条件モーダル -->
+<div class="modal-overlay" id="ng-modal" onclick="if(event.target===this)closeNg()">
+  <div class="modal-box">
+    <div class="modal-head-ng">
+      <div class="modal-title-ng" id="ng-title">🚫 受け入れNG条件</div>
+      <button class="modal-close-ng" onclick="closeNg()">✕</button>
     </div>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#fecaca;color:#b91c1c;">×</div>
-      <span style="color:#dc2626;">満員</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-badge" style="background:#f1f5f9;color:#94a3b8;">休</div>
-      <span style="color:#718096;">休業日</span>
+    <div class="modal-body">
+      <div class="ng-note">⚠️ 以下の状態の方は受け入れが難しい場合があります。詳細はお電話でご確認ください。</div>
+      <div id="ng-body"></div>
     </div>
   </div>
 </div>
 
-<!-- INFO MODAL（NG条件含む詳細） -->
-<div class="info-modal" id="info-modal" onclick="if(event.target===this)closeInfo()">
-  <div class="info-modal-inner">
-    <div class="info-modal-header">
-      <div class="info-modal-title" id="info-modal-title">📋 事業所情報</div>
-      <button class="info-close-btn" onclick="closeInfo()">✕</button>
+<!-- 地図モーダル -->
+<div class="modal-overlay" id="map-modal" onclick="if(event.target===this)closeMap()">
+  <div class="modal-map-box">
+    <div class="modal-head">
+      <div class="modal-title" id="map-title">🗺 送迎範囲</div>
+      <button class="modal-close" onclick="closeMap()">✕</button>
     </div>
-    <div class="info-modal-body" id="info-modal-body"></div>
-  </div>
-</div>
-
-<!-- MAP MODAL -->
-<div class="map-modal" id="map-modal" onclick="if(event.target===this)closeMap()">
-  <div class="map-modal-inner">
-    <div class="map-modal-header">
-      <div class="map-modal-title" id="map-modal-title">🗺 送迎範囲</div>
-      <button class="map-close-btn" onclick="closeMap()">✕</button>
-    </div>
-    <div class="map-modal-body">
-      <iframe id="map-iframe" src="" allowfullscreen></iframe>
-    </div>
+    <iframe id="map-iframe" src="" allowfullscreen style="width:100%;height:400px;border:none;display:block;"></iframe>
   </div>
 </div>
 
 <main>
-  <div class="setup-notice" id="setup-notice" style="display:none;">
-    <strong>⚙️ Apps Script URLの設定が必要です</strong>
-    <code>const APPS_SCRIPT_URL = 'ここにURLを貼り付け';</code><br>
-    の部分にGoogle Apps ScriptのデプロイURLを貼り付けてください。
-  </div>
+  <div class="loading" id="loading"><div class="spinner"></div><div>データを読み込んでいます...</div></div>
+  <div class="error-box" id="error-box">⚠️ データの読み込みに失敗しました。しばらくしてから再度お試しください。</div>
 
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div>データを読み込んでいます...</div>
-  </div>
+  <!-- ガイド -->
+  <div class="guide-section" id="guide-section">
+    <button class="guide-toggle-btn" id="guide-btn" onclick="toggleGuide()">
+      <span>📱 スマホをもっと便利に使う方法（ホーム画面追加・辞書登録）</span>
+      <span class="arr">▼</span>
+    </button>
+    <div class="guide-content" id="guide-content">
+      <div class="guide-tabs">
+        <button class="gtab active" onclick="switchGTab(0)">🏠 ホーム画面に追加</button>
+        <button class="gtab" onclick="switchGTab(1)">📖 辞書登録</button>
+        <button class="gtab" onclick="switchGTab(2)">💡 便利なコツ</button>
+      </div>
 
-  <div class="error-box" id="error-box">
-    ⚠️ データの読み込みに失敗しました。URLの設定を確認してください。
+      <!-- ホーム画面 -->
+      <div class="gpanel active" id="gp0">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">このページをホーム画面に追加するとアプリのようにすぐ開けます。</p>
+        <div class="ostabs">
+          <button class="ostab active" onclick="switchOs('h','ios')">🍎 iPhone</button>
+          <button class="ostab" onclick="switchOs('h','android')">🤖 Android</button>
+        </div>
+        <div class="ospanel active" id="h-ios">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">Safariでこのページを開く</div><div class="gdesc"><b>SafariのみiPhoneはホーム画面への追加が可能です。</b>Chromeでは追加できません。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">画面下の「共有」ボタンをタップ</div><div class="gdesc">画面下中央の <b>□に↑のマーク</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「ホーム画面に追加」を選ぶ</div><div class="gdesc">メニューをスクロールして <b>「ホーム画面に追加」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">4</div><div class="gbody"><div class="gtitle">「追加」をタップして完了</div><div class="gdesc">ホーム画面にアイコンが追加されます！次回からワンタップで開けます。</div></div></div>
+        </div>
+        <div class="ospanel" id="h-android">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">Chromeでこのページを開く</div><div class="gdesc">AndroidのChromeブラウザでこのページを開いてください。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">右上の「︙」メニューをタップ</div><div class="gdesc">画面右上の <b>「︙（縦三点）」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「ホーム画面に追加」を選ぶ</div><div class="gdesc"><b>「ホーム画面に追加」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">4</div><div class="gbody"><div class="gtitle">「追加」をタップして完了</div><div class="gdesc">ホーム画面にアイコンが追加されます！</div></div></div>
+        </div>
+      </div>
+
+      <!-- 辞書登録 -->
+      <div class="gpanel" id="gp1">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">よみがなを入力するだけでメールアドレスや施設名が変換できるようになります。</p>
+        <div class="ostabs">
+          <button class="ostab active" onclick="switchOs('d','ios')">🍎 iPhone</button>
+          <button class="ostab" onclick="switchOs('d','android')">🤖 Android</button>
+        </div>
+        <div class="ospanel active" id="d-ios">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">設定アプリを開く</div><div class="gdesc">ホーム画面の <b>「設定」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">「一般」→「キーボード」→「ユーザ辞書」</div><div class="gdesc">順番に進んで <b>「ユーザ辞書」</b> を開きます。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">右上の「＋」をタップして登録</div><div class="gdesc">「単語」に変換後の文字、「よみ」にひらがなを入力して保存します。</div></div></div>
+        </div>
+        <div class="ospanel" id="d-android">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">キーボードの設定を開く</div><div class="gdesc">文字入力中に <b>「⚙️設定アイコン」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">「単語リスト」または「ユーザー辞書」を選ぶ</div><div class="gdesc">機種によって名前が異なります。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「＋」をタップして単語を追加</div><div class="gdesc">「単語」と「よみ」を入力して保存します。</div></div></div>
+        </div>
+        <p style="font-size:12px;font-weight:700;color:var(--text);margin:14px 0 8px;">📌 おすすめの登録ワード</p>
+        <div class="dicword"><span class="dicread">よみ：けあ</span><span class="dicval">carenaviokinawa8181@gmail.com</span></div>
+        <div class="dicword"><span class="dicread">よみ：でい</span><span class="dicval">デイサービス</span></div>
+        <div class="dicword"><span class="dicread">よみ：けあなび</span><span class="dicval">ケアナビ沖縄</span></div>
+        <div class="dicword"><span class="dicread">よみ：でんわ</span><span class="dicval">050-1791-8181</span></div>
+      </div>
+
+      <!-- 便利なコツ -->
+      <div class="gpanel" id="gp2">
+        <div class="gstep"><div class="gnum">💡</div><div class="gbody"><div class="gtitle">文字を大きくする（iPhone）</div><div class="gdesc">設定 → 画面表示と明るさ → テキストサイズ で調整できます。</div></div></div>
+        <div class="gstep"><div class="gnum">💡</div><div class="gbody"><div class="gtitle">文字を大きくする（Android）</div><div class="gdesc">設定 → ユーザー補助 → フォントサイズ で調整できます。</div></div></div>
+        <div class="gstep"><div class="gnum">💡</div><div class="gbody"><div class="gtitle">電話番号をタップして発信</div><div class="gdesc">このページ下部の電話番号をタップするとそのまま発信できます。</div></div></div>
+        <div class="gstep"><div class="gnum">💡</div><div class="gbody"><div class="gtitle">空き状況は自動更新されます</div><div class="gdesc">ページを開いたまま置いておくと5分ごとに自動で最新情報に更新されます。</div></div></div>
+        <div class="gstep"><div class="gnum">💡</div><div class="gbody"><div class="gtitle">メールアドレスをタップして送信</div><div class="gdesc">フッターのメールアドレスをタップするとメール作成画面が開きます。</div></div></div>
+      </div>
+    </div>
   </div>
 
   <div class="facilities-grid" id="facilities-grid"></div>
 </main>
 
+<footer style="background:#0f4a7a;padding:18px 20px;margin-top:40px;">
+  <div style="max-width:900px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
+    <div style="color:#fff;font-size:13px;font-weight:700;">ケアナビ沖縄</div>
+    <a href="tel:050-1791-8181" style="color:#fff;font-size:13px;text-decoration:none;">📞 050-1791-8181</a>
+    <a href="mailto:carenaviokinawa8181@gmail.com" style="color:#fff;font-size:13px;text-decoration:none;">📧 carenaviokinawa8181@gmail.com</a>
+  </div>
+</footer>
+
 <script>
 // ============================================================
-// ★ Apps Script のデプロイURL
+// ★ 設定（2か所をGAS側と必ず一致させること）
 // ============================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec';
+const SECRET_TOKEN    = 'carenavi-okinawa-2024'; // ★GAS側と同じ文字列にすること
+const YOYAKU_URL      = 'https://forms.gle/VFXsJY45mEaCePvT6';
+// ============================================================
 
-// 予約フォームURL
-const YOYAKU_URL = 'https://forms.gle/VFXsJY45mEaCePvT6';
-
-// 曜日順
 const DAYS = ['月','火','水','木','金','土','日'];
-
 let allFacilities = [];
 
-// 記号→CSSクラス
-function getSymClass(sym) {
-  if (!sym || sym === '休' || sym === '-') return 'sym-closed';
-  if (sym === '○') return 'sym-ok';
-  if (sym === '△') return 'sym-few';
+function getSymClass(s) {
+  if (!s || s==='休' || s==='-') return 'sym-closed';
+  if (s==='○') return 'sym-ok';
+  if (s==='△') return 'sym-few';
   return 'sym-full';
 }
-
-// 全体の空き状況バッジ
-function getOverallStatus(symbols) {
-  const vals = Object.values(symbols);
-  if (vals.includes('○'))  return { label: '空きあり',   cls: 'status-ok' };
-  if (vals.includes('△'))  return { label: '残りわずか', cls: 'status-few' };
-  return { label: '満員', cls: 'status-full' };
+function getOverallStatus(sym) {
+  const v = Object.values(sym);
+  if (v.includes('○')) return {label:'空きあり',   cls:'status-ok'};
+  if (v.includes('△')) return {label:'残りわずか', cls:'status-few'};
+  return {label:'満員', cls:'status-full'};
 }
 
-// ============================================================
-// 施設カードを描画
-// ============================================================
+/* お知らせ */
+function renderNotices(notices) {
+  if (!notices || !notices.length) return;
+  const iconMap = {info:'ℹ️', warning:'⚠️', important:'🔴'};
+  const sec = document.getElementById('notices-section');
+  sec.innerHTML = notices.map(n => {
+    const cls = n.type==='warning' ? 'notice-warning' : n.type==='important' ? 'notice-important' : 'notice-info';
+    return `<div class="notice-item ${cls}">
+      <span style="font-size:16px;flex-shrink:0;">${iconMap[n.type]||'ℹ️'}</span>
+      <div><div>${n.message}</div>${n.date?`<div class="notice-date">${n.date}</div>`:''}</div>
+    </div>`;
+  }).join('');
+  sec.style.display = 'block';
+}
+
+/* カード描画 */
 function renderFacilities(data) {
-  allFacilities = data.facilities;
+  allFacilities = data.facilities || [];
   document.getElementById('loading').style.display = 'none';
   document.getElementById('update-time').textContent = '空き状況更新：' + data.lastUpdated;
+  document.getElementById('guide-section').style.display = 'block';
+  if (data.notices) renderNotices(data.notices);
 
   const grid = document.getElementById('facilities-grid');
-  if (!data.facilities || data.facilities.length === 0) {
+  if (!allFacilities.length) {
     grid.innerHTML = '<p style="text-align:center;color:#718096;padding:40px;">施設情報がまだ登録されていません</p>';
     return;
   }
-
-  grid.innerHTML = data.facilities.map((f, idx) => {
+  grid.innerHTML = allFacilities.map((f, idx) => {
     const status = getOverallStatus(f.symbols);
-
+    const isPaid = f.plan === '有料';
     const daysHTML = DAYS.map(d => {
       const sym = f.symbols[d] || '休';
-      const symClass = getSymClass(sym);
-      const dayClass = d==='土' ? 'sat' : d==='日' ? 'sun' : '';
-      return `<div class="day-cell">
-        <div class="day-label ${dayClass}">${d}</div>
-        <div class="day-symbol ${symClass}">${sym}</div>
-      </div>`;
+      const dc = d==='土'?'sat':d==='日'?'sun':'';
+      return `<div class="day-cell"><div class="day-label ${dc}">${d}</div><div class="day-symbol ${getSymClass(sym)}">${sym}</div></div>`;
     }).join('');
-
-    const bikoHTML = f.備考
-      ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
-
-    const yoyakuBtn = YOYAKU_URL
-      ? `<a href="${YOYAKU_URL}" target="_blank" class="reserve-btn">予約する</a>`
-      : '';
-
-    // 地図ボタン（mapUrlがある場合のみ表示）
-    // プラン判定（F列：有料なら全機能表示）
-    const isPaid = f.plan === '有料';
-
-    // 有料プランのみ表示するボタン
-    const pdfBtn = (isPaid && f.pdfUrl)
-      ? `<a href="${f.pdfUrl}" target="_blank" class="pdf-btn">📄 施設紹介PDF</a>`
-      : '';
-    const mapBtn = (isPaid && f.mapUrl)
-      ? `<button class="map-btn" onclick="openMap('${f.name.replace(/'/g,"\'")}', '${f.mapUrl.replace(/'/g,"\'")}')">🗺 送迎範囲</button>`
-      : '';
-    const infoBtn = isPaid
-      ? `<button class="info-btn" onclick="openInfo(${idx})">📋 詳細・NG条件</button>`
-      : '';
-
-    // 有料バッジ（有料プランのカードに表示）
-    const planBadge = isPaid
-      ? ``
-      : '';
-
+    const biko    = f.備考 ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
+    const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
+    const pdfBtn  = (isPaid && f.pdfUrl)  ? `<a href="${f.pdfUrl}" target="_blank" class="btn btn-brown">📄 施設紹介PDF</a>` : '';
+    const mapBtn  = (isPaid && f.mapUrl)  ? `<button class="btn btn-green" onclick="openMap('${f.name.replace(/'/g,"\\'")}','${f.mapUrl.replace(/'/g,"\\'")}')">🗺 送迎範囲</button>` : '';
+    const infoBtn = isPaid                ? `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>` : '';
+    const ngBtn   = (isPaid && f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
     return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
-      <div class="card-header">
-        <div class="card-name">${f.name}</div>
-        <div class="card-status ${status.cls}">${status.label}</div>
-      </div>
-      <div class="days-table">
-        <div class="days-row">${daysHTML}</div>
-      </div>
-      ${bikoHTML}
-      <div class="card-footer">
-        ${infoBtn}
-        ${pdfBtn}
-        ${mapBtn}
-        ${yoyakuBtn}
-      </div>
+      <div class="card-header"><div class="card-name">${f.name}</div><div class="card-status ${status.cls}">${status.label}</div></div>
+      <div class="days-table"><div class="days-row">${daysHTML}</div></div>
+      ${biko}
+      <div class="card-footer">${infoBtn}${ngBtn}${pdfBtn}${mapBtn}${yBtn}</div>
     </div>`;
   }).join('');
 }
 
-// ============================================================
-// データ読み込み
-// ============================================================
+/* データ取得（トークン付き） */
 function loadData() {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('ここに')) {
-    document.getElementById('setup-notice').style.display = 'block';
-    document.getElementById('loading').style.display = 'none';
-    return;
-  }
-
-  fetch(APPS_SCRIPT_URL)
-    .then(res => res.json())
-    .then(data => renderFacilities(data))
-    .catch(err => {
+  fetch(APPS_SCRIPT_URL + '?token=' + encodeURIComponent(SECRET_TOKEN))
+    .then(r => r.json())
+    .then(data => {
+      if (data.error === 'unauthorized') {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error-box').style.display = 'block';
+        return;
+      }
+      renderFacilities(data);
+    })
+    .catch(() => {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('error-box').style.display = 'block';
-      console.error(err);
     });
 }
-
 loadData();
-setInterval(loadData, 5 * 60 * 1000); // 5分ごとに自動更新
+setInterval(loadData, 5 * 60 * 1000);
 
-// ============================================================
-// 詳細モーダル（NG条件含む）
-// ============================================================
+/* 詳細モーダル */
 function openInfo(idx) {
-  const f = allFacilities[idx];
-  if (!f) return;
-  document.getElementById('info-modal-title').textContent = '📋 ' + f.name;
-
+  const f = allFacilities[idx]; if (!f) return;
+  document.getElementById('info-title').textContent = '📋 ' + f.name;
   const info = f.info || {};
-  // ── 対応状況をバッジで表示 ──
-  function statusBadge(val) {
-    if(!val) return '<span style="color:#ccc;">—</span>';
-    const ok  = val.includes('あり')||val.includes('可能')||val.includes('対応')||val.includes('可');
-    const mid = val.includes('要相談')||val.includes('場合による');
-    const ng2 = val.includes('なし')||val.includes('不可');
-    const color = ok ? '#2f855a' : mid ? '#b7791f' : ng2 ? '#c53030' : '#4a5568';
-    const bg    = ok ? '#c6f6d5' : mid ? '#fefcbf' : ng2 ? '#fed7d7' : '#e2e8f0';
-    const mark  = ok ? '◎' : mid ? '△' : ng2 ? '×' : '—';
+  function badge(val) {
+    if (!val) return '<span style="color:#ccc;">—</span>';
+    const ok  = /あり|可能|対応|可/.test(val);
+    const mid = /要相談|場合による/.test(val);
+    const ng  = /なし|不可/.test(val);
+    const [bg, color, mark] = ok  ? ['#c6f6d5','#2f855a','◎']
+                            : mid ? ['#fefcbf','#b7791f','△']
+                            : ng  ? ['#fed7d7','#c53030','×']
+                            :       ['#e2e8f0','#4a5568','—'];
     return `<span style="background:${bg};color:${color};font-weight:700;padding:2px 8px;border-radius:12px;font-size:12px;">${mark} ${val}</span>`;
   }
-
   const rows = [
-    ['📍 住所',           info.address,    false, false],
-    ['📞 電話番号',       info.tel,        false, false],
-    ['🕐 営業時間',       info.hours,      false, false],
-    ['📅 定休日',         info.holiday,    false, false],
-    ['👥 利用者区分',     info.users,      false, true ],
-    ['🚐 送迎',           info.transfer,   false, true ],
-    ['♿ 車椅子対応',     info.wheelchair, false, true ],
-    ['🧠 認知症対応',     info.dementia,   false, true ],
-    ['💭 精神疾患対応',   info.mental,     false, true ],
-    ['🛁 入浴',           info.bath,       false, true ],
-    ['💊 対応医療行為',   info.medical,    false, false],
-    ['🚫 受け入れNG条件', info.ng,         true,  false],
-  ].filter(([, val]) => val);
-
-  if (rows.length === 0) {
-    document.getElementById('info-modal-body').innerHTML =
-      '<p style="color:#718096;text-align:center;padding:20px;">詳細情報はまだ登録されていません</p>';
-  } else {
-    document.getElementById('info-modal-body').innerHTML = rows.map(([label, val, isNg, isBadge]) =>
-      `<div class="info-row">
-        <div class="info-label" style="${isNg?'color:#dc2626;':''}">${label}</div>
-        <div class="info-value ${isNg?'ng':''}">${isBadge ? statusBadge(val) : val}</div>
-      </div>`
-    ).join('');
-  }
+    ['📍 住所',         info.address,    false],
+    ['📞 電話番号',     info.tel,        false],
+    ['🕐 営業時間',     info.hours,      false],
+    ['📅 定休日',       info.holiday,    false],
+    ['👥 利用者区分',   info.users,      true ],
+    ['🚐 送迎',         info.transfer,   true ],
+    ['♿ 車椅子対応',   info.wheelchair, true ],
+    ['🧠 認知症対応',   info.dementia,   true ],
+    ['💭 精神疾患対応', info.mental,     true ],
+    ['🛁 入浴',         info.bath,       true ],
+    ['💊 対応医療行為', info.medical,    false],
+  ].filter(([,v]) => v);
+  document.getElementById('info-body').innerHTML = rows.length
+    ? rows.map(([l,v,b]) => `<div class="info-row"><div class="info-label">${l}</div><div class="info-value">${b?badge(v):v}</div></div>`).join('')
+    : '<p style="color:#718096;text-align:center;padding:20px;">詳細情報はまだ登録されていません</p>';
   document.getElementById('info-modal').classList.add('active');
 }
+function closeInfo() { document.getElementById('info-modal').classList.remove('active'); }
 
-function closeInfo() {
-  document.getElementById('info-modal').classList.remove('active');
+/* NG条件モーダル */
+function openNg(idx) {
+  const f = allFacilities[idx]; if (!f) return;
+  document.getElementById('ng-title').textContent = '🚫 ' + f.name + ' の受け入れNG条件';
+  const ng = f.info && f.info.ng ? f.info.ng : '';
+  document.getElementById('ng-body').innerHTML = ng
+    ? `<div class="ng-content">${ng.replace(/\n/g,'<br>')}</div>`
+    : '<p style="color:#718096;text-align:center;padding:20px;">NG条件の登録がありません</p>';
+  document.getElementById('ng-modal').classList.add('active');
 }
+function closeNg() { document.getElementById('ng-modal').classList.remove('active'); }
 
-// ============================================================
-// 地図モーダル
-// ============================================================
-function openMap(facilityName, mapUrl) {
-  document.getElementById('map-modal-title').textContent = '🗺 ' + facilityName + ' 送迎範囲';
-  document.getElementById('map-iframe').src = mapUrl;
+/* 地図モーダル */
+function openMap(name, url) {
+  document.getElementById('map-title').textContent = '🗺 ' + name + ' 送迎範囲';
+  document.getElementById('map-iframe').src = url;
   document.getElementById('map-modal').classList.add('active');
 }
-
 function closeMap() {
   document.getElementById('map-modal').classList.remove('active');
   document.getElementById('map-iframe').src = '';
 }
-</script>
 
-<footer style="background:#0f4a7a;padding:18px 20px;margin-top:40px;">
-  <div style="max-width:900px;margin:0 auto;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
-    <div style="color:#fff;font-size:13px;font-weight:700;">ケアナビ沖縄</div>
-    <div style="color:#fff;font-size:13px;">📞 050-1791-8181</div>
-    <div style="color:#fff;font-size:13px;">📧 carenaviokinawa8181@gmail.com</div>
-  </div>
-</footer>
+/* ガイド */
+function toggleGuide() {
+  document.getElementById('guide-btn').classList.toggle('open');
+  document.getElementById('guide-content').classList.toggle('open');
+}
+function switchGTab(n) {
+  document.querySelectorAll('.gtab').forEach((t,i) => t.classList.toggle('active', i===n));
+  ['gp0','gp1','gp2'].forEach((id,i) => document.getElementById(id).classList.toggle('active', i===n));
+}
+function switchOs(prefix, os) {
+  const ids = [prefix+'-ios', prefix+'-android'];
+  ids.forEach(id => { const el = document.getElementById(id); if(el) el.classList.toggle('active', id.endsWith(os)); });
+  // 対応するostabsも更新
+  const panels = ['gp0','gp1','gp2'];
+  panels.forEach(pid => {
+    const panel = document.getElementById(pid);
+    if (!panel) return;
+    panel.querySelectorAll('.ostab').forEach((t,i) => {
+      const target = i===0 ? 'ios' : 'android';
+      t.classList.toggle('active', target===os);
+    });
+  });
+}
+</script>
 </body>
 </html>
