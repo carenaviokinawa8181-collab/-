@@ -272,7 +272,7 @@
           <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「＋」をタップして単語を追加</div><div class="gdesc">「単語」と「よみ」を入力して保存します。</div></div></div>
         </div>
         <p style="font-size:12px;font-weight:700;color:var(--text);margin:14px 0 8px;">📌 おすすめの登録ワード</p>
-        <div class="dicword"><span class="dicread">よみ：けあ</span><span class="dicval">carenaviokinawa8181@gmail.com</span></div>
+        <div class="dicword"><span class="dicread">よみ：めあど</span><span class="dicval">carenaviokinawa8181@gmail.com</span></div>
         <div class="dicword"><span class="dicread">よみ：でい</span><span class="dicval">デイサービス</span></div>
         <div class="dicword"><span class="dicread">よみ：けあなび</span><span class="dicval">ケアナビ沖縄</span></div>
         <div class="dicword"><span class="dicread">よみ：でんわ</span><span class="dicval">050-1791-8181</span></div>
@@ -365,8 +365,9 @@ function renderFacilities(data) {
     const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
     const pdfBtn  = (isPaid && f.pdfUrl)  ? `<a href="${f.pdfUrl}" target="_blank" class="btn btn-brown">📄 施設紹介PDF</a>` : '';
     const mapBtn  = (isPaid && f.mapUrl)  ? `<button class="btn btn-green" onclick="openMap('${f.name.replace(/'/g,"\\'")}','${f.mapUrl.replace(/'/g,"\\'")}')">🗺 送迎範囲</button>` : '';
-    const infoBtn = isPaid                ? `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>` : '';
-    const ngBtn   = (isPaid && f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
+    // 変更後（全プランで詳細ボタン表示）
+const infoBtn = `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>`;
+const ngBtn   = (f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
     return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
       <div class="card-header"><div class="card-name">${f.name}</div><div class="card-status ${status.cls}">${status.label}</div></div>
       <div class="days-table"><div class="days-row">${daysHTML}</div></div>
