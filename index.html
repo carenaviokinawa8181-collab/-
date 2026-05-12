@@ -88,7 +88,26 @@
   .sym-full   { background: #fecaca; color: #b91c1c; }
   .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 12px; }
 
-  .card-biko { margin: 0 16px 12px; background: var(--primary-light); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--primary); font-weight: 500; line-height: 1.6; }
+  .card-biko { margin: 0 16px 8px; background: var(--primary-light); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--primary); font-weight: 500; line-height: 1.6; }
+
+  /* ★ 施設ごとの更新日時 */
+  .card-updated {
+    margin: 0 16px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .card-updated .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #68d391;
+    flex-shrink: 0;
+  }
+  .card-updated.stale .dot { background: #fc8181; }
+  .card-updated.stale { color: #e53e3e; }
+
   .card-footer { padding: 10px 16px 14px; display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px; }
 
   /* BUTTONS */
@@ -297,17 +316,15 @@
     <div style="color:#fff;font-size:13px;font-weight:700;">ケアナビ沖縄</div>
     <a href="tel:050-1791-8181" style="color:#fff;font-size:13px;text-decoration:none;">📞 050-1791-8181</a>
     <a href="mailto:carenaviokinawa8181@gmail.com" style="color:#fff;font-size:13px;text-decoration:none;">📧 carenaviokinawa8181@gmail.com</a>
+    <!-- ★ 規約リンク追加 -->
+    <a href="terms.html" style="color:rgba(255,255,255,0.65);font-size:12px;text-decoration:none;">利用規約・免責事項</a>
   </div>
 </footer>
 
 <script>
-// ============================================================
-// ★ 設定（2か所をGAS側と必ず一致させること）
-// ============================================================
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec';
-const SECRET_TOKEN    = 'carenavi-okinawa-2024'; // ★GAS側と同じ文字列にすること
+const SECRET_TOKEN    = 'carenavi-okinawa-2024';
 const YOYAKU_URL      = 'https://forms.gle/VFXsJY45mEaCePvT6';
-// ============================================================
 
 const DAYS = ['月','火','水','木','金','土','日'];
 let allFacilities = [];
@@ -323,6 +340,24 @@ function getOverallStatus(sym) {
   if (v.includes('○')) return {label:'空きあり',   cls:'status-ok'};
   if (v.includes('△')) return {label:'残りわずか', cls:'status-few'};
   return {label:'満員', cls:'status-full'};
+}
+
+/* ★ 更新日時の表示テキストと「古い」判定
+   7日以上更新がない場合は赤ドットで警告 */
+function formatUpdated(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr.replace(/\//g, '-'));
+  if (isNaN(d)) return null;
+  const now = new Date();
+  const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+  // 表示文字列を短く整形（例：5月12日 09:30）
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const label = `${m}月${day}日 ${hh}:${mm} 更新`;
+  const stale = diffDays >= 7; // 7日以上古ければ警告
+  return { label, stale };
 }
 
 /* お知らせ */
@@ -344,7 +379,7 @@ function renderNotices(notices) {
 function renderFacilities(data) {
   allFacilities = data.facilities || [];
   document.getElementById('loading').style.display = 'none';
-  document.getElementById('update-time').textContent = '空き状況更新：' + data.lastUpdated;
+  document.getElementById('update-time').textContent = 'データ取得：' + data.lastUpdated;
   document.getElementById('guide-section').style.display = 'block';
   if (data.notices) renderNotices(data.notices);
 
@@ -353,31 +388,43 @@ function renderFacilities(data) {
     grid.innerHTML = '<p style="text-align:center;color:#718096;padding:40px;">施設情報がまだ登録されていません</p>';
     return;
   }
+
   grid.innerHTML = allFacilities.map((f, idx) => {
     const status = getOverallStatus(f.symbols);
     const isPaid = f.plan === '有料';
+
     const daysHTML = DAYS.map(d => {
       const sym = f.symbols[d] || '休';
       const dc = d==='土'?'sat':d==='日'?'sun':'';
       return `<div class="day-cell"><div class="day-label ${dc}">${d}</div><div class="day-symbol ${getSymClass(sym)}">${sym}</div></div>`;
     }).join('');
-    const biko    = f.備考 ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
-    const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
+
+    const biko = f.備考 ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
+
+    // ★ 施設ごとの更新日時
+    const upd = formatUpdated(f.更新日);
+    const updHTML = upd
+      ? `<div class="card-updated${upd.stale ? ' stale' : ''}"><div class="dot"></div><span>${upd.label}${upd.stale ? '（要確認）' : ''}</span></div>`
+      : '';
+
+    // ★ ボタン：詳細・NGは全プラン表示、PDF・地図は有料のみ
+    const infoBtn = `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>`;
+    const ngBtn   = (f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
     const pdfBtn  = (isPaid && f.pdfUrl)  ? `<a href="${f.pdfUrl}" target="_blank" class="btn btn-brown">📄 施設紹介PDF</a>` : '';
     const mapBtn  = (isPaid && f.mapUrl)  ? `<button class="btn btn-green" onclick="openMap('${f.name.replace(/'/g,"\\'")}','${f.mapUrl.replace(/'/g,"\\'")}')">🗺 送迎範囲</button>` : '';
-    // 変更後（全プランで詳細ボタン表示）
-const infoBtn = `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>`;
-const ngBtn   = (f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
+    const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
+
     return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
       <div class="card-header"><div class="card-name">${f.name}</div><div class="card-status ${status.cls}">${status.label}</div></div>
       <div class="days-table"><div class="days-row">${daysHTML}</div></div>
       ${biko}
+      ${updHTML}
       <div class="card-footer">${infoBtn}${ngBtn}${pdfBtn}${mapBtn}${yBtn}</div>
     </div>`;
   }).join('');
 }
 
-/* データ取得（トークン付き） */
+/* データ取得 */
 function loadData() {
   fetch(APPS_SCRIPT_URL + '?token=' + encodeURIComponent(SECRET_TOKEN))
     .then(r => r.json())
@@ -468,7 +515,6 @@ function switchGTab(n) {
 function switchOs(prefix, os) {
   const ids = [prefix+'-ios', prefix+'-android'];
   ids.forEach(id => { const el = document.getElementById(id); if(el) el.classList.toggle('active', id.endsWith(os)); });
-  // 対応するostabsも更新
   const panels = ['gp0','gp1','gp2'];
   panels.forEach(pid => {
     const panel = document.getElementById(pid);
