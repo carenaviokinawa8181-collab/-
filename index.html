@@ -409,7 +409,7 @@ function renderFacilities(data) {
 
     // ★ ボタン：詳細・NGは全プラン表示、PDF・地図は有料のみ
     const infoBtn = `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>`;
-    const ngBtn   = (f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
+    const ngBtn = (isPaid && f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
     const pdfBtn  = (isPaid && f.pdfUrl)  ? `<a href="${f.pdfUrl}" target="_blank" class="btn btn-brown">📄 施設紹介PDF</a>` : '';
     const mapBtn  = (isPaid && f.mapUrl)  ? `<button class="btn btn-green" onclick="openMap('${f.name.replace(/'/g,"\\'")}','${f.mapUrl.replace(/'/g,"\\'")}')">🗺 送迎範囲</button>` : '';
     const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
