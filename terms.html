@@ -4,331 +4,361 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>利用規約・各種ポリシー | ケアナビ沖縄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+/* Jekyll上書き対策：全要素をリセットしてから再定義 */
+html, body, div, span, h1, h2, h3, h4, p, a, ul, ol, li, nav, header, footer, section {
+  box-sizing: border-box !important;
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif !important;
+}
+html { background: #FAF7F2 !important; }
+body {
+  background: #FAF7F2 !important;
+  color: #2C2A27 !important;
+  line-height: 1.9 !important;
+  font-size: 15px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+}
 
-  :root 
-    --terracotta: #C0714F;
-    --terracotta-light: #E8A98A;
-    --terracotta-pale: #F5E6DF;
-    --sage: #6B8F71;
-    --sage-pale: #E8F0EA;
-    --navy: #2C3E50;
-    --cream: #FAF7F2;
-    --warm-white: #FFFDF9;
-    --text-main: #2C2A27;
-    --text-sub: #6B6560;
-    --border: #E0D8D0;
-  }
+/* HEADER */
+.cn-header {
+  background: linear-gradient(135deg, #C0714F 0%, #A05A3E 60%, #2C3E50 100%) !important;
+  color: white !important;
+  padding: 20px 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 0 !important;
+}
+.cn-logo {
+  font-family: 'Noto Serif JP', serif !important;
+  font-size: 1.3em !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-decoration: none !important;
+  color: white !important;
+  border: none !important;
+}
+.cn-back {
+  font-size: 0.82em !important;
+  color: rgba(255,255,255,0.85) !important;
+  text-decoration: none !important;
+  border: 1px solid rgba(255,255,255,0.4) !important;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+  background: transparent !important;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* HERO */
+.cn-hero {
+  background: #FFFDF9 !important;
+  border-bottom: 1px solid #E0D8D0 !important;
+  padding: 48px 32px 36px !important;
+  text-align: center !important;
+  margin: 0 !important;
+}
+.cn-badge {
+  display: inline-block !important;
+  background: #F5E6DF !important;
+  color: #C0714F !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  padding: 4px 16px !important;
+  border-radius: 20px !important;
+  margin-bottom: 16px !important;
+}
+.cn-hero h1 {
+  font-family: 'Noto Serif JP', serif !important;
+  font-size: 1.9em !important;
+  font-weight: 700 !important;
+  color: #2C3E50 !important;
+  margin: 0 0 10px 0 !important;
+  padding: 0 !important;
+  letter-spacing: 0.04em !important;
+  border: none !important;
+}
+.cn-hero .cn-meta {
+  font-size: 0.83em !important;
+  color: #6B6560 !important;
+  margin: 4px 0 !important;
+  padding: 0 !important;
+}
 
-  body {
-    font-family: 'Noto Sans JP', sans-serif;
-    background: var(--cream);
-    color: var(--text-main);
-    line-height: 1.9;
-    font-size: 15px;
-  }
+/* CONTAINER */
+.cn-container {
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding: 48px 24px 80px !important;
+}
 
-  /* ===== HEADER ===== */
-  .site-header {
-    background: linear-gradient(135deg, var(--terracotta) 0%, #A05A3E 60%, var(--navy) 100%);
-    color: white;
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .site-header .logo {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.3em;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    color: white;
-  }
-  .site-header .back-btn {
-    font-size: 0.82em;
-    color: rgba(255,255,255,0.85);
-    text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.4);
-    padding: 6px 16px;
-    border-radius: 20px;
-    transition: all 0.2s;
-  }
-  .site-header .back-btn:hover {
-    background: rgba(255,255,255,0.15);
-    color: white;
-  }
+/* TOC */
+.cn-toc {
+  background: #FFFDF9 !important;
+  border: 1px solid #E0D8D0 !important;
+  border-radius: 12px !important;
+  padding: 24px 28px !important;
+  margin-bottom: 48px !important;
+}
+.cn-toc-title {
+  font-size: 0.78em !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  color: #6B6560 !important;
+  margin-bottom: 12px !important;
+  display: block !important;
+}
+.cn-toc ol {
+  list-style: none !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 4px 24px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.cn-toc ol li {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  display: block !important;
+}
+.cn-toc ol li::before { content: none !important; }
+.cn-toc ol li::marker { content: none !important; }
+.cn-toc ol li a {
+  font-size: 0.85em !important;
+  color: #2C3E50 !important;
+  text-decoration: none !important;
+  padding: 3px 0 !important;
+  display: block !important;
+  border-bottom: 1px solid transparent !important;
+}
+.cn-toc ol li a:hover { color: #C0714F !important; }
 
-  /* ===== PAGE HERO ===== */
-  .page-hero {
-    background: var(--warm-white);
-    border-bottom: 1px solid var(--border);
-    padding: 48px 32px 36px;
-    text-align: center;
-  }
-  .page-hero .badge {
-    display: inline-block;
-    background: var(--terracotta-pale);
-    color: var(--terracotta);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    padding: 4px 16px;
-    border-radius: 20px;
-    margin-bottom: 16px;
-  }
-  .page-hero h1 {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.9em;
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 10px;
-    letter-spacing: 0.04em;
-  }
-  .page-hero .meta {
-    font-size: 0.83em;
-    color: var(--text-sub);
-    letter-spacing: 0.04em;
-  }
+/* SECTION */
+.cn-section {
+  margin-bottom: 48px !important;
+  scroll-margin-top: 24px !important;
+}
+.cn-sec-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 20px !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid #F5E6DF !important;
+}
+.cn-num {
+  background: #C0714F !important;
+  color: white !important;
+  font-family: 'Noto Serif JP', serif !important;
+  font-size: 0.85em !important;
+  font-weight: 700 !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  letter-spacing: 0.02em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.cn-sec-header h2 {
+  font-family: 'Noto Serif JP', serif !important;
+  font-size: 1.15em !important;
+  font-weight: 700 !important;
+  color: #2C3E50 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+.cn-section p {
+  margin-bottom: 14px !important;
+  font-size: 0.93em !important;
+  color: #2C2A27 !important;
+  line-height: 1.9 !important;
+  padding: 0 !important;
+}
+.cn-sub {
+  font-family: 'Noto Serif JP', serif !important;
+  font-size: 1em !important;
+  font-weight: 700 !important;
+  color: #2C3E50 !important;
+  margin: 20px 0 10px !important;
+  padding: 0 !important;
+  border: none !important;
+  display: block !important;
+}
 
-  /* ===== LAYOUT ===== */
-  .container {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
+/* LISTS */
+ol.cn-list {
+  list-style: none !important;
+  counter-reset: cn-counter !important;
+  margin: 12px 0 16px !important;
+  padding: 0 !important;
+}
+ol.cn-list li {
+  counter-increment: cn-counter !important;
+  display: flex !important;
+  gap: 12px !important;
+  margin-bottom: 10px !important;
+  font-size: 0.91em !important;
+  line-height: 1.85 !important;
+  list-style: none !important;
+  padding: 0 !important;
+}
+ol.cn-list li::before {
+  content: counter(cn-counter) !important;
+  background: #F5E6DF !important;
+  color: #C0714F !important;
+  font-weight: 700 !important;
+  font-size: 0.8em !important;
+  min-width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  margin-top: 3px !important;
+}
+ol.cn-list li::marker { content: none !important; }
 
-  /* ===== TOC ===== */
-  .toc {
-    background: var(--warm-white);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px 28px;
-    margin-bottom: 48px;
-  }
-  .toc-title {
-    font-size: 0.78em;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    color: var(--text-sub);
-    margin-bottom: 12px;
-  }
-  .toc ol {
-    list-style: none;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4px 24px;
-  }
-  .toc ol li a {
-    font-size: 0.85em;
-    color: var(--navy);
-    text-decoration: none;
-    padding: 3px 0;
-    display: block;
-    border-bottom: 1px solid transparent;
-    transition: all 0.15s;
-  }
-  .toc ol li a:hover {
-    color: var(--terracotta);
-    border-bottom-color: var(--terracotta-light);
-  }
-  .toc ol li::before {
-    content: none;
-  }
+ul.cn-list {
+  list-style: none !important;
+  margin: 12px 0 16px !important;
+  padding: 0 !important;
+}
+ul.cn-list li {
+  display: flex !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
+  font-size: 0.91em !important;
+  line-height: 1.85 !important;
+  list-style: none !important;
+  padding: 0 !important;
+}
+ul.cn-list li::before {
+  content: "—" !important;
+  color: #E8A98A !important;
+  flex-shrink: 0 !important;
+}
+ul.cn-list li::marker { content: none !important; }
 
-  /* ===== SECTIONS ===== */
-  .terms-section {
-    margin-bottom: 48px;
-    scroll-margin-top: 24px;
-  }
+/* BOXES */
+.cn-highlight {
+  background: #E8F0EA !important;
+  border-left: 4px solid #6B8F71 !important;
+  border-radius: 0 8px 8px 0 !important;
+  padding: 14px 18px !important;
+  margin: 16px 0 !important;
+  font-size: 0.89em !important;
+  line-height: 1.85 !important;
+  color: #2C2A27 !important;
+}
+.cn-alert {
+  background: #FEF3E8 !important;
+  border-left: 4px solid #E89040 !important;
+  border-radius: 0 8px 8px 0 !important;
+  padding: 14px 18px !important;
+  margin: 16px 0 !important;
+  font-size: 0.89em !important;
+  line-height: 1.85 !important;
+  color: #2C2A27 !important;
+}
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 20px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--terracotta-pale);
-  }
-  .section-num {
-    background: var(--terracotta);
-    color: white;
-    font-family: 'Noto Serif JP', serif;
-    font-size: 0.85em;
-    font-weight: 700;
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    letter-spacing: 0.02em;
-  }
-  .section-header h2 {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.15em;
-    font-weight: 700;
-    color: var(--navy);
-  }
+/* DIVIDER */
+.cn-divider {
+  border: none !important;
+  border-top: 1px solid #E0D8D0 !important;
+  margin: 40px 0 !important;
+}
 
-  p {
-    margin-bottom: 14px;
-    font-size: 0.93em;
-    color: var(--text-main);
-    line-height: 1.9;
-  }
+/* CONTACT */
+.cn-contact {
+  background: #2C3E50 !important;
+  color: white !important;
+  border-radius: 14px !important;
+  padding: 28px 32px !important;
+  margin-top: 48px !important;
+}
+.cn-contact h3 {
+  font-family: 'Noto Serif JP', serif !important;
+  font-size: 1.05em !important;
+  margin: 0 0 16px 0 !important;
+  padding: 0 !important;
+  font-weight: 600 !important;
+  color: white !important;
+  border: none !important;
+  opacity: 0.9 !important;
+}
+.cn-contact-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+}
+.cn-contact-item .cn-clabel {
+  font-size: 0.75em !important;
+  opacity: 0.6 !important;
+  letter-spacing: 0.1em !important;
+  margin-bottom: 3px !important;
+  display: block !important;
+  color: white !important;
+}
+.cn-contact-item .cn-cval {
+  font-size: 0.9em !important;
+  font-weight: 500 !important;
+  color: white !important;
+  display: block !important;
+}
 
-  ol.terms-list {
-    list-style: none;
-    counter-reset: terms-counter;
-    margin: 12px 0 16px;
-  }
-  ol.terms-list li {
-    counter-increment: terms-counter;
-    display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
-    font-size: 0.91em;
-    line-height: 1.85;
-  }
-  ol.terms-list li::before {
-    content: counter(terms-counter);
-    background: var(--terracotta-pale);
-    color: var(--terracotta);
-    font-weight: 700;
-    font-size: 0.8em;
-    min-width: 22px; height: 22px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    margin-top: 3px;
-  }
+/* FOOTER */
+.cn-footer {
+  background: #2C3E50 !important;
+  color: rgba(255,255,255,0.5) !important;
+  text-align: center !important;
+  padding: 24px !important;
+  font-size: 0.8em !important;
+  letter-spacing: 0.04em !important;
+  margin: 0 !important;
+}
+.cn-footer a {
+  color: rgba(255,255,255,0.7) !important;
+  text-decoration: none !important;
+}
 
-  ul.terms-list {
-    list-style: none;
-    margin: 12px 0 16px;
-  }
-  ul.terms-list li {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 8px;
-    font-size: 0.91em;
-    line-height: 1.85;
-  }
-  ul.terms-list li::before {
-    content: "—";
-    color: var(--terracotta-light);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .highlight-box {
-    background: var(--sage-pale);
-    border-left: 4px solid var(--sage);
-    border-radius: 0 8px 8px 0;
-    padding: 14px 18px;
-    margin: 16px 0;
-    font-size: 0.89em;
-    line-height: 1.85;
-  }
-  .alert-box {
-    background: #FEF3E8;
-    border-left: 4px solid #E89040;
-    border-radius: 0 8px 8px 0;
-    padding: 14px 18px;
-    margin: 16px 0;
-    font-size: 0.89em;
-    line-height: 1.85;
-  }
-
-  /* ===== CONTACT SECTION ===== */
-  .contact-section {
-    background: var(--navy);
-    color: white;
-    border-radius: 14px;
-    padding: 28px 32px;
-    margin-top: 48px;
-  }
-  .contact-section h3 {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.05em;
-    margin-bottom: 16px;
-    font-weight: 600;
-    opacity: 0.9;
-  }
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .contact-item .label {
-    font-size: 0.75em;
-    opacity: 0.6;
-    letter-spacing: 0.1em;
-    margin-bottom: 3px;
-  }
-  .contact-item .value {
-    font-size: 0.9em;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-  }
-
-  /* ===== DIVIDER ===== */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 40px 0;
-  }
-
-  /* ===== FOOTER ===== */
-  .site-footer {
-    background: var(--navy);
-    color: rgba(255,255,255,0.5);
-    text-align: center;
-    padding: 24px;
-    font-size: 0.8em;
-    letter-spacing: 0.04em;
-  }
-  .site-footer a {
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
-  }
-
-  @media (max-width: 600px) {
-    .toc ol { grid-template-columns: 1fr; }
-    .contact-grid { grid-template-columns: 1fr; }
-    .page-hero { padding: 32px 20px 24px; }
-    .page-hero h1 { font-size: 1.5em; }
-    .container { padding: 32px 16px 60px; }
-  }
+@media (max-width: 600px) {
+  .cn-toc ol { grid-template-columns: 1fr !important; }
+  .cn-contact-grid { grid-template-columns: 1fr !important; }
+  .cn-hero { padding: 32px 20px 24px !important; }
+  .cn-hero h1 { font-size: 1.5em !important; }
+  .cn-container { padding: 32px 16px 60px !important; }
+  .cn-header { padding: 16px 20px !important; }
+}
 </style>
 </head>
 <body>
 
-<!-- ヘッダー -->
-<header class="site-header">
-  <!-- ▼▼▼ サイト名・トップページURLを編集 ▼▼▼ -->
-  <a class="logo" href="index.html">ケアナビ沖縄</a>
-  <a class="back-btn" href="index.html">← トップに戻る</a>
-  <!-- ▲▲▲ -->
+<header class="cn-header">
+  <a class="cn-logo" href="index.html">ケアナビ沖縄</a>
+  <a class="cn-back" href="index.html">← トップに戻る</a>
 </header>
 
-<!-- ページタイトル -->
-<div class="page-hero">
-  <div class="badge">TERMS · PRIVACY · LEGAL</div>
+<div class="cn-hero">
+  <div class="cn-badge">TERMS · PRIVACY · LEGAL</div>
   <h1>利用規約・各種ポリシー</h1>
-  <!-- ▼▼▼ 制定日・改定日を編集 ▼▼▼ -->
-  <p class="meta">制定：2026年5月　／　運営：ケアナビ沖縄</p>
-  <p class="meta" style="margin-top:6px;">このページはフォームの同意規約と共通です</p>
-  <!-- ▲▲▲ -->
+  <p class="cn-meta">制定：2026年5月　／　運営：ケアナビ沖縄</p>
+  <p class="cn-meta">このページはフォームの同意規約と共通です</p>
 </div>
 
-<div class="container">
+<div class="cn-container">
 
-  <!-- 目次 -->
-  <nav class="toc">
-    <div class="toc-title">目 次</div>
+  <nav class="cn-toc">
+    <span class="cn-toc-title">目 次</span>
     <ol>
       <li><a href="#s1">第1条　サービスの目的</a></li>
       <li><a href="#s2">第2条　利用対象者</a></li>
@@ -346,27 +376,27 @@
     </ol>
   </nav>
 
-  <!-- ===== 第1条 ===== -->
-  <section class="terms-section" id="s1">
-    <div class="section-header">
-      <div class="section-num">1</div>
+  <!-- 第1条 -->
+  <section class="cn-section" id="s1">
+    <div class="cn-sec-header">
+      <div class="cn-num">1</div>
       <h2>サービスの目的</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>ケアナビ沖縄（以下「本サービス」）は、沖縄県内のデイサービス施設の空き状況を掲載し、ケアマネージャーおよび利用者家族が施設を比較・検討するための情報提供を目的としています。</p>
     <p>本サービスは施設と利用者の仲介・契約を行うものではなく、情報提供のみを目的としています。</p>
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第2条 ===== -->
-  <section class="terms-section" id="s2">
-    <div class="section-header">
-      <div class="section-num">2</div>
+  <!-- 第2条 -->
+  <section class="cn-section" id="s2">
+    <div class="cn-sec-header">
+      <div class="cn-num">2</div>
       <h2>利用対象者</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>本サービスは以下の方を対象としています。</p>
-    <ul class="terms-list">
+    <ul class="cn-list">
       <li>デイサービス施設の利用を検討しているご本人またはそのご家族</li>
       <li>ケアマネージャーおよび介護関係者</li>
       <li>掲載施設のスタッフ（情報入力・管理目的）</li>
@@ -374,18 +404,16 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第3条 ===== -->
-  <section class="terms-section" id="s3">
-    <div class="section-header">
-      <div class="section-num">3</div>
+  <!-- 第3条 -->
+  <section class="cn-section" id="s3">
+    <div class="cn-sec-header">
+      <div class="cn-num">3</div>
       <h2>情報の正確性について</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>本サービスに掲載されている空き状況・料金・営業時間などの情報は、各施設から提供されたものをそのまま表示しています。</p>
-    <div class="alert-box">
-      掲載情報は各施設の更新タイミングにより、実際の状況と異なる場合があります。最新情報は必ず直接施設へお問い合わせください。
-    </div>
-    <ol class="terms-list">
+    <div class="cn-alert">掲載情報は各施設の更新タイミングにより、実際の状況と異なる場合があります。最新情報は必ず直接施設へお問い合わせください。</div>
+    <ol class="cn-list">
       <li>空き状況は施設スタッフが入力した時点の情報であり、リアルタイムの正確性を保証するものではありません。</li>
       <li>料金・サービス内容は変更されることがあります。契約前に必ず施設へご確認ください。</li>
       <li>運営者は掲載情報の正確性について最善を尽くしますが、完全性・最新性を保証するものではありません。</li>
@@ -393,15 +421,15 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第4条 ===== -->
-  <section class="terms-section" id="s4">
-    <div class="section-header">
-      <div class="section-num">4</div>
+  <!-- 第4条 -->
+  <section class="cn-section" id="s4">
+    <div class="cn-sec-header">
+      <div class="cn-num">4</div>
       <h2>免責事項</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>以下の事項について、運営者は一切の責任を負いかねます。</p>
-    <ul class="terms-list">
+    <ul class="cn-list">
       <li>本サービスの情報を参考にした結果生じたトラブル・損害</li>
       <li>施設との契約・利用に関するトラブル</li>
       <li>システムの障害・メンテナンスによるサービス停止</li>
@@ -409,21 +437,19 @@
       <li>第三者による不正アクセス・情報漏洩</li>
       <li>外部リンク先（各施設サイト等）のコンテンツ</li>
     </ul>
-    <div class="highlight-box">
-      本サービスはあくまでも情報提供ツールです。施設との最終的なご契約・ご利用判断はご自身の責任においてご判断ください。
-    </div>
+    <div class="cn-highlight">本サービスはあくまでも情報提供ツールです。施設との最終的なご契約・ご利用判断はご自身の責任においてご判断ください。</div>
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第5条 ===== -->
-  <section class="terms-section" id="s5">
-    <div class="section-header">
-      <div class="section-num">5</div>
+  <!-- 第5条 -->
+  <section class="cn-section" id="s5">
+    <div class="cn-sec-header">
+      <div class="cn-num">5</div>
       <h2>禁止事項</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>利用者は以下の行為を行ってはなりません。</p>
-    <ol class="terms-list">
+    <ol class="cn-list">
       <li>本サービスに掲載された施設情報・文章・データを無断で転載・複製・販売する行為</li>
       <li>本サービスのシステムに不正アクセスする行為</li>
       <li>虚偽の情報を登録・入力する行為</li>
@@ -434,15 +460,15 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第6条 ===== -->
-  <section class="terms-section" id="s6">
-    <div class="section-header">
-      <div class="section-num">6</div>
+  <!-- 第6条 -->
+  <section class="cn-section" id="s6">
+    <div class="cn-sec-header">
+      <div class="cn-num">6</div>
       <h2>個人情報の取り扱い</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>本サービスでは、施設登録フォームの入力を通じて施設担当者の連絡先等を取得することがあります。</p>
-    <ol class="terms-list">
+    <ol class="cn-list">
       <li>取得した情報はサービス運営・施設への連絡のみに使用し、第三者への提供は行いません。</li>
       <li>本サービスはGoogle Analytics を使用してアクセス解析を行っています。個人を特定する情報は収集していません。</li>
       <li>Cookieを利用して閲覧の利便性向上を図っています。ブラウザの設定で無効化することができます。</li>
@@ -451,15 +477,15 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第7条 ===== -->
-  <section class="terms-section" id="s7">
-    <div class="section-header">
-      <div class="section-num">7</div>
+  <!-- 第7条 -->
+  <section class="cn-section" id="s7">
+    <div class="cn-sec-header">
+      <div class="cn-num">7</div>
       <h2>施設情報の掲載について</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>掲載施設は以下の事項に同意したものとみなします。</p>
-    <ol class="terms-list">
+    <ol class="cn-list">
       <li>登録情報がサイト上で一般公開されること</li>
       <li>入力した空き状況・施設情報がケアマネージャーおよび一般利用者に表示されること</li>
       <li>情報の正確性・最新性の維持は施設側の責任において行うこと</li>
@@ -468,28 +494,28 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 第8条 ===== -->
-  <section class="terms-section" id="s8">
-    <div class="section-header">
-      <div class="section-num">8</div>
+  <!-- 第8条 -->
+  <section class="cn-section" id="s8">
+    <div class="cn-sec-header">
+      <div class="cn-num">8</div>
       <h2>規約の変更</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>運営者は必要に応じて本規約を変更することがあります。変更後の規約はサイト上に掲載した時点から効力を生じるものとし、継続利用をもって同意したものとみなします。</p>
     <!-- ▲▲▲ -->
   </section>
 
-  <hr class="divider">
+  <hr class="cn-divider">
 
-  <!-- ===== プライバシーポリシー ===== -->
-  <section class="terms-section" id="privacy">
-    <div class="section-header">
-      <div class="section-num" style="font-size:0.7em;">PP</div>
+  <!-- プライバシーポリシー -->
+  <section class="cn-section" id="privacy">
+    <div class="cn-sec-header">
+      <div class="cn-num" style="font-size:0.65em !important;">PP</div>
       <h2>プライバシーポリシー</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>ケアナビ沖縄（以下「当運営」）は、ご提供いただいた個人情報を以下の方針に基づき適切に管理します。</p>
-    <ol class="terms-list">
+    <ol class="cn-list">
       <li><strong>収集する情報：</strong>施設登録フォームで入力された施設名・担当者名・メールアドレス・電話番号・住所などの情報。</li>
       <li><strong>利用目的：</strong>サービスの提供・運営連絡・掲載内容の確認・システムの改善のみに使用します。</li>
       <li><strong>第三者提供：</strong>法令に基づく場合を除き、ご本人の同意なく第三者に提供することはありません。</li>
@@ -501,15 +527,15 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 掲載規約 ===== -->
-  <section class="terms-section" id="listing">
-    <div class="section-header">
-      <div class="section-num" style="font-size:0.7em;">掲載</div>
+  <!-- 掲載規約 -->
+  <section class="cn-section" id="listing">
+    <div class="cn-sec-header">
+      <div class="cn-num" style="font-size:0.6em !important;">掲載</div>
       <h2>掲載規約</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>本サービスに施設情報を掲載する事業者（以下「掲載施設」）は、以下の規約に同意の上でご利用ください。</p>
-    <ol class="terms-list">
+    <ol class="cn-list">
       <li>掲載施設は、登録する情報（施設名・住所・営業時間・料金・サービス内容等）がすべて正確かつ最新であることを保証します。</li>
       <li>空き状況の入力は各施設の責任において行うものとし、入力内容に起因するトラブルについて当運営は責任を負いません。</li>
       <li>掲載された情報はウェブサイト上で一般公開されることに同意します。</li>
@@ -521,17 +547,15 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 特定商取引法 ===== -->
-  <section class="terms-section" id="tokusho">
-    <div class="section-header">
-      <div class="section-num" style="font-size:0.55em;">特商法</div>
+  <!-- 特定商取引法 -->
+  <section class="cn-section" id="tokusho">
+    <div class="cn-sec-header">
+      <div class="cn-num" style="font-size:0.5em !important;">特商法</div>
       <h2>特定商取引法に基づく表記</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
-    <div class="highlight-box">
-      現在、本サービスは無料にて情報掲載を提供しており、有料サービスについては別途ご案内しております。有料プランをご利用の場合は以下が適用されます。
-    </div>
-    <ol class="terms-list">
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
+    <div class="cn-highlight">現在、本サービスは無料にて情報掲載を提供しており、有料サービスについては別途ご案内しております。有料プランをご利用の場合は以下が適用されます。</div>
+    <ol class="cn-list">
       <li><strong>販売事業者：</strong>ケアナビ沖縄</li>
       <li><strong>所在地：</strong>沖縄県那覇市（詳細はお問い合わせください）</li>
       <li><strong>電話番号：</strong>050-1792-8181（お問い合わせ受付：平日10:00〜18:00）</li>
@@ -546,48 +570,42 @@
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 掲載情報の事実確認 ===== -->
-  <section class="terms-section" id="confirm">
-    <div class="section-header">
-      <div class="section-num" style="font-size:0.6em;">確認</div>
+  <!-- 掲載情報の事実確認 -->
+  <section class="cn-section" id="confirm">
+    <div class="cn-sec-header">
+      <div class="cn-num" style="font-size:0.55em !important;">確認</div>
       <h2>掲載情報の事実確認について</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>施設登録フォームを送信することで、以下の内容を確認・同意したものとみなします。</p>
-    <ol class="terms-list">
+    <ol class="cn-list">
       <li>登録する施設名・住所・電話番号・営業時間・料金・サービス内容はすべて事実であり、現在有効な情報です。</li>
       <li>入力内容に虚偽・誤りがないことを責任をもって確認しました。</li>
       <li>情報に変更が生じた場合は速やかに更新・修正することに同意します。</li>
       <li>掲載情報に起因して第三者（ケアマネージャー・ご家族等）との間でトラブルが発生した場合、当運営は一切の責任を負いません。</li>
       <li>当運営が必要と判断した場合、掲載内容の確認のためご連絡させていただくことがあります。</li>
     </ol>
-    <div class="alert-box">
-      フォーム送信をもって、上記すべての規約・ポリシーに同意いただいたものとみなします。ご不明な点は送信前に carenaviokinawa8181@gmail.com までお問い合わせください。
-    </div>
+    <div class="cn-alert">フォーム送信をもって、上記すべての規約・ポリシーに同意いただいたものとみなします。ご不明な点は送信前に carenaviokinawa8181@gmail.com までお問い合わせください。</div>
     <!-- ▲▲▲ -->
   </section>
 
-  <!-- ===== 著作権 ===== -->
-  <section class="terms-section" id="copyright">
-    <div class="section-header">
-      <div class="section-num" style="font-size:0.65em;">©</div>
+  <!-- 著作権 -->
+  <section class="cn-section" id="copyright">
+    <div class="cn-sec-header">
+      <div class="cn-num">©</div>
       <h2>著作権・コンテンツの利用について</h2>
     </div>
-    <!-- ▼▼▼ 内容を自由に編集できます ▼▼▼ -->
+    <!-- ▼▼▼ 内容を編集できます ▼▼▼ -->
     <p>本サービスのウェブサイト・PDFブックレットに掲載されているすべてのコンテンツ（文章・デザイン・レイアウト・画像・ロゴ等）の著作権は、ケアナビ沖縄または各施設に帰属します。</p>
-
-    <h3 style="font-family:'Noto Serif JP',serif;font-size:1em;font-weight:700;color:var(--navy);margin:20px 0 10px;">ウェブサイトのコンテンツ</h3>
-    <ol class="terms-list">
+    <span class="cn-sub">ウェブサイトのコンテンツ</span>
+    <ol class="cn-list">
       <li>サイト上の文章・デザイン・構成の無断転載・複製・改変を禁じます。</li>
       <li>施設情報（住所・電話番号・空き状況等）を営利目的で収集・転用することを禁じます。</li>
       <li>個人的な閲覧・ケアマネージャーによる業務上の利用（利用者への情報共有等）は自由に行っていただけます。</li>
     </ol>
-
-    <h3 style="font-family:'Noto Serif JP',serif;font-size:1em;font-weight:700;color:var(--navy);margin:20px 0 10px;">施設紹介PDFブックレット</h3>
-    <div class="highlight-box">
-      PDFブックレットは各施設の紹介を目的として作成されています。以下の範囲内でご自由にお使いいただけます。
-    </div>
-    <ol class="terms-list">
+    <span class="cn-sub">施設紹介PDFブックレット</span>
+    <div class="cn-highlight">PDFブックレットは各施設の紹介を目的として作成されています。以下の範囲内でご自由にお使いいただけます。</div>
+    <ol class="cn-list">
       <li><strong>利用OK：</strong>掲載施設が自施設の紹介・広報のために印刷・配布・SNS掲載・ホームページ掲載に使用すること</li>
       <li><strong>利用OK：</strong>ケアマネージャーが利用者・ご家族への施設紹介資料として使用すること</li>
       <li><strong>利用OK：</strong>介護関係者が業務上の情報共有・比較検討のために使用すること</li>
@@ -595,32 +613,31 @@
       <li><strong>利用NG：</strong>ケアナビ沖縄または施設の許可なく商業目的で販売・転用すること</li>
       <li><strong>利用NG：</strong>PDFのデザイン・レイアウトを他サービスで無断使用すること</li>
     </ol>
-    <div class="alert-box">
-      上記の範囲を超えた利用を希望される場合は、事前に carenaviokinawa8181@gmail.com までご相談ください。
-    </div>
+    <div class="cn-alert">上記の範囲を超えた利用を希望される場合は、事前に carenaviokinawa8181@gmail.com までご相談ください。</div>
     <!-- ▲▲▲ -->
   </section>
 
-  <hr class="divider">
-  <div class="contact-section">
+  <hr class="cn-divider">
+
+  <div class="cn-contact">
     <h3>お問い合わせ先</h3>
     <!-- ▼▼▼ 連絡先を編集 ▼▼▼ -->
-    <div class="contact-grid">
-      <div class="contact-item">
-        <div class="label">サービス名</div>
-        <div class="value">ケアナビ沖縄</div>
+    <div class="cn-contact-grid">
+      <div class="cn-contact-item">
+        <span class="cn-clabel">サービス名</span>
+        <span class="cn-cval">ケアナビ沖縄</span>
       </div>
-      <div class="contact-item">
-        <div class="label">所在地</div>
-        <div class="value">沖縄県那覇市</div>
+      <div class="cn-contact-item">
+        <span class="cn-clabel">所在地</span>
+        <span class="cn-cval">沖縄県那覇市</span>
       </div>
-      <div class="contact-item">
-        <div class="label">メールアドレス</div>
-        <div class="value">carenaviokinawa8181@gmail.com</div>
+      <div class="cn-contact-item">
+        <span class="cn-clabel">メールアドレス</span>
+        <span class="cn-cval">carenaviokinawa8181@gmail.com</span>
       </div>
-      <div class="contact-item">
-        <div class="label">電話番号</div>
-        <div class="value">050-1792-8181</div>
+      <div class="cn-contact-item">
+        <span class="cn-clabel">電話番号</span>
+        <span class="cn-cval">050-1792-8181</span>
       </div>
     </div>
     <!-- ▲▲▲ -->
@@ -628,11 +645,8 @@
 
 </div>
 
-<!-- フッター -->
-<footer class="site-footer">
-  <!-- ▼▼▼ フッターの文言・リンクを編集 ▼▼▼ -->
+<footer class="cn-footer">
   <p>© 2026 ケアナビ沖縄　｜　<a href="index.html">トップページ</a></p>
-  <!-- ▲▲▲ -->
 </footer>
 
 </body>
