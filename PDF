@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:794px;height:1123px;overflow:hidden;font-family:'Noto Sans JP',sans-serif;background:#fff;}
+</style></head><body>
+<div style="position:relative;width:794px;height:1123px;background:#fff;overflow:hidden;">
+
+<!-- ① ヘッダー top:0 h:57px + border5 -->
+<div style="position:absolute;top:0;left:0;right:0;height:57px;background:linear-gradient(135deg,#4a7a5a,#6a9a78);border-bottom:5px solid #c8b860;padding:7px 16px;display:flex;justify-content:space-between;align-items:center;">
+  <div>
+    <div style="font-size:9px;color:rgba(220,255,220,0.75);letter-spacing:0.15em;font-weight:700;">デイサービス</div>
+    <div style="font-family:'Noto Serif JP',serif;font-size:21px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px;">デイサービスさんごの里</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end;max-width:310px;"><span style="font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;display:inline-block;background:#d8f0e4;border:2px solid #3a8a58;color:#1a4a2a;">🛁 入浴あり</span><span style="font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;display:inline-block;background:#fff0cc;border:2px solid #c8a030;color:#5a3a00;">🍱 食事提供</span><span style="font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;display:inline-block;background:#d8eef8;border:2px solid #3a7aaa;color:#1a3a5a;">🚐 送迎あり</span><span style="font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;display:inline-block;background:#f0ece4;border:2px solid #8a6a40;color:#3a2a10;">♿ 車椅子</span><span style="font-size:9px;font-weight:700;padding:3px 7px;border-radius:4px;white-space:nowrap;display:inline-block;background:#e8f0e4;border:2px solid #5a7a48;color:#2a3a18;">🧠 認知症対応</span></div>
+</div>
+
+<!-- ② 上段 top:68 h:308px -->
+<div style="position:absolute;top:68px;left:12px;right:12px;height:308px;display:flex;gap:10px;">
+
+  <!-- 左カラム 202px -->
+  <div style="width:202px;flex-shrink:0;height:308px;overflow:hidden;display:flex;flex-direction:column;gap:2px;">
+
+    <div style="font-size:10px;font-weight:700;color:#2a5a3a;padding:2px 7px;margin-bottom:2px;background:#e8f2ec;border-left:4px solid #4a7a5a;border-radius:0 3px 3px 0;">基本情報</div>
+    <table style="width:100%;border-collapse:collapse;border:1.5px solid #aacaaa;margin-bottom:2px;">
+      <tr style="border-bottom:1px solid #c8dcc8;"><td style="font-size:9px;color:#4a7a5a;font-weight:700;width:36px;padding:1px 4px;vertical-align:top;background:#f0f8f2;">住所</td><td style="font-size:10px;font-weight:600;color:#111;line-height:1.35;padding:1px 4px;">沖縄県那覇市首里金城町2-1-3</td></tr>
+      <tr style="border-bottom:1px solid #c8dcc8;"><td style="font-size:9px;color:#4a7a5a;font-weight:700;padding:1px 4px;background:#f0f8f2;">電話</td><td style="font-size:10px;font-weight:600;color:#111;padding:1px 4px;">098-123-4567</td></tr>
+      <tr style="border-bottom:1px solid #c8dcc8;"><td style="font-size:9px;color:#4a7a5a;font-weight:700;padding:1px 4px;background:#f0f8f2;">時間</td><td style="font-size:10px;font-weight:600;color:#111;padding:1px 4px;">9:00〜17:30</td></tr>
+      <tr><td style="font-size:9px;color:#4a7a5a;font-weight:700;padding:1px 4px;background:#f0f8f2;">定休日</td><td style="font-size:10px;font-weight:600;color:#111;padding:1px 4px;">日曜日・祝日</td></tr>
+    </table>
+
+    <div style="font-size:10px;font-weight:700;color:#2a5a3a;padding:2px 7px;margin-bottom:2px;background:#e8f2ec;border-left:4px solid #4a7a5a;border-radius:0 3px 3px 0;">対応状況</div>
+    <div style="padding:1px 4px;border:1px solid #b0ccb0;margin-bottom:2px;background:#f4f8f4;border-radius:3px;">
+      <div style="font-size:9px;color:#3a6a48;font-weight:700;margin-bottom:2px;">利用者区分</div>
+      <div style="display:flex;flex-wrap:wrap;gap:2px;"><span style="font-size:9px;background:#e0f0e8;border:1px solid #8abaa0;border-radius:3px;padding:1px 3px;color:#1a4a2a;">要支援1</span><span style="font-size:9px;background:#e0f0e8;border:1px solid #8abaa0;border-radius:3px;padding:1px 3px;color:#1a4a2a;">要支援2</span><span style="font-size:9px;background:#e0f0e8;border:1px solid #8abaa0;border-radius:3px;padding:1px 3px;color:#1a4a2a;">要介護1</span><span style="font-size:9px;background:#e0f0e8;border:1px solid #8abaa0;border-radius:3px;padding:1px 3px;color:#1a4a2a;">要介護2</span><span style="font-size:9px;background:#e0f0e8;border:1px solid #8abaa0;border-radius:3px;padding:1px 3px;color:#1a4a2a;">要介護3</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:3px;padding:1px 4px;border:1px solid #b0ccb0;margin-bottom:2px;background:#f4f8f4;border-radius:3px;"><span style="font-size:9px;color:#3a6a48;font-weight:700;min-width:34px;white-space:nowrap;">入浴</span><span style="color:#1a6a3a;font-weight:700;">◎</span> <span style="font-size:9px;">あり</span></div><div style="display:flex;align-items:center;gap:3px;padding:1px 4px;border:1px solid #b0ccb0;margin-bottom:2px;background:#f4f8f4;border-radius:3px;"><span style="font-size:9px;color:#3a6a48;font-weight:700;min-width:34px;white-space:nowrap;">送迎</span><span style="color:#1a6a3a;font-weight:700;">◎</span> <span style="font-size:9px;">あり</span></div><div style="display:flex;align-items:center;gap:3px;padding:1px 4px;border:1px solid #b0ccb0;margin-bottom:2px;background:#f4f8f4;border-radius:3px;"><span style="font-size:9px;color:#3a6a48;font-weight:700;min-width:34px;white-space:nowrap;">車椅子</span><span style="color:#1a6a3a;font-weight:700;">◎</span> <span style="font-size:9px;">対応可能</span></div>
+    <div style="padding:2px 4px;border:1px solid #b0ccb0;margin-bottom:2px;background:#f4f8f4;border-radius:3px;"><span style="font-size:9px;color:#3a6a48;font-weight:700;">医療行為　</span><span style="font-size:8px;color:#333;line-height:1.3;">胃ろう・経鼻経管栄養, インスリン・血糖測定</span></div>
+
+    <!-- 料金：flex-shrink:0で必ず表示 -->
+    <div style="flex-shrink:0;margin-top:3px;background:linear-gradient(135deg,#fffbee,#fff5d0);border:2px solid #c8b860;border-radius:5px;padding:4px 8px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#4a7a5a,#c8b860);"></div>
+      <div style="font-size:9px;color:#7a6820;font-weight:700;margin-bottom:1px;">１回利用時の費用</div>
+      <div style="font-family:'Noto Serif JP',serif;font-size:22px;font-weight:700;color:#3a2808;line-height:1;">850<span style="font-size:10px;color:#8a7830;">　円〜 / 日</span></div>
+      <div style="font-size:8px;color:#9a8a50;margin-top:1px;">※介護度・加算内容により異なります</div>
+    </div>
+
+  </div><!-- /左カラム -->
+
+  <!-- 右：写真 -->
+  <div style="flex:1;height:308px;min-width:0;">
+    <div style="border:3px solid #4a7a5a;border-radius:6px;overflow:hidden;width:100%;height:100%;"><div style="height:100%;display:flex;flex-direction:column;gap:3px;">
+<div style="height:58%;overflow:hidden;"><img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=600&q=80" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+<div style="height:calc(42% - 3px);display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+<div style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1576765608689-93a9b30e9d59?w=600&q=80" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+<div style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=600&q=80" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+</div></div></div>
+  </div>
+
+</div><!-- /上段 -->
+
+<!-- ③ 中段 top:382 h:185px -->
+<div style="position:absolute;top:382px;left:12px;right:12px;height:185px;display:grid;grid-template-columns:202px 1fr;gap:10px;">
+
+  <div style="background:#f4f8f4;border:2px solid #4a7a5a;border-radius:5px;padding:5px 8px;overflow:hidden;height:185px;">
+    <div style="font-size:10px;font-weight:700;color:#2a5a3a;padding:2px 7px;margin-bottom:2px;background:#e8f2ec;border-left:4px solid #4a7a5a;border-radius:0 3px 3px 0;">1日の流れ</div>
+    <div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">🌅</span><span style="color:#4a7a5a;font-weight:700;min-width:32px;flex-shrink:0;font-size:9px;">9:00</span><span style="font-size:10px;color:#1a3a28;">送迎</span></div><div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">🤸</span><span style="font-size:10px;color:#1a3a28;">健康チェック</span></div><div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">🛁</span><span style="color:#4a7a5a;font-weight:700;min-width:32px;flex-shrink:0;font-size:9px;">10:00</span><span style="font-size:10px;color:#1a3a28;">体操</span></div><div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">🍱</span><span style="font-size:10px;color:#1a3a28;">昼食</span></div><div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">🎨</span><span style="color:#4a7a5a;font-weight:700;min-width:32px;flex-shrink:0;font-size:9px;">13:00</span><span style="font-size:10px;color:#1a3a28;">レクリエーション</span></div><div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">☕</span><span style="color:#4a7a5a;font-weight:700;min-width:32px;flex-shrink:0;font-size:9px;">15:00</span><span style="font-size:10px;color:#1a3a28;">おやつ</span></div><div style="display:flex;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid #c8dcc8;"><span style="font-size:12px;flex-shrink:0;">🏠</span><span style="color:#4a7a5a;font-weight:700;min-width:32px;flex-shrink:0;font-size:9px;">16:30</span><span style="font-size:10px;color:#1a3a28;">送迎</span></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:3px;height:185px;overflow:hidden;">
+    <div style="flex:1.5;background:#fff;border:1.5px solid #aacaaa;border-left:6px solid #4a7a5a;border-radius:4px;padding:4px 10px;overflow:hidden;min-height:0;">
+      <div style="font-size:10px;font-weight:700;color:#2a5a3a;padding:2px 7px;margin-bottom:2px;background:#e8f2ec;border-left:4px solid #4a7a5a;border-radius:0 3px 3px 0;">施設の強み・特徴</div>
+      <div style="font-size:10px;color:#111;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;">理学療法士・作業療法士が常駐し、個別機能訓練を毎日実施。少人数制（定員12名）でアットホームな雰囲気を大切にしています。沖縄の伝統行事を取り入れたイベントも人気です。</div>
+    </div>
+    <div style="flex:1;background:#f4f8f4;border:1.5px solid #aacaaa;border-left:6px solid #c8b860;border-radius:4px;padding:4px 10px;overflow:hidden;min-height:0;">
+      <div style="font-size:10px;font-weight:700;color:#2a5a3a;padding:2px 7px;margin-bottom:2px;background:#e8f2ec;border-left:4px solid #4a7a5a;border-radius:0 3px 3px 0;">人気の行事・レクリエーション</div>
+      <div style="font-size:10px;color:#111;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">エイサー体験、花見ドライブ、ちんすこう作り、お誕生日会（毎月）、クリスマス会</div>
+    </div>
+    <div style="flex:0.9;background:linear-gradient(135deg,#fffbee,#fff8e0);border:1.5px solid #c8b860;border-radius:4px;padding:4px 10px;overflow:hidden;min-height:0;">
+      <div style="font-size:10px;font-weight:700;color:#2a5a3a;padding:2px 7px;margin-bottom:2px;background:#e8f2ec;border-left:4px solid #4a7a5a;border-radius:0 3px 3px 0;">施設からのひとこと</div>
+      <div style="font-size:10px;color:#111;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">「また来たい」と思える場所づくりを目指しています。お気軽に見学にお越しください！</div>
+    </div>
+  </div>
+
+</div><!-- /中段 -->
+
+<!-- ④ ケアマネ欄 top:573 h:488px -->
+<div style="position:absolute;top:573px;left:12px;right:12px;height:488px;background:#fff;border:2px solid #4a7a5a;border-radius:5px;padding:7px 12px;overflow:hidden;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;padding-bottom:4px;border-bottom:2px solid #c8b860;">
+    <span style="background:#4a7a5a;color:#fff8d0;font-size:10px;font-weight:700;padding:2px 10px;border-radius:3px;">ケアマネ記録欄</span>
+    <span style="font-size:10px;color:#555;">※ この欄はケアマネージャー・ご家族の記入用です</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 16px;">
+
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#3a6a48;padding:2px 0;margin:0 0 5px;border-bottom:2px solid #c8b860;">📅 体験利用の調整</div>
+      <div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">体験希望日</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">体験確定日</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">迎えの時間</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">帰りの時間</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">担当スタッフ名</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div>
+    </div>
+
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#3a6a48;padding:2px 0;margin:0 0 5px;border-bottom:2px solid #c8b860;">🎒 持ち物チェックリスト</div>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;"><div style="width:12px;height:12px;border:2px solid #4a7a5a;border-radius:2px;flex-shrink:0;"></div><span style="font-size:10px;color:#111;">タオル・バスタオル</span></div><div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;"><div style="width:12px;height:12px;border:2px solid #4a7a5a;border-radius:2px;flex-shrink:0;"></div><span style="font-size:10px;color:#111;">着替え（上下）</span></div><div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;"><div style="width:12px;height:12px;border:2px solid #4a7a5a;border-radius:2px;flex-shrink:0;"></div><span style="font-size:10px;color:#111;">室内履き</span></div><div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;"><div style="width:12px;height:12px;border:2px solid #4a7a5a;border-radius:2px;flex-shrink:0;"></div><span style="font-size:10px;color:#111;">お薬・薬手帳</span></div><div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;"><div style="width:12px;height:12px;border:2px solid #4a7a5a;border-radius:2px;flex-shrink:0;"></div><span style="font-size:10px;color:#111;">保険証・受給者証</span></div><div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;"><div style="width:12px;height:12px;border:2px solid #4a7a5a;border-radius:2px;flex-shrink:0;"></div><span style="font-size:10px;color:#111;">その他（　　　　）</span></div>
+      <div style="margin-top:6px;padding-top:5px;border-top:1px solid #c8dcc8;">
+        <div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:3px;">📝 申し送り・気になった点</div>
+        <div style="height:72px;border:1.5px solid #7aaa88;border-radius:3px;background:white;"></div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#3a6a48;padding:2px 0;margin:0 0 5px;border-bottom:2px solid #c8b860;">📞 利用開始・確認事項</div>
+      <div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">正式利用開始日</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">利用曜日・回数</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">担当スタッフ</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">食事形態・アレルギー</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div><div style="margin-bottom:5px;"><div style="font-size:10px;font-weight:700;color:#2a4a30;margin-bottom:1px;">緊急連絡先確認</div><div style="height:19px;border-bottom:1.5px solid #7aaa88;"></div></div>
+    </div>
+
+  </div>
+</div><!-- /ケアマネ -->
+
+<!-- ⑤ グラデ top:1061 -->
+<div style="position:absolute;top:1061px;left:0;right:0;height:4px;background:linear-gradient(90deg,#4a7a5a,#c8b860,#4a7a5a);"></div>
+
+<!-- ⑥ フッター top:1065 -->
+<div style="position:absolute;top:1065px;left:0;right:0;height:58px;background:#4a7a5a;display:flex;justify-content:space-between;align-items:center;padding:0 14px;">
+  <span style="font-size:8px;color:#c0d8c0;">© 2026 ケアナビ沖縄</span>
+  <span style="font-size:8px;color:#c0d8c0;">作成：ケアナビ沖縄</span>
+</div>
+
+</div></body></html>
