@@ -29,6 +29,9 @@
     --muted: #718096;
     --border: #e2e8f0;
     --shadow: 0 2px 20px rgba(0,0,0,0.07);
+    --blue: #2c5fa8;
+    --purple: #8b5cf6;
+    --purple-bg: #f1ebfd;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -69,12 +72,18 @@
   .facilities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
   .facility-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); animation: fadeUp 0.4s ease both; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .card-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+
+  /* ★ カードヘッダー：全体ステータス(空きあり/満員)バッジは廃止。
+     代わりに「種別バッジ」+ 控えめな更新日時を右側に表示 */
+  .card-header { padding: 12px 16px 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .card-name { font-size: 15px; font-weight: 900; }
-  .card-status { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-  .status-ok   { background: var(--green-bg);  color: var(--green); }
-  .status-few  { background: var(--orange-bg); color: var(--orange); }
-  .status-full { background: var(--red-bg);    color: var(--red); }
+  .card-header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .service-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .service-badge.day      { background: var(--primary-light); color: var(--primary); }
+  .service-badge.daycare  { background: #e3edfb; color: var(--blue); }
+  .service-badge.residential { background: var(--purple-bg); color: var(--purple); }
+  .updated-mini { font-size: 10px; color: #b0b8c0; }
+  .updated-mini.stale { color: var(--red); font-weight: 700; }
 
   .days-table { width: 100%; padding: 12px 16px; }
   .days-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
@@ -82,31 +91,42 @@
   .day-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
   .day-label.sat { color: #2563eb; }
   .day-label.sun { color: var(--red); }
-  .day-symbol { width: 38px; height: 38px; margin: 0 auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; }
+  /* ★ ○△×を一段階大きく */
+  .day-symbol { width: 42px; height: 42px; margin: 0 auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 19px; font-weight: 900; }
   .sym-ok     { background: #c6f0d4; color: #15803d; }
   .sym-few    { background: #fed7aa; color: #c2410c; }
   .sym-full   { background: #fecaca; color: #b91c1c; }
-  .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 12px; }
+  .sym-closed { background: #f1f5f9; color: #94a3b8; font-size: 13px; }
 
-  .card-biko { margin: 0 16px 8px; background: var(--primary-light); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--primary); font-weight: 500; line-height: 1.6; }
+  /* ★ 一言備考：曜日表の直下、20文字目安で1行に収まるよう省略表示 */
+  .card-biko {
+    margin: 0 16px 8px;
+    background: var(--primary-light);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 500;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  /* ★ 施設ごとの更新日時 */
-  .card-updated {
-    margin: 0 16px 10px;
-    font-size: 11px;
-    color: var(--muted);
-    display: flex;
+  /* ★ 対応状況バッジ：送迎・車椅子・医療行為(吸引/胃ろうは個別、残りは件数まとめ) */
+  .care-badges { margin: 0 16px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .care-badge {
+    display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
+    background: var(--green-bg);
+    color: var(--green);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 20px;
   }
-  .card-updated .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #68d391;
-    flex-shrink: 0;
-  }
-  .card-updated.stale .dot { background: #fc8181; }
-  .card-updated.stale { color: #e53e3e; }
+  .care-badge.warn { background: var(--red-bg); color: var(--red); }
 
   .card-footer { padding: 10px 16px 14px; display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 6px; }
 
@@ -316,7 +336,6 @@
     <div style="color:#fff;font-size:13px;font-weight:700;">ケアナビ沖縄</div>
     <a href="tel:050-1791-8181" style="color:#fff;font-size:13px;text-decoration:none;">📞 050-1791-8181</a>
     <a href="mailto:carenaviokinawa8181@gmail.com" style="color:#fff;font-size:13px;text-decoration:none;">📧 carenaviokinawa8181@gmail.com</a>
-    <!-- ★ 規約リンク追加 -->
     <a href="terms.html" style="color:rgba(255,255,255,0.65);font-size:12px;text-decoration:none;">利用規約・免責事項</a>
   </div>
 </footer>
@@ -335,29 +354,64 @@ function getSymClass(s) {
   if (s==='△') return 'sym-few';
   return 'sym-full';
 }
-function getOverallStatus(sym) {
-  const v = Object.values(sym);
-  if (v.includes('○')) return {label:'空きあり',   cls:'status-ok'};
-  if (v.includes('△')) return {label:'残りわずか', cls:'status-few'};
-  return {label:'満員', cls:'status-full'};
-}
 
-/* ★ 更新日時の表示テキストと「古い」判定
-   7日以上更新がない場合は赤ドットで警告 */
+/* ★ 更新日時：今までの全幅バナーから、ヘッダー右側の控えめな小文字表示に変更 */
 function formatUpdated(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr.replace(/\//g, '-'));
   if (isNaN(d)) return null;
   const now = new Date();
   const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-  // 表示文字列を短く整形（例：5月12日 09:30）
   const m = d.getMonth() + 1;
   const day = d.getDate();
   const hh = String(d.getHours()).padStart(2, '0');
   const mm = String(d.getMinutes()).padStart(2, '0');
-  const label = `${m}月${day}日 ${hh}:${mm} 更新`;
-  const stale = diffDays >= 7; // 7日以上古ければ警告
+  const label = `${m}/${day} ${hh}:${mm}更新`;
+  const stale = diffDays >= 7;
   return { label, stale };
+}
+
+/* ★ サービス種別バッジ
+   スプレッドシート側に「サービス種別」列(プルダウン)を追加した場合、
+   f.serviceType に値が入ってくる想定。未設定の施設は何も表示しない。 */
+function getServiceBadge(f) {
+  const type = f.serviceType || '';
+  if (type === 'デイケア') return '<span class="service-badge daycare">デイケア</span>';
+  if (type === '有料老人ホーム') return '<span class="service-badge residential">有料老人ホーム</span>';
+  if (type === 'デイサービス' || !type) return '<span class="service-badge day">デイサービス</span>';
+  return `<span class="service-badge day">${type}</span>`;
+}
+
+/* ★ 対応状況バッジ
+   送迎・車椅子は対応の有無で表示。
+   医療行為は「吸引」「胃ろう」を個別表示し、残りはまとめて「他n件」。 */
+function getCareBadges(f) {
+  const info = f.info || {};
+  const badges = [];
+
+  if (info.transfer && /あり|可/.test(info.transfer)) {
+    badges.push('<span class="care-badge">🚐 送迎あり</span>');
+  }
+  if (info.wheelchair) {
+    const ok = /あり|可能|対応|可/.test(info.wheelchair) && !/要相談/.test(info.wheelchair);
+    badges.push(ok
+      ? '<span class="care-badge">♿ 車椅子対応</span>'
+      : '<span class="care-badge warn">♿ 車椅子要相談</span>');
+  }
+
+  if (info.medical) {
+    // 「、」「,」「・」などで区切られた項目リストとして扱う
+    const items = info.medical.split(/[、,・\n]/).map(s => s.trim()).filter(Boolean);
+    const hasSuction = items.some(s => s.includes('吸引'));
+    const hasIro     = items.some(s => s.includes('胃ろう') || s.includes('経鼻'));
+    const others     = items.filter(s => !s.includes('吸引') && !s.includes('胃ろう') && !s.includes('経鼻') && !s.includes('医療行為対応なし'));
+
+    if (hasSuction) badges.push('<span class="care-badge">💊 吸引</span>');
+    if (hasIro)      badges.push('<span class="care-badge">💊 胃ろう</span>');
+    if (others.length > 0) badges.push(`<span class="care-badge">他${others.length}件</span>`);
+  }
+
+  return badges.join('');
 }
 
 /* お知らせ */
@@ -390,7 +444,6 @@ function renderFacilities(data) {
   }
 
   grid.innerHTML = allFacilities.map((f, idx) => {
-    const status = getOverallStatus(f.symbols);
     const isPaid = f.plan === '有料';
 
     const daysHTML = DAYS.map(d => {
@@ -399,15 +452,15 @@ function renderFacilities(data) {
       return `<div class="day-cell"><div class="day-label ${dc}">${d}</div><div class="day-symbol ${getSymClass(sym)}">${sym}</div></div>`;
     }).join('');
 
-    const biko = f.備考 ? `<div class="card-biko">📌 ${f.備考}</div>` : '';
+    const biko = f.備考 ? `<div class="card-biko" title="${f.備考}">📌 ${f.備考}</div>` : '';
+    const careBadges = getCareBadges(f);
+    const careHTML = careBadges ? `<div class="care-badges">${careBadges}</div>` : '';
 
-    // ★ 施設ごとの更新日時
     const upd = formatUpdated(f.更新日);
     const updHTML = upd
-      ? `<div class="card-updated${upd.stale ? ' stale' : ''}"><div class="dot"></div><span>${upd.label}${upd.stale ? '（要確認）' : ''}</span></div>`
+      ? `<span class="updated-mini${upd.stale ? ' stale' : ''}">${upd.label}${upd.stale ? '（要確認）' : ''}</span>`
       : '';
 
-    // ★ ボタン：詳細・NGは全プラン表示、PDF・地図は有料のみ
     const infoBtn = `<button class="btn btn-indigo" onclick="openInfo(${idx})">📋 詳細情報</button>`;
     const ngBtn = (isPaid && f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
     const pdfBtn  = (isPaid && f.pdfUrl)  ? `<a href="${f.pdfUrl}" target="_blank" class="btn btn-brown">📄 施設紹介PDF</a>` : '';
@@ -415,10 +468,16 @@ function renderFacilities(data) {
     const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
 
     return `<div class="facility-card" style="animation-delay:${idx*0.07}s">
-      <div class="card-header"><div class="card-name">${f.name}</div><div class="card-status ${status.cls}">${status.label}</div></div>
+      <div class="card-header">
+        <div class="card-name">${f.name}</div>
+        <div class="card-header-right">
+          ${getServiceBadge(f)}
+          ${updHTML}
+        </div>
+      </div>
       <div class="days-table"><div class="days-row">${daysHTML}</div></div>
       ${biko}
-      ${updHTML}
+      ${careHTML}
       <div class="card-footer">${infoBtn}${ngBtn}${pdfBtn}${mapBtn}${yBtn}</div>
     </div>`;
   }).join('');
