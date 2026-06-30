@@ -457,8 +457,8 @@ function renderFacilities(data) {
     const ngBtn = (isPaid && f.info && f.info.ng) ? `<button class="btn btn-red" onclick="openNg(${idx})">🚫 NG条件</button>` : '';
     const pdfBtn  = (isPaid && f.pdfUrl)  ? `<a href="${f.pdfUrl}" target="_blank" class="btn btn-brown">📄 施設紹介PDF</a>` : '';
 
-    // ★送迎範囲ボタン: My MapsのURLがあればそれを優先、無くても送迎範囲ポリゴンがあれば表示する
-    const hasMap = isPaid && (f.mapUrl || (f.sokeiPolygon && f.sokeiPolygon.length > 0));
+    // ★送迎範囲ボタン: My MapsのURLがあれば、または送迎範囲ポリゴンがあれば表示(プラン不問)
+    const hasMap = f.mapUrl || (f.sokeiPolygon && f.sokeiPolygon.length > 0);
     const mapBtn = hasMap ? `<button class="btn btn-green" onclick="openMap(${idx})">🗺 送迎範囲</button>` : '';
 
     const yBtn    = YOYAKU_URL ? `<a href="${YOYAKU_URL}" target="_blank" class="btn btn-blue">予約する</a>` : '';
@@ -554,6 +554,10 @@ function openMap(idx) {
   const iframeEl  = document.getElementById('map-iframe');
   const leafletEl = document.getElementById('map-leaflet');
 
+  // ★モーダルを先に表示してからLeafletを初期化する(非表示状態だとサイズ0で初期化され、
+  //   ズームが極端におかしくなる事故が起きるため)
+  document.getElementById('map-modal').classList.add('active');
+
   if (f.mapUrl) {
     // --- My Maps表示 ---
     leafletEl.style.display = 'none';
@@ -585,11 +589,14 @@ function openMap(idx) {
     }).addTo(leafletMapInstance);
     leafletMapInstance.fitBounds(polygon.getBounds(), { padding: [20, 20] });
 
-    // モーダル表示後にサイズを再計算(display:noneの状態で初期化されるとサイズがおかしくなるため)
-    setTimeout(() => { if (leafletMapInstance) leafletMapInstance.invalidateSize(); }, 100);
+    // モーダルが描画され終わったタイミングでサイズを再計算し、ズームも再調整する
+    setTimeout(() => {
+      if (leafletMapInstance) {
+        leafletMapInstance.invalidateSize();
+        leafletMapInstance.fitBounds(polygon.getBounds(), { padding: [20, 20] });
+      }
+    }, 150);
   }
-
-  document.getElementById('map-modal').classList.add('active');
 }
 function closeMap() {
   document.getElementById('map-modal').classList.remove('active');
