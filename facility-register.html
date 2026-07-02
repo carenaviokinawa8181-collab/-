@@ -1,30 +1,721 @@
 <!--
+  ============================================================
   事業所情報登録フォーム（GitHub Pages配置用・静的HTML版）
   ケアナビ沖縄
 
-  【使い方】
-  1. このファイルをそのままGitHub Pagesのリポジトリに追加する
-     （例: facility-register.html としてルート、または任意のフォルダに配置）
-  2. ページ下部のスクリプト部分にある POST_URL の値を、GASの
-     「デプロイを管理」で確認できる有効なウェブアプリURL（末尾が /exec）
-     に書き換える
-  3. git push すればそのまま公開される
+  【編集したいとき】
+  このファイルを開いて「編集はここだけでOK」というコメントの
+  ある範囲（ページ下のほうのスクリプト部分）だけを見てください。
+  項目名・選択肢・ヒント文・必須/任意・URL・電話番号などは
+  すべてそこにまとまっています。それより下のコードは表示や
+  送信の「仕組み」なので、基本さわらなくて大丈夫です。
+
+  【デプロイ方法】
+  1. GitHubのリポジトリにこのファイルをアップロード
+  2. 下記の POST_URL を、GASの「デプロイを管理」で確認できる
+     現在有効なURL（末尾が /exec）に書き換える
+  3. git push すれば公開される
 
   【裏側の仕組み】
-  - このページ自体はただの静的HTML・CSS・JSで、Googleアカウントとは無関係に
-    誰でも開けます（GASのexec URLを直接開く際に起きる「現在、ファイルを
-    開くことができません」エラーとは無縁です）
-  - 送信ボタンを押すと fetch() でGASの doPost にJSONをPOSTします。
-    実際のスプレッドシートへの書き込み処理はすべてGAS側（CareNavi_統合版.gs
-    の handleFacilityRegistPost_ 以降）が行います。ここは変更していません。
-  - 事業所名の重複チェックも同様に fetch() 経由でGASの doGet
-    （action=checkDuplicate）を呼び出しています。
-
-  【POST_URLが将来変わったら】
-  GASで「新しいデプロイ」を作るとURLが変わります。「新しいバージョン」で
-  更新していればURLは変わりません。もしURLが変わってしまった場合は、
-  このファイルの POST_URL を書き換えて git push するだけで直ります。
+  - このページ自体は静的HTMLなので、Googleアカウントとは無関係に
+    誰でも開けます。
+  - 送信ボタンを押すと fetch() でGASの doPost にJSONを送ります。
+    スプレッドシートへの書き込み処理はGAS側
+    （CareNavi_統合版.gs の handleFacilityRegistPost_ 以降）が
+    行っており、ここでは変更していません。
+  ============================================================
 -->
-<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>事業所情報登録フォーム | ケアナビ沖縄</title><style>:root{--s:#4a7a5a;--sd:#3a6a4a;--sp:#e8f2ec;--sc:#c8dcc8;--g:#c8b860;--t:#1a2a1f;--tm:#5a6a5f;--tl:#9aaa9f;--bg:#eef4f0;--er:#c03020;--eb:#fff0ee;}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--t);max-width:520px;margin:0 auto;padding-bottom:40px;}.hdr{background:linear-gradient(135deg,var(--sd),var(--s));padding:14px 18px 16px;border-bottom:4px solid var(--g);}.logo{font-size:12px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:6px;margin-bottom:4px;}.hdr-ttl{font-size:19px;font-weight:700;color:#fff;}.dbar{display:flex;justify-content:space-between;align-items:center;padding:6px 14px;background:var(--sp);border-bottom:1px solid var(--sc);font-size:11px;color:var(--tl);}.clr{background:none;border:none;color:var(--er);font-size:11px;cursor:pointer;}.prog{background:#fff;padding:14px 16px 10px;border-bottom:1px solid var(--sc);}.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}.prog-name{font-size:14px;font-weight:700;color:var(--sd);}.prog-cnt{font-size:12px;color:var(--tl);background:var(--sp);border-radius:20px;padding:3px 10px;}.dots{display:flex;gap:5px;}.dot{flex:1;height:5px;border-radius:3px;background:var(--sc);transition:background .3s;}.dot.done{background:var(--s);}.dot.active{background:var(--g);}.panel{display:none;padding:18px 14px;}.panel.on{display:block;}.sec{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:var(--sd);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--g);}.fld{margin-bottom:16px;}.lbl{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px;}.req{background:var(--er);color:#fff;font-size:10px;padding:1px 6px;border-radius:4px;font-weight:700;}.opt{background:var(--sc);color:var(--tm);font-size:10px;padding:1px 6px;border-radius:4px;font-weight:700;}.cnt-badge{color:var(--tl);font-size:11px;font-weight:400;}.hint{font-size:11px;color:var(--tl);margin-top:4px;line-height:1.5;}.emsg{font-size:11px;color:var(--er);margin-top:4px;display:none;}.emsg.on{display:block;}input[type=text],input[type=email],input[type=tel],textarea{width:100%;padding:11px 13px;border:2px solid var(--sc);border-radius:8px;font-size:15px;background:#fff;color:var(--t);font-family:inherit;transition:border-color .2s;-webkit-appearance:none;}input:focus,textarea:focus{outline:none;border-color:var(--s);}input.bad,textarea.bad{border-color:var(--er);background:var(--eb);}textarea{resize:vertical;min-height:70px;line-height:1.6;}.charcount{text-align:right;font-size:11px;color:var(--tl);margin-top:3px;}.rg{display:flex;flex-wrap:wrap;gap:7px;}.rb,.cb{display:none;}.rl{padding:9px 15px;border:2px solid var(--sc);border-radius:8px;font-size:13px;cursor:pointer;background:#fff;color:var(--tm);user-select:none;transition:all .15s;}.rb:checked+.rl,.cb:checked+.rl{background:var(--s);border-color:var(--sd);color:#fff;font-weight:700;}.other-input{margin-top:8px;display:none;}.group-bad .rl{border-color:var(--er);}.dupw{display:none;background:#fff7e6;border:2px solid var(--g);border-radius:8px;padding:9px 13px;font-size:12px;color:#7a5000;margin-top:5px;}.dupw.on{display:block;}.tosbox{background:#fff;border:2px solid var(--sc);border-radius:10px;padding:14px;margin-bottom:18px;}.tos-link{display:block;font-size:12px;color:var(--sd);background:var(--sp);padding:9px 11px;border-radius:7px;margin-bottom:10px;text-decoration:none;word-break:break-all;line-height:1.6;}.tos-check{display:flex;align-items:flex-start;gap:8px;cursor:pointer;}.tos-check input{margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--s);}.tos-check span{font-size:13px;font-weight:700;line-height:1.5;}.drop{border:2px dashed var(--sc);border-radius:10px;padding:22px;text-align:center;background:#fff;cursor:pointer;transition:all .2s;margin-bottom:12px;}.drop.over{border-color:var(--s);background:var(--sp);}.dz-ic{font-size:30px;margin-bottom:6px;}.dz-t{font-size:14px;font-weight:700;color:var(--tm);margin-bottom:3px;}.dz-h{font-size:11px;color:var(--tl);}.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}.pslot{position:relative;aspect-ratio:4/3;border:2px dashed var(--sc);border-radius:9px;background:#fff;overflow:hidden;cursor:pointer;transition:border-color .2s;}.pslot:hover,.pslot.over{border-color:var(--s);}.pslot.filled{border-style:solid;border-color:var(--s);cursor:default;}.pph{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:5px;color:var(--tl);}.pph-ic{font-size:26px;}.pph-n{font-size:11px;font-weight:700;color:var(--s);}.pph-t{font-size:11px;}.pimg{width:100%;height:100%;object-fit:cover;display:none;}.prm{position:absolute;top:5px;right:5px;width:22px;height:22px;background:rgba(180,30,20,.85);color:#fff;border:none;border-radius:50%;font-size:13px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;}.pslot.filled .pph{display:none;}.pslot.filled .pimg{display:block;}.pslot.filled .prm{display:flex;}.nav{display:flex;gap:9px;margin-top:22px;}.btn{flex:1;padding:15px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;}.btnP{background:var(--s);color:#fff;}.btnP:disabled{background:#aac4b4;cursor:not-allowed;}.btnS{background:#fff;color:var(--sd);border:2px solid var(--s);flex:0 0 auto;padding:15px 18px;}.subBtn{width:100%;padding:17px;background:var(--g);color:#1a1000;border:none;border-radius:11px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:18px;}.subBtn:disabled{opacity:.6;cursor:not-allowed;}.ov{display:none;position:fixed;inset:0;background:rgba(20,40,28,.75);z-index:200;align-items:center;justify-content:center;padding:16px;}.ov.on{display:flex;}.card{background:#fff;border-radius:18px;padding:28px 22px;text-align:center;max-width:360px;width:100%;max-height:90vh;overflow-y:auto;}.ci{font-size:52px;margin-bottom:12px;}.ct{font-size:21px;font-weight:700;color:var(--s);margin-bottom:10px;}.cb{font-size:14px;color:var(--tm);line-height:1.7;}.gu{margin-top:16px;padding:14px;border-radius:10px;text-align:left;}.gu-l{background:#e8f5e9;border:2px solid #4caf50;}.gu-m{background:#e3f2fd;border:2px solid #2196f3;}.gu-t{font-size:13px;font-weight:700;margin-bottom:7px;}.gu-b{font-size:13px;color:var(--tm);line-height:1.7;}.hp{position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none;}@keyframes spin{to{transform:rotate(360deg);}}.spin{display:inline-block;width:18px;height:18px;border:3px solid rgba(0,0,0,.15);border-top-color:#555;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px;}</style></head><body><div class="hp"><input type="text" id="_hp" tabindex="-1" autocomplete="off"></div><div class="hdr"><div class="logo"><span>🍀</span><span>ケアナビ沖縄</span></div><div class="hdr-ttl">事業所情報登録フォーム</div></div><div class="dbar"><span id="draftAt">下書きなし</span><button class="clr" onclick="clearDraft()">下書きを削除</button></div><div class="prog"><div class="prog-row"><span class="prog-name" id="sName">規約・連絡先</span><span class="prog-cnt" id="sCnt">1 / 5</span></div><div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div><div class="panel on" id="p0"><div class="sec"><span>📋</span>規約確認・基本情報</div><div class="tosbox"><a class="tos-link" href="https://carenaviokinawa8181-collab.github.io/terms.html" target="_top">掲載登録の前に、以下の規約をご確認ください。【規約・ポリシー確認ページ】<br>https://carenaviokinawa8181-collab.github.io/terms.html</a><label class="tos-check"><input type="checkbox" id="tos"><span>利用規約・各種ポリシーをすべて確認し、同意します</span></label><div class="emsg" id="e_tos">利用規約への同意が必要です</div></div><div class="fld"><div class="lbl">連絡方法 <span class="req">必須</span></div><div class="hint" style="margin-top:0;margin-bottom:6px;">空き状況を更新する際にURLを送ります。その受け取り先です。</div><div class="rg" id="grp_連絡方法"><input type="radio" class="rb" name="連絡方法" id="r_連絡方法_0" value="メール"><label class="rl" for="r_連絡方法_0">メール</label><input type="radio" class="rb" name="連絡方法" id="r_連絡方法_1" value="LINE"><label class="rl" for="r_連絡方法_1">LINE</label></div><div class="emsg" id="e_連絡方法">連絡方法を選択してください</div></div><div class="fld"><div class="lbl">事業所名 <span class="req">必須</span></div><input type="text" id="f_事業所名" placeholder="例：デイサービスさくら" maxlength="50"><div class="dupw" id="dupW">⚠️ この事業所名はすでに登録されています。変更はケアナビ運営にご連絡ください。</div><div class="emsg" id="e_事業所名">事業所名を入力してください</div></div><div class="fld"><div class="lbl">所在地（住所） <span class="req">必須</span></div><input type="text" id="f_所在地（住所）" placeholder="例：沖縄県那覇市おもろまち1-2-3"><div class="hint">📍 この住所から地図上のピンが自動設定されます</div><div class="emsg" id="e_所在地（住所）">所在地（住所）を入力してください</div></div><div class="fld"><div class="lbl">メールアドレス <span class="req">必須</span></div><input type="email" id="f_メールアドレス" placeholder="例：info@example.com"><div class="hint">仮予約が入った際に確認ができるメールアドレスでお願いします</div><div class="emsg" id="e_メールアドレス">メールアドレスを入力してください</div></div><div class="fld"><div class="lbl">電話番号 <span class="req">必須</span></div><input type="tel" id="f_電話番号" placeholder="例：098-123-4567"><div class="emsg" id="e_電話番号">電話番号を入力してください</div></div><div class="nav"><button class="btn btnP" onclick="nxt()">営業情報へ →</button></div></div><div class="panel" id="p1"><div class="sec"><span>🏥</span>営業情報</div><div class="fld"><div class="lbl">営業時間 <span class="req">必須</span></div><input type="text" id="f_営業時間" placeholder="例：9:00〜17:00"><div class="emsg" id="e_営業時間">営業時間を入力してください</div></div><div class="fld"><div class="lbl">定休日 <span class="req">必須</span></div><input type="text" id="f_定休日" placeholder="例：日曜・祝日"><div class="emsg" id="e_定休日">定休日を入力してください</div></div><div class="fld"><div class="lbl">１回利用時の費用 <span class="opt">任意</span></div><input type="text" id="f_１回利用時の費用" placeholder="例：1,500円〜"><div class="hint">昼食代など毎回かかる費用。空白にすると「お問い合わせください」と表示されます。</div><div class="emsg" id="e_１回利用時の費用">１回利用時の費用を入力してください</div></div><div class="fld"><div class="lbl">送迎の有無 <span class="req">必須</span></div><div class="rg" id="grp_送迎の有無"><input type="checkbox" class="cb" name="送迎の有無" id="c_送迎の有無_0" value="あり"><label class="rl" for="c_送迎の有無_0">あり</label><input type="checkbox" class="cb" name="送迎の有無" id="c_送迎の有無_1" value="なし"><label class="rl" for="c_送迎の有無_1">なし</label><input type="checkbox" class="cb" name="送迎の有無" id="c_送迎の有無_2" value="その他"><label class="rl" for="c_送迎の有無_2">その他</label></div><input type="text" class="other-input" id="other_送迎の有無" placeholder="その他の内容を入力してください"><div class="emsg" id="e_送迎の有無">送迎の有無を1つ以上選択してください</div></div><div class="fld"><div class="lbl">車椅子対応 <span class="req">必須</span></div><div class="rg" id="grp_車椅子対応"><input type="radio" class="rb" name="車椅子対応" id="r_車椅子対応_0" value="対応可能"><label class="rl" for="r_車椅子対応_0">対応可能</label><input type="radio" class="rb" name="車椅子対応" id="r_車椅子対応_1" value="不可"><label class="rl" for="r_車椅子対応_1">不可</label><input type="radio" class="rb" name="車椅子対応" id="r_車椅子対応_2" value="その他"><label class="rl" for="r_車椅子対応_2">その他</label></div><input type="text" class="other-input" id="other_車椅子対応" placeholder="その他の内容を入力してください"><div class="emsg" id="e_車椅子対応">車椅子対応を選択してください</div></div><div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button><button class="btn btnP" onclick="nxt()">対応状況へ →</button></div></div><div class="panel" id="p2"><div class="sec"><span>🩺</span>対応状況</div><div class="fld"><div class="lbl">利用可能な利用者 <span class="req">必須</span></div><div class="hint" style="margin-top:0;margin-bottom:6px;">対象介護度を全て選択お願いします。</div><div class="rg" id="grp_利用可能な利用者"><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_0" value="要支援"><label class="rl" for="c_利用可能な利用者_0">要支援</label><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_1" value="要介護1"><label class="rl" for="c_利用可能な利用者_1">要介護1</label><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_2" value="要介護2"><label class="rl" for="c_利用可能な利用者_2">要介護2</label><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_3" value="要介護3"><label class="rl" for="c_利用可能な利用者_3">要介護3</label><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_4" value="要介護4"><label class="rl" for="c_利用可能な利用者_4">要介護4</label><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_5" value="要介護5"><label class="rl" for="c_利用可能な利用者_5">要介護5</label><input type="checkbox" class="cb" name="利用可能な利用者" id="c_利用可能な利用者_6" value="その他"><label class="rl" for="c_利用可能な利用者_6">その他</label></div><input type="text" class="other-input" id="other_利用可能な利用者" placeholder="その他の内容を入力してください"><div class="emsg" id="e_利用可能な利用者">利用可能な利用者を1つ以上選択してください</div></div><div class="fld"><div class="lbl">入浴の有無 <span class="req">必須</span></div><div class="rg" id="grp_入浴の有無"><input type="checkbox" class="cb" name="入浴の有無" id="c_入浴の有無_0" value="ストレッチャー可能"><label class="rl" for="c_入浴の有無_0">ストレッチャー可能</label><input type="checkbox" class="cb" name="入浴の有無" id="c_入浴の有無_1" value="シャワーチェアー可能"><label class="rl" for="c_入浴の有無_1">シャワーチェアー可能</label><input type="checkbox" class="cb" name="入浴の有無" id="c_入浴の有無_2" value="入浴対応不可"><label class="rl" for="c_入浴の有無_2">入浴対応不可</label><input type="checkbox" class="cb" name="入浴の有無" id="c_入浴の有無_3" value="その他"><label class="rl" for="c_入浴の有無_3">その他</label></div><input type="text" class="other-input" id="other_入浴の有無" placeholder="その他の内容を入力してください"><div class="emsg" id="e_入浴の有無">入浴の有無を1つ以上選択してください</div></div><div class="fld"><div class="lbl">認知症対応 <span class="req">必須</span></div><div class="rg" id="grp_認知症対応"><input type="radio" class="rb" name="認知症対応" id="r_認知症対応_0" value="可能"><label class="rl" for="r_認知症対応_0">可能</label><input type="radio" class="rb" name="認知症対応" id="r_認知症対応_1" value="不可"><label class="rl" for="r_認知症対応_1">不可</label><input type="radio" class="rb" name="認知症対応" id="r_認知症対応_2" value="その他"><label class="rl" for="r_認知症対応_2">その他</label></div><input type="text" class="other-input" id="other_認知症対応" placeholder="その他の内容を入力してください"><div class="emsg" id="e_認知症対応">認知症対応を選択してください</div></div><div class="fld"><div class="lbl">精神疾患の利用者 <span class="req">必須</span></div><div class="rg" id="grp_精神疾患の利用者"><input type="radio" class="rb" name="精神疾患の利用者" id="r_精神疾患の利用者_0" value="可能"><label class="rl" for="r_精神疾患の利用者_0">可能</label><input type="radio" class="rb" name="精神疾患の利用者" id="r_精神疾患の利用者_1" value="不可"><label class="rl" for="r_精神疾患の利用者_1">不可</label><input type="radio" class="rb" name="精神疾患の利用者" id="r_精神疾患の利用者_2" value="その他"><label class="rl" for="r_精神疾患の利用者_2">その他</label></div><input type="text" class="other-input" id="other_精神疾患の利用者" placeholder="その他の内容を入力してください"><div class="emsg" id="e_精神疾患の利用者">精神疾患の利用者を選択してください</div></div><div class="fld"><div class="lbl">食事提供 <span class="req">必須</span></div><div class="rg" id="grp_食事提供"><input type="radio" class="rb" name="食事提供" id="r_食事提供_0" value="あり（嚥下食）対応可能"><label class="rl" for="r_食事提供_0">あり（嚥下食）対応可能</label><input type="radio" class="rb" name="食事提供" id="r_食事提供_1" value="なし"><label class="rl" for="r_食事提供_1">なし</label><input type="radio" class="rb" name="食事提供" id="r_食事提供_2" value="その他"><label class="rl" for="r_食事提供_2">その他</label></div><input type="text" class="other-input" id="other_食事提供" placeholder="その他の内容を入力してください"><div class="emsg" id="e_食事提供">食事提供を選択してください</div></div><div class="fld"><div class="lbl">対応可能な医療行為 <span class="req">必須</span></div><div class="rg" id="grp_対応可能な医療行為"><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_0" value="吸引"><label class="rl" for="c_対応可能な医療行為_0">吸引</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_1" value="胃ろう・経鼻経管栄養"><label class="rl" for="c_対応可能な医療行為_1">胃ろう・経鼻経管栄養</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_2" value="気切ケア"><label class="rl" for="c_対応可能な医療行為_2">気切ケア</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_3" value="在宅酸素"><label class="rl" for="c_対応可能な医療行為_3">在宅酸素</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_4" value="人工肛門"><label class="rl" for="c_対応可能な医療行為_4">人工肛門</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_5" value="インスリン・血糖測定"><label class="rl" for="c_対応可能な医療行為_5">インスリン・血糖測定</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_6" value="導尿・膀胱留置カテーテル管理"><label class="rl" for="c_対応可能な医療行為_6">導尿・膀胱留置カテーテル管理</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_7" value="医療行為対応なし"><label class="rl" for="c_対応可能な医療行為_7">医療行為対応なし</label><input type="checkbox" class="cb" name="対応可能な医療行為" id="c_対応可能な医療行為_8" value="その他"><label class="rl" for="c_対応可能な医療行為_8">その他</label></div><input type="text" class="other-input" id="other_対応可能な医療行為" placeholder="その他の内容を入力してください"><div class="emsg" id="e_対応可能な医療行為">対応可能な医療行為を1つ以上選択してください</div></div><div class="fld"><div class="lbl">受け入れNG条件 <span class="opt">任意</span><span class="cnt-badge">※50文字まで</span></div><textarea id="f_受け入れNG条件" rows="2" placeholder="例：胃ろう・たん吸引・暴力行為のある方はお断りしています" maxlength="50" oninput="updCnt(this,'受け入れNG条件')"></textarea><div class="charcount" id="cnt_受け入れNG条件">0 / 50文字</div><div class="hint">複数ある場合は「・」で区切って入力してください。</div><div class="emsg" id="e_受け入れNG条件">受け入れNG条件を入力してください</div></div><div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button><button class="btn btnP" onclick="nxt()">施設の紹介へ →</button></div></div><div class="panel" id="p3"><div class="sec"><span>⭐</span>施設の紹介</div><div class="fld"><div class="lbl">人気の行事・レクリエーション <span class="req">必須</span><span class="cnt-badge">※140文字まで</span></div><textarea id="f_人気の行事・レクリエーション" rows="3" placeholder="例：外出支援・カラオケ など" maxlength="140" oninput="updCnt(this,'人気の行事・レクリエーション')"></textarea><div class="charcount" id="cnt_人気の行事・レクリエーション">0 / 140文字</div><div class="emsg" id="e_人気の行事・レクリエーション">人気の行事・レクリエーションを入力してください</div></div><div class="fld"><div class="lbl">１日の流れ <span class="req">必須</span></div><textarea id="f_１日の流れ" rows="4" placeholder="例：8:30送迎 9:00検温 10:00リハビリ 12:00昼食 13:00レク 16:00帰宅"></textarea><div class="hint">箇条書きで大丈夫です。</div><div class="emsg" id="e_１日の流れ">１日の流れを入力してください</div></div><div class="fld"><div class="lbl">施設の強み・特徴 <span class="req">必須</span><span class="cnt-badge">※200文字まで</span></div><textarea id="f_施設の強み・特徴" rows="4" placeholder="例：栄養士在籍してます。個別リハあります。囲碁・将棋・麻雀あります。" maxlength="200" oninput="updCnt(this,'施設の強み・特徴')"></textarea><div class="charcount" id="cnt_施設の強み・特徴">0 / 200文字</div><div class="emsg" id="e_施設の強み・特徴">施設の強み・特徴を入力してください</div></div><div class="fld"><div class="lbl">施設からのひとこと <span class="req">必須</span><span class="cnt-badge">※140文字まで</span></div><textarea id="f_施設からのひとこと" rows="3" placeholder="" maxlength="140" oninput="updCnt(this,'施設からのひとこと')"></textarea><div class="charcount" id="cnt_施設からのひとこと">0 / 140文字</div><div class="emsg" id="e_施設からのひとこと">施設からのひとことを入力してください</div></div><div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button><button class="btn btnP" onclick="nxt()">施設写真へ →</button></div></div><div class="panel" id="p4"><div class="sec"><span>📷</span>施設写真（任意・最大4枚）</div><div class="hint" style="margin-bottom:10px;">リハビリ機器、食堂、スタッフの写真、施設の外見など、なんでも可能です。</div><div class="drop" id="dropZone"><div class="dz-ic">📤</div><div class="dz-t">写真をドラッグ＆ドロップ</div><div class="dz-h">または下の枠をタップして選択 / JPEG・PNG・WebP / 1枚5MBまで</div></div><input type="file" id="photoInput" style="display:none" multiple accept="image/jpeg,image/jpg,image/png,image/webp"><div class="pgrid"><div class="pslot" id="ps0" onclick="clickSlot(event,0)"><div class="pph"><div class="pph-ic">📷</div><div class="pph-n">写真①</div><div class="pph-t">タップして選択</div></div><img class="pimg" id="pi0"><button class="prm" onclick="rmPhoto(event,0)">✕</button></div><div class="pslot" id="ps1" onclick="clickSlot(event,1)"><div class="pph"><div class="pph-ic">📷</div><div class="pph-n">写真②</div><div class="pph-t">タップして選択</div></div><img class="pimg" id="pi1"><button class="prm" onclick="rmPhoto(event,1)">✕</button></div><div class="pslot" id="ps2" onclick="clickSlot(event,2)"><div class="pph"><div class="pph-ic">📷</div><div class="pph-n">写真③</div><div class="pph-t">タップして選択</div></div><img class="pimg" id="pi2"><button class="prm" onclick="rmPhoto(event,2)">✕</button></div><div class="pslot" id="ps3" onclick="clickSlot(event,3)"><div class="pph"><div class="pph-ic">📷</div><div class="pph-n">写真④</div><div class="pph-t">タップして選択</div></div><img class="pimg" id="pi3"><button class="prm" onclick="rmPhoto(event,3)">✕</button></div></div><div class="hint" style="margin-bottom:4px;">💡 写真は後からでも変更できます。まず登録を完了させてください。</div><div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button></div><button class="subBtn" id="subBtn" onclick="doSub()"><span id="subLbl">✅ この内容で登録する</span></button></div><div class="ov" id="ov"><div class="card"><div class="ci">🌿</div><div class="ct">ご登録完了！</div><div class="cb">ご登録ありがとうございます。<br>※ご選択いただいた連絡方法に応じて、以下をご確認ください。</div><div class="gu gu-l" id="guL" style="display:none"><div class="gu-t" style="color:#1b5e20">【LINEをご選択いただいた方】</div><div class="gu-b">①公式LINEを友だち追加してください。<br><a href="https://line.me/R/ti/p/@362hawrz" target="_top" style="color:#06c755;word-break:break-all;">https://line.me/R/ti/p/@362hawrz</a><br><br>②友だち追加後、トーク画面に「貴施設の事業所名」を、今回ご登録いただいた表記と<b>まったく同じ文字列</b>で送信してください。<br>（例：デイサービス〇〇）※今回は「<b id="fnD"></b>」<br><br>③自動返信で以下の2つのリンクが届きますので、それぞれご対応をお願いいたします。<br>・空き状況の入力フォーム<br>・送迎範囲（地図上で範囲を設定）の入力フォーム</div></div><div class="gu gu-m" id="guM" style="display:none"><div class="gu-t" style="color:#1565c0">【メールをご選択いただいた方】</div><div class="gu-b">ご登録後、ご入力いただいたメールアドレス宛にご案内メールをお送りします。<br><br>メール内に以下の2つのリンクを記載しておりますので、それぞれご対応をお願いいたします。<br>・空き状況の入力フォーム<br>・送迎範囲（地図上で範囲を設定）の入力フォーム<br><br>※メールが届かない場合は、迷惑メールフォルダもあわせてご確認ください。</div></div><div class="gu" style="background:#fdf8ee;border:2px solid #C9A24B;margin-top:14px;"><div class="gu-t" style="color:#7a5000;">★登録後、Webサイトに反映されているかご確認をお願いします★</div><div class="gu-b"><a href="https://carenaviokinawa8181-collab.github.io/-/" target="_top" style="color:#7a5000;word-break:break-all;">https://carenaviokinawa8181-collab.github.io/-/</a></div></div><div style="margin-top:16px;font-size:12px;color:var(--tm);line-height:1.9;text-align:left;">ご不明な点がございましたらご連絡ください。<br>📞 <a href="tel:0501791818" style="color:var(--tm);">050-1791-8181</a><br>📧 carenaviokinawa8181@gmail.com</div></div></div><script>/* ▼▼▼ ここにGASウェブアプリのURL（末尾が /exec のもの）を貼り付けてください ▼▼▼ */
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>事業所情報登録フォーム | ケアナビ沖縄</title>
+<style>
+:root{
+  --s:#4a7a5a; --sd:#3a6a4a; --sp:#e8f2ec; --sc:#c8dcc8; --g:#c8b860;
+  --t:#1a2a1f; --tm:#5a6a5f; --tl:#9aaa9f; --bg:#eef4f0; --er:#c03020; --eb:#fff0ee;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  background: var(--bg); color: var(--t);
+  max-width: 520px; margin: 0 auto; padding-bottom: 40px;
+}
+.hdr { background: linear-gradient(135deg, var(--sd), var(--s)); padding: 14px 18px 16px; border-bottom: 4px solid var(--g); }
+.logo { font-size: 12px; color: rgba(255,255,255,.75); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.hdr-ttl { font-size: 19px; font-weight: 700; color: #fff; }
+.dbar { display: flex; justify-content: space-between; align-items: center; padding: 6px 14px; background: var(--sp); border-bottom: 1px solid var(--sc); font-size: 11px; color: var(--tl); }
+.clr { background: none; border: none; color: var(--er); font-size: 11px; cursor: pointer; }
+.prog { background: #fff; padding: 14px 16px 10px; border-bottom: 1px solid var(--sc); }
+.prog-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.prog-name { font-size: 14px; font-weight: 700; color: var(--sd); }
+.prog-cnt { font-size: 12px; color: var(--tl); background: var(--sp); border-radius: 20px; padding: 3px 10px; }
+.dots { display: flex; gap: 5px; }
+.dot { flex: 1; height: 5px; border-radius: 3px; background: var(--sc); transition: background .3s; }
+.dot.done { background: var(--s); } .dot.active { background: var(--g); }
+.panel { display: none; padding: 18px 14px; }
+.panel.on { display: block; }
+.sec { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--sd); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--g); }
+.fld { margin-bottom: 16px; }
+.lbl { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px; font-weight: 700; color: var(--t); margin-bottom: 6px; }
+.req { background: var(--er); color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.opt { background: var(--sc); color: var(--tm); font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.cnt-badge { color: var(--tl); font-size: 11px; font-weight: 400; }
+.hint { font-size: 11px; color: var(--tl); margin-top: 4px; line-height: 1.5; }
+.emsg { font-size: 11px; color: var(--er); margin-top: 4px; display: none; }
+.emsg.on { display: block; }
+input[type=text], input[type=email], input[type=tel], textarea {
+  width: 100%; padding: 11px 13px; border: 2px solid var(--sc); border-radius: 8px;
+  font-size: 15px; background: #fff; color: var(--t); font-family: inherit;
+  transition: border-color .2s; -webkit-appearance: none;
+}
+input:focus, textarea:focus { outline: none; border-color: var(--s); }
+input.bad, textarea.bad { border-color: var(--er); background: var(--eb); }
+textarea { resize: vertical; min-height: 70px; line-height: 1.6; }
+.charcount { text-align: right; font-size: 11px; color: var(--tl); margin-top: 3px; }
+.rg { display: flex; flex-wrap: wrap; gap: 7px; }
+.rb, .cb { display: none; }
+.rl { padding: 9px 15px; border: 2px solid var(--sc); border-radius: 8px; font-size: 13px; cursor: pointer; background: #fff; color: var(--tm); user-select: none; transition: all .15s; }
+.rb:checked + .rl, .cb:checked + .rl { background: var(--s); border-color: var(--sd); color: #fff; font-weight: 700; }
+.other-input { margin-top: 8px; display: none; }
+.group-bad .rl { border-color: var(--er); }
+.dupw { display: none; background: #fff7e6; border: 2px solid var(--g); border-radius: 8px; padding: 9px 13px; font-size: 12px; color: #7a5000; margin-top: 5px; }
+.dupw.on { display: block; }
+.tosbox { background: #fff; border: 2px solid var(--sc); border-radius: 10px; padding: 14px; margin-bottom: 18px; }
+.tos-link { display: block; font-size: 12px; color: var(--sd); background: var(--sp); padding: 9px 11px; border-radius: 7px; margin-bottom: 10px; text-decoration: none; word-break: break-all; line-height: 1.6; }
+.tos-check { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+.tos-check input { margin-top: 2px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--s); }
+.tos-check span { font-size: 13px; font-weight: 700; line-height: 1.5; }
+.drop { border: 2px dashed var(--sc); border-radius: 10px; padding: 22px; text-align: center; background: #fff; cursor: pointer; transition: all .2s; margin-bottom: 12px; }
+.drop.over { border-color: var(--s); background: var(--sp); }
+.dz-ic { font-size: 30px; margin-bottom: 6px; }
+.dz-t { font-size: 14px; font-weight: 700; color: var(--tm); margin-bottom: 3px; }
+.dz-h { font-size: 11px; color: var(--tl); }
+.pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 14px; }
+.pslot { position: relative; aspect-ratio: 4/3; border: 2px dashed var(--sc); border-radius: 9px; background: #fff; overflow: hidden; cursor: pointer; transition: border-color .2s; }
+.pslot:hover, .pslot.over { border-color: var(--s); }
+.pslot.filled { border-style: solid; border-color: var(--s); cursor: default; }
+.pph { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 5px; color: var(--tl); }
+.pph-ic { font-size: 26px; } .pph-n { font-size: 11px; font-weight: 700; color: var(--s); } .pph-t { font-size: 11px; }
+.pimg { width: 100%; height: 100%; object-fit: cover; display: none; }
+.prm { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; background: rgba(180,30,20,.85); color: #fff; border: none; border-radius: 50%; font-size: 13px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
+.pslot.filled .pph { display: none; } .pslot.filled .pimg { display: block; } .pslot.filled .prm { display: flex; }
+.nav { display: flex; gap: 9px; margin-top: 22px; }
+.btn { flex: 1; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.btnP { background: var(--s); color: #fff; } .btnP:disabled { background: #aac4b4; cursor: not-allowed; }
+.btnS { background: #fff; color: var(--sd); border: 2px solid var(--s); flex: 0 0 auto; padding: 15px 18px; }
+.subBtn { width: 100%; padding: 17px; background: var(--g); color: #1a1000; border: none; border-radius: 11px; font-size: 17px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 18px; }
+.subBtn:disabled { opacity: .6; cursor: not-allowed; }
+.ov { display: none; position: fixed; inset: 0; background: rgba(20,40,28,.75); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+.ov.on { display: flex; }
+.card { background: #fff; border-radius: 18px; padding: 28px 22px; text-align: center; max-width: 360px; width: 100%; max-height: 90vh; overflow-y: auto; }
+.ci { font-size: 52px; margin-bottom: 12px; } .ct { font-size: 21px; font-weight: 700; color: var(--s); margin-bottom: 10px; } .cb { font-size: 14px; color: var(--tm); line-height: 1.7; }
+.gu { margin-top: 16px; padding: 14px; border-radius: 10px; text-align: left; }
+.gu-l { background: #e8f5e9; border: 2px solid #4caf50; } .gu-m { background: #e3f2fd; border: 2px solid #2196f3; }
+.gu-t { font-size: 13px; font-weight: 700; margin-bottom: 7px; } .gu-b { font-size: 13px; color: var(--tm); line-height: 1.7; }
+.hp { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(0,0,0,.15); border-top-color: #555; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle; margin-right: 6px; }
+</style>
+</head>
+<body>
+
+<div class="hp"><input type="text" id="_hp" tabindex="-1" autocomplete="off"></div>
+
+<div class="hdr">
+  <div class="logo"><span>🍀</span><span>ケアナビ沖縄</span></div>
+  <div class="hdr-ttl">事業所情報登録フォーム</div>
+</div>
+
+<div class="dbar">
+  <span id="draftAt">下書きなし</span>
+  <button class="clr" onclick="clearDraft()">下書きを削除</button>
+</div>
+
+<div class="prog">
+  <div class="prog-row">
+    <span class="prog-name" id="sName">規約・連絡先</span>
+    <span class="prog-cnt" id="sCnt">1 / 5</span>
+  </div>
+  <div class="dots">
+    <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+</div>
+
+<!-- 各ステップの中身はJSがCONFIGから自動で組み立てます。中身を編集したい場合は
+     このHTMLではなく、下のスクリプト部分にある CONFIG を編集してください。 -->
+<div class="panel on" id="p0"><div class="sec"><span>📋</span>規約確認・基本情報</div>
+  <div id="p0-fields"></div>
+  <div class="nav"><button class="btn btnP" onclick="nxt()">営業情報へ →</button></div>
+</div>
+
+<div class="panel" id="p1"><div class="sec"><span>🏥</span>営業情報</div>
+  <div id="p1-fields"></div>
+  <div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button><button class="btn btnP" onclick="nxt()">対応状況へ →</button></div>
+</div>
+
+<div class="panel" id="p2"><div class="sec"><span>🩺</span>対応状況</div>
+  <div id="p2-fields"></div>
+  <div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button><button class="btn btnP" onclick="nxt()">施設の紹介へ →</button></div>
+</div>
+
+<div class="panel" id="p3"><div class="sec"><span>⭐</span>施設の紹介</div>
+  <div id="p3-fields"></div>
+  <div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button><button class="btn btnP" onclick="nxt()">施設写真へ →</button></div>
+</div>
+
+<div class="panel" id="p4"><div class="sec"><span>📷</span>施設写真（任意・最大4枚）</div>
+  <div class="hint" style="margin-bottom:10px;">リハビリ機器、食堂、スタッフの写真、施設の外見など、なんでも可能です。</div>
+  <div class="drop" id="dropZone">
+    <div class="dz-ic">📤</div>
+    <div class="dz-t">写真をドラッグ＆ドロップ</div>
+    <div class="dz-h">または下の枠をタップして選択 / JPEG・PNG・WebP / 1枚5MBまで</div>
+  </div>
+  <input type="file" id="photoInput" style="display:none" multiple accept="image/jpeg,image/jpg,image/png,image/webp">
+  <div class="pgrid" id="photoGrid"></div>
+  <div class="hint" style="margin-bottom:4px;">💡 写真は後からでも変更できます。まず登録を完了させてください。</div>
+  <div class="nav"><button class="btn btnS" onclick="prv()">← 戻る</button></div>
+  <button class="subBtn" id="subBtn" onclick="doSub()"><span id="subLbl">✅ この内容で登録する</span></button>
+</div>
+
+<div class="ov" id="ov"><div class="card">
+  <div class="ci">🌿</div><div class="ct">ご登録完了！</div>
+  <div class="cb">ご登録ありがとうございます。<br>※ご選択いただいた連絡方法に応じて、以下をご確認ください。</div>
+
+  <div class="gu gu-l" id="guL" style="display:none">
+    <div class="gu-t" style="color:#1b5e20">【LINEをご選択いただいた方】</div>
+    <div class="gu-b" id="guL-body"></div>
+  </div>
+
+  <div class="gu gu-m" id="guM" style="display:none">
+    <div class="gu-t" style="color:#1565c0">【メールをご選択いただいた方】</div>
+    <div class="gu-b">ご登録後、ご入力いただいたメールアドレス宛にご案内メールをお送りします。<br><br>
+    メール内に以下の2つのリンクを記載しておりますので、それぞれご対応をお願いいたします。<br>
+    ・空き状況の入力フォーム<br>・送迎範囲（地図上で範囲を設定）の入力フォーム<br><br>
+    ※メールが届かない場合は、迷惑メールフォルダもあわせてご確認ください。</div>
+  </div>
+
+  <div class="gu" style="background:#fdf8ee;border:2px solid #C9A24B;margin-top:14px;">
+    <div class="gu-t" style="color:#7a5000;">★登録後、Webサイトに反映されているかご確認をお願いします★</div>
+    <div class="gu-b" id="guSite-body"></div>
+  </div>
+
+  <div style="margin-top:16px;font-size:12px;color:var(--tm);line-height:1.9;text-align:left;" id="guContact"></div>
+</div></div>
+
+<script>
+/* ================================================================
+   ▼▼▼▼▼  編集はここだけでOK（この先、「編集ここまで」まで）  ▼▼▼▼▼
+   項目の文言・選択肢・必須/任意・URL・電話番号などはすべてここにあります。
+   ================================================================ */
+
+// ---- 各種URL・連絡先 -------------------------------------------------
+// GASウェブアプリのURL（GASエディタ→デプロイ→デプロイを管理、で確認できる
+// 「/exec」で終わるURL）。ここが古いと送信できません。
 var POST_URL = "https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec";
-/* ▲▲▲ ここまで ▲▲▲ 「デプロイを管理」の一覧に表示されている現在有効なURLをコピーしてください。再デプロイでURLが変わった場合は、ここだけ書き換えてgit pushすればOKです。 */var REQ={"連絡方法":true,"事業所名":true,"所在地（住所）":true,"メールアドレス":true,"電話番号":true,"営業時間":true,"定休日":true,"１回利用時の費用":false,"送迎の有無":true,"車椅子対応":true,"利用可能な利用者":true,"入浴の有無":true,"認知症対応":true,"精神疾患の利用者":true,"食事提供":true,"対応可能な医療行為":true,"受け入れNG条件":false,"人気の行事・レクリエーション":true,"１日の流れ":true,"施設の強み・特徴":true,"施設からのひとこと":true};var TFIELDS=["事業所名","所在地（住所）","メールアドレス","電話番号","営業時間","定休日","１回利用時の費用"];var TAFIELDS=[{"id":"受け入れNG条件","maxlen":50},{"id":"人気の行事・レクリエーション","maxlen":140},{"id":"１日の流れ","maxlen":null},{"id":"施設の強み・特徴","maxlen":200},{"id":"施設からのひとこと","maxlen":140}];var RADIO_GROUPS={"連絡方法":["メール","LINE"],"車椅子対応":["対応可能","不可","その他"],"認知症対応":["可能","不可","その他"],"精神疾患の利用者":["可能","不可","その他"],"食事提供":["あり（嚥下食）対応可能","なし","その他"]};var CHECKBOX_GROUPS={"送迎の有無":["あり","なし","その他"],"利用可能な利用者":["要支援","要介護1","要介護2","要介護3","要介護4","要介護5","その他"],"入浴の有無":["ストレッチャー可能","シャワーチェアー可能","入浴対応不可","その他"],"対応可能な医療行為":["吸引","胃ろう・経鼻経管栄養","気切ケア","在宅酸素","人工肛門","インスリン・血糖測定","導尿・膀胱留置カテーテル管理","医療行為対応なし","その他"]};var STEPS=["規約・連絡先","営業情報","対応状況","施設の紹介","施設写真"];var DKEY="carenaviFacilityDraft";var ATYPES=["image/jpeg","image/jpg","image/png","image/webp"];var MAXSZ=5*1024*1024;var cur=0,photos=[null,null,null,null],sending=false,startTs=Date.now(),dupTimer=null;document.addEventListener("DOMContentLoaded",function(){setupOthers();loadDraft();setupDrop();setListeners();render();var ne=document.getElementById("f_事業所名");if(ne)ne.addEventListener("blur",function(){var n=this.value.trim();if(n){clearTimeout(dupTimer);dupTimer=setTimeout(function(){chkDup(n);},600);}});});function setupOthers(){Object.keys(RADIO_GROUPS).forEach(function(name){if(RADIO_GROUPS[name].indexOf("その他")===-1)return;document.querySelectorAll("input[name=\""+name+"\"]").forEach(function(r){r.addEventListener("change",function(){toggleOther(name,r.value==="その他");});});});Object.keys(CHECKBOX_GROUPS).forEach(function(name){if(CHECKBOX_GROUPS[name].indexOf("その他")===-1)return;document.querySelectorAll("input[name=\""+name+"\"]").forEach(function(c){c.addEventListener("change",function(){var otherBox=document.querySelector("input[name=\""+name+"\"][value=\"その他\"]");toggleOther(name,otherBox&&otherBox.checked);});});});}function toggleOther(name,show){var el=document.getElementById("other_"+name);if(!el)return;el.style.display=show?"block":"none";if(show)el.focus();else el.value="";}function render(){document.querySelectorAll(".dot").forEach(function(d,i){d.className="dot"+(i<cur?" done":i===cur?" active":"");});document.getElementById("sName").textContent=STEPS[cur];document.getElementById("sCnt").textContent=(cur+1)+" / "+STEPS.length;}function nxt(){if(!vld(cur))return;if(cur<STEPS.length-1){document.getElementById("p"+cur).classList.remove("on");cur++;document.getElementById("p"+cur).classList.add("on");render();window.scrollTo(0,0);saveDraft();}}function prv(){if(cur>0){document.getElementById("p"+cur).classList.remove("on");cur--;document.getElementById("p"+cur).classList.add("on");render();window.scrollTo(0,0);}}function gfv(id){var e=document.getElementById("f_"+id);return e?e.value.trim():"";}function gvr(n){var e=document.querySelector("input[name=\""+n+"\"]:checked");return e?e.value:"";}function updCnt(el,id){var c=document.getElementById("cnt_"+id);if(c)c.textContent=el.value.length+" / "+el.getAttribute("maxlength")+"文字";}function vld(step,silent){var ok=true;function chkText(id){var el=document.getElementById("f_"+id);var er=document.getElementById("e_"+id);if(REQ[id]&&!gfv(id)){if(el)el.classList.add("bad");if(er)er.classList.add("on");ok=false;}else{if(el)el.classList.remove("bad");if(er)er.classList.remove("on");}}function chkRadio(name){var er=document.getElementById("e_"+name);var grp=document.getElementById("grp_"+name);var has=gvr(name)!=="";if(REQ[name]&&!has){if(er)er.classList.add("on");if(grp)grp.classList.add("group-bad");ok=false;}else{if(er)er.classList.remove("on");if(grp)grp.classList.remove("group-bad");}}function chkCheckbox(name){var er=document.getElementById("e_"+name);var grp=document.getElementById("grp_"+name);var has=document.querySelectorAll("input[name=\""+name+"\"]:checked").length>0;if(REQ[name]&&!has){if(er)er.classList.add("on");if(grp)grp.classList.add("group-bad");ok=false;}else{if(er)er.classList.remove("on");if(grp)grp.classList.remove("group-bad");}}if(step===0){var tosEl=document.getElementById("tos");var tosEr=document.getElementById("e_tos");if(!tosEl.checked){if(tosEr)tosEr.classList.add("on");ok=false;}else{if(tosEr)tosEr.classList.remove("on");}chkRadio("連絡方法");chkText("事業所名");chkText("所在地（住所）");chkText("メールアドレス");chkText("電話番号");if(document.getElementById("dupW").classList.contains("on"))ok=false;}if(step===1){chkText("営業時間");chkText("定休日");chkCheckbox("送迎の有無");chkRadio("車椅子対応");}if(step===2){chkCheckbox("利用可能な利用者");chkCheckbox("入浴の有無");chkRadio("認知症対応");chkRadio("精神疾患の利用者");chkRadio("食事提供");chkCheckbox("対応可能な医療行為");}if(step===3){chkText("人気の行事・レクリエーション");chkText("１日の流れ");chkText("施設の強み・特徴");chkText("施設からのひとこと");}if(!ok&&!silent){var fe=document.querySelector(".bad,.emsg.on");if(fe)fe.scrollIntoView({behavior:"smooth",block:"center"});}return ok;}function chkDup(name){fetch(POST_URL+"?action=checkDuplicate&name="+encodeURIComponent(name)).then(function(r){return r.json();}).then(function(d){var w=document.getElementById("dupW");var el=document.getElementById("f_事業所名");if(d.exists){w.classList.add("on");if(el)el.classList.add("bad");}else{w.classList.remove("on");if(el)el.classList.remove("bad");}}).catch(function(){});}function clickSlot(e,i){if(photos[i])return;e.stopPropagation();var inp=document.createElement("input");inp.type="file";inp.accept="image/jpeg,image/jpg,image/png,image/webp";inp.onchange=function(ev){addFiles(Array.from(ev.target.files));};inp.click();}function addFiles(files){for(var i=0;i<files.length;i++){var f=files[i];if(ATYPES.indexOf(f.type)===-1){alert(f.name+" はJPEG/PNG/WebPのみ対応です");continue;}if(f.size>MAXSZ){alert(f.name+" は5MBを超えています（"+(f.size/1024/1024).toFixed(1)+"MB）");continue;}var si=photos.indexOf(null);if(si===-1){alert("写真は最大4枚です");break;}(function(si2,fl){var rd=new FileReader();rd.onload=function(ev){photos[si2]={data:ev.target.result,type:fl.type};document.getElementById("pi"+si2).src=ev.target.result;document.getElementById("ps"+si2).classList.add("filled");};rd.readAsDataURL(fl);})(si,f);}document.getElementById("photoInput").value="";}function rmPhoto(e,i){e.stopPropagation();photos[i]=null;document.getElementById("pi"+i).src="";document.getElementById("ps"+i).classList.remove("filled");}function setupDrop(){var dz=document.getElementById("dropZone");dz.addEventListener("dragover",function(e){e.preventDefault();dz.classList.add("over");});dz.addEventListener("dragleave",function(){dz.classList.remove("over");});dz.addEventListener("drop",function(e){e.preventDefault();dz.classList.remove("over");addFiles(Array.from(e.dataTransfer.files));});dz.addEventListener("click",function(){document.getElementById("photoInput").click();});document.getElementById("photoInput").addEventListener("change",function(e){addFiles(Array.from(e.target.files));});for(var i=0;i<4;i++){(function(idx){var sl=document.getElementById("ps"+idx);sl.addEventListener("dragover",function(e){e.preventDefault();if(!photos[idx])sl.classList.add("over");});sl.addEventListener("dragleave",function(){sl.classList.remove("over");});sl.addEventListener("drop",function(e){e.preventDefault();sl.classList.remove("over");if(photos[idx])return;var f=Array.from(e.dataTransfer.files);if(f.length)addFiles([f[0]]);});})(i);}}function saveDraft(){var d={};TFIELDS.forEach(function(id){var el=document.getElementById("f_"+id);if(el)d["t_"+id]=el.value;});TAFIELDS.forEach(function(o){var el=document.getElementById("f_"+o.id);if(el)d["t_"+o.id]=el.value;});Object.keys(RADIO_GROUPS).forEach(function(n){d["r_"+n]=gvr(n);var o=document.getElementById("other_"+n);if(o)d["ro_"+n]=o.value;});Object.keys(CHECKBOX_GROUPS).forEach(function(n){d["c_"+n]=Array.from(document.querySelectorAll("input[name=\""+n+"\"]:checked")).map(function(x){return x.value;});var o=document.getElementById("other_"+n);if(o)d["co_"+n]=o.value;});d._ts=Date.now();try{localStorage.setItem(DKEY,JSON.stringify(d));var now=new Date();document.getElementById("draftAt").textContent="下書き保存済み "+now.getHours()+":"+String(now.getMinutes()).padStart(2,"0");}catch(e){}}function loadDraft(){try{var raw=localStorage.getItem(DKEY);if(!raw)return;var d=JSON.parse(raw);TFIELDS.forEach(function(id){if(d["t_"+id]!==undefined){var el=document.getElementById("f_"+id);if(el)el.value=d["t_"+id];}});TAFIELDS.forEach(function(o){if(d["t_"+o.id]!==undefined){var el=document.getElementById("f_"+o.id);if(el){el.value=d["t_"+o.id];updCnt(el,o.id);}}});Object.keys(RADIO_GROUPS).forEach(function(n){if(d["r_"+n]){document.querySelectorAll("input[name=\""+n+"\"]").forEach(function(el){if(el.value===d["r_"+n])el.checked=true;});if(d["r_"+n]==="その他"){var o=document.getElementById("other_"+n);if(o&&d["ro_"+n]){o.value=d["ro_"+n];o.style.display="block";}}}});Object.keys(CHECKBOX_GROUPS).forEach(function(n){var vals=d["c_"+n]||[];document.querySelectorAll("input[name=\""+n+"\"]").forEach(function(el){if(vals.indexOf(el.value)!==-1)el.checked=true;});if(vals.indexOf("その他")!==-1){var o=document.getElementById("other_"+n);if(o&&d["co_"+n]){o.value=d["co_"+n];o.style.display="block";}}});if(d._ts){var dt=new Date(d._ts);document.getElementById("draftAt").textContent="下書き保存済み "+(dt.getMonth()+1)+"/"+dt.getDate()+" "+dt.getHours()+":"+String(dt.getMinutes()).padStart(2,"0");}}catch(e){}}function clearDraft(){if(!confirm("下書きを削除しますか？入力内容が消えます。"))return;try{localStorage.removeItem(DKEY);}catch(e){}location.reload();}function setListeners(){TFIELDS.forEach(function(id){var el=document.getElementById("f_"+id);if(el)el.addEventListener("change",saveDraft);});TAFIELDS.forEach(function(o){var el=document.getElementById("f_"+o.id);if(el)el.addEventListener("change",saveDraft);});document.querySelectorAll("input[type=radio],input[type=checkbox]").forEach(function(el){if(el.id!=="tos")el.addEventListener("change",saveDraft);});}function collect(){var d={};TFIELDS.forEach(function(id){d[id]=gfv(id);});TAFIELDS.forEach(function(o){d[o.id]=gfv(o.id);});Object.keys(RADIO_GROUPS).forEach(function(name){var val=gvr(name);if(val==="その他"){var ot=document.getElementById("other_"+name);val=ot?ot.value.trim():"";}d[name]=val;});Object.keys(CHECKBOX_GROUPS).forEach(function(name){var boxes=document.querySelectorAll("input[name=\""+name+"\"]:checked");var vals=[];boxes.forEach(function(b){if(b.value==="その他"){var ot=document.getElementById("other_"+name);var t=ot?ot.value.trim():"";if(t)vals.push(t);}else{vals.push(b.value);}});d[name]=vals.join("、");});return d;}async function doSub(){if(sending)return;for(var s=0;s<4;s++){if(!vld(s,true)){document.getElementById("p"+cur).classList.remove("on");cur=s;document.getElementById("p"+cur).classList.add("on");render();window.scrollTo(0,0);vld(s);return;}}sending=true;var btn=document.getElementById("subBtn"),lbl=document.getElementById("subLbl");btn.disabled=true;lbl.innerHTML="<span class=\"spin\"></span>送信しています...";var data=collect();var pData=photos.filter(function(p){return p!==null;}).map(function(p){return{data:p.data,type:p.type};});var hp=document.getElementById("_hp")?document.getElementById("_hp").value:"";var tos=document.getElementById("tos").checked;try{var res=await fetch(POST_URL,{method:"POST",body:JSON.stringify({action:"facilityRegist",data:data,photos:pData,tos:tos,_hp:hp,_ts:startTs}),headers:{"Content-Type":"text/plain;charset=utf-8"}});var result=await res.json();if(result.status==="ok"){try{localStorage.removeItem(DKEY);}catch(e){}var m=data["連絡方法"];document.getElementById("guL").style.display=m==="LINE"?"block":"none";document.getElementById("guM").style.display=m==="メール"?"block":"none";document.getElementById("fnD").textContent=data["事業所名"];document.getElementById("ov").classList.add("on");}else if(result.status==="duplicate"){alert(result.message||"この事業所名はすでに登録されています。");document.getElementById("p"+cur).classList.remove("on");cur=0;document.getElementById("p0").classList.add("on");render();window.scrollTo(0,0);document.getElementById("dupW").classList.add("on");var ne=document.getElementById("f_事業所名");if(ne)ne.classList.add("bad");}else{alert("送信に失敗しました。\n\n"+(result.message||"不明なエラー")+"\n\nケアナビ運営（050-1791-8181）にご連絡ください。");}}catch(err){alert("通信エラーが発生しました。\n\n"+err.message+"\n\nケアナビ運営（050-1791-8181）にご連絡ください。");}finally{sending=false;btn.disabled=false;lbl.innerHTML="✅ この内容で登録する";}}</script></body></html>
+
+// 利用規約・プライバシーポリシーのページURL
+var TERMS_URL = "https://carenaviokinawa8181-collab.github.io/-/terms.html";
+
+// ケアナビ沖縄 公式LINEのURL（友だち追加用リンク）
+var LINE_OA_URL = "https://line.me/R/ti/p/@362hawrz";
+
+// ケアナビ沖縄のサイトURL（掲載確認用として登録完了画面に表示）
+var SITE_URL = "https://carenaviokinawa8181-collab.github.io/-/";
+
+// 電話番号・メールアドレス（登録完了画面などに表示）
+var ADMIN_TEL = "050-1791-8181";
+var ADMIN_TEL_LINK = "0501791818"; // tel:リンク用（ハイフンなし）
+var ADMIN_EMAIL = "carenaviokinawa8181@gmail.com";
+
+// ---- ステップのタイトル（進捗バーに表示される文字） -------------------
+var STEP_TITLES = ["規約・連絡先", "営業情報", "対応状況", "施設の紹介", "施設写真"];
+
+// ---- フォーム項目の定義 -----------------------------------------------
+// kind: 'text'（1行入力） / 'textarea'（複数行） / 'radio'（単一選択） / 'checkbox'（複数選択）
+// id: 項目名。スプレッドシートの列名としてもそのまま使われるので、
+//     変更する場合はスプレッドシート側の列名も合わせて変える必要があります。
+// required: false を書かなければ自動的に必須項目になります
+// options に 'その他' を含めると、選んだ時に自由記述欄が自動で出ます
+//
+// STEP_FIELDS は5つの配列（ステップ0〜4）でできています。
+// ステップ4（施設写真）は特別な作りなのでここには含めません。
+
+var STEP_FIELDS = [
+
+  // ── ステップ0: 規約確認・基本情報 ──
+  [
+    { kind:'radio', id:'連絡方法', options:['メール','LINE'],
+      hint:'空き状況を更新する際にURLを送ります。その受け取り先です。' },
+    { kind:'text', id:'事業所名', type:'text', placeholder:'例：デイサービスさくら',
+      maxlength:50, dupCheck:true },
+    { kind:'text', id:'所在地（住所）', type:'text', placeholder:'例：沖縄県那覇市おもろまち1-2-3',
+      hint:'📍 この住所から地図上のピンが自動設定されます' },
+    { kind:'text', id:'メールアドレス', type:'email', placeholder:'例：info@example.com',
+      hint:'仮予約が入った際に確認ができるメールアドレスでお願いします' },
+    { kind:'text', id:'電話番号', type:'tel', placeholder:'例：098-123-4567' },
+  ],
+
+  // ── ステップ1: 営業情報 ──
+  [
+    { kind:'text', id:'営業時間', type:'text', placeholder:'例：9:00〜17:00' },
+    { kind:'text', id:'定休日', type:'text', placeholder:'例：日曜・祝日' },
+    { kind:'text', id:'１回利用時の費用', type:'text', placeholder:'例：1,500円〜',
+      hint:'昼食代など毎回かかる費用。空白にすると「お問い合わせください」と表示されます。',
+      required:false },
+    { kind:'checkbox', id:'送迎の有無', options:['あり','なし','その他'] },
+    { kind:'radio', id:'車椅子対応', options:['対応可能','不可','その他'] },
+  ],
+
+  // ── ステップ2: 対応状況 ──
+  [
+    { kind:'checkbox', id:'利用可能な利用者',
+      options:['要支援','要介護1','要介護2','要介護3','要介護4','要介護5','その他'],
+      hint:'対象介護度を全て選択お願いします。' },
+    { kind:'checkbox', id:'入浴の有無',
+      options:['ストレッチャー可能','シャワーチェアー可能','入浴対応不可','その他'] },
+    { kind:'radio', id:'認知症対応', options:['可能','不可','その他'] },
+    { kind:'radio', id:'精神疾患の利用者', options:['可能','不可','その他'] },
+    { kind:'radio', id:'食事提供', options:['あり（嚥下食）対応可能','なし','その他'] },
+    { kind:'checkbox', id:'対応可能な医療行為',
+      options:['吸引','胃ろう・経鼻経管栄養','気切ケア','在宅酸素','人工肛門',
+               'インスリン・血糖測定','導尿・膀胱留置カテーテル管理','医療行為対応なし','その他'] },
+    { kind:'textarea', id:'受け入れNG条件', maxlength:50, rows:2,
+      placeholder:'例：胃ろう・たん吸引・暴力行為のある方はお断りしています',
+      hint:'複数ある場合は「・」で区切って入力してください。', required:false },
+  ],
+
+  // ── ステップ3: 施設の紹介 ──
+  [
+    { kind:'textarea', id:'人気の行事・レクリエーション', maxlength:140, rows:3,
+      placeholder:'例：外出支援・カラオケ など' },
+    { kind:'textarea', id:'１日の流れ', rows:4,
+      placeholder:'例：8:30送迎 9:00検温 10:00リハビリ 12:00昼食 13:00レク 16:00帰宅',
+      hint:'箇条書きで大丈夫です。' },
+    { kind:'textarea', id:'施設の強み・特徴', maxlength:200, rows:4,
+      placeholder:'例：栄養士在籍してます。個別リハあります。囲碁・将棋・麻雀あります。' },
+    { kind:'textarea', id:'施設からのひとこと', maxlength:140, rows:3, placeholder:'' },
+  ],
+];
+
+/* ================================================================
+   ▲▲▲▲▲  編集ここまで。この下は表示・送信の仕組みなので基本さわらなくてOK  ▲▲▲▲▲
+   ================================================================ */
+</script>
+
+<script>
+/* ---- ここから下は表示・送信の仕組み。編集は非推奨 --------------------- */
+
+var TOS_TEXT_LINK = '掲載登録の前に、以下の規約をご確認ください。【規約・ポリシー確認ページ】<br>' + TERMS_URL;
+
+var ATYPES = ["image/jpeg","image/jpg","image/png","image/webp"];
+var MAXSZ = 5 * 1024 * 1024;
+var DKEY = "carenaviFacilityDraft";
+var cur = 0, photos = [null,null,null,null], sending = false, startTs = Date.now(), dupTimer = null;
+
+// STEP_FIELDSから種類別のショートカット一覧を自動生成（CONFIGを二重管理しないため）
+var TFIELDS = [], TAFIELDS = [], RADIO_GROUPS = {}, CHECKBOX_GROUPS = {};
+STEP_FIELDS.forEach(function(step){
+  step.forEach(function(f){
+    if (f.required === undefined) f.required = true;
+    if (f.kind === 'text') TFIELDS.push(f);
+    else if (f.kind === 'textarea') TAFIELDS.push(f);
+    else if (f.kind === 'radio') RADIO_GROUPS[f.id] = f;
+    else if (f.kind === 'checkbox') CHECKBOX_GROUPS[f.id] = f;
+  });
+});
+
+// ---- 描画ヘルパー ----
+function reqBadge(required){ return '<span class="' + (required ? 'req">必須' : 'opt">任意') + '</span>'; }
+
+function renderTextField(f){
+  return '<div class="fld"><div class="lbl">' + f.id + ' ' + reqBadge(f.required) + '</div>'
+    + '<input type="' + f.type + '" id="f_' + f.id + '" placeholder="' + (f.placeholder||'') + '"'
+    + (f.maxlength ? ' maxlength="' + f.maxlength + '"' : '') + '>'
+    + (f.dupCheck ? '<div class="dupw" id="dupW">⚠️ この事業所名はすでに登録されています。変更はケアナビ運営にご連絡ください。</div>' : '')
+    + (f.hint ? '<div class="hint">' + f.hint + '</div>' : '')
+    + '<div class="emsg" id="e_' + f.id + '">' + f.id + 'を入力してください</div></div>';
+}
+
+function renderTextareaField(f){
+  return '<div class="fld"><div class="lbl">' + f.id + ' ' + reqBadge(f.required)
+    + (f.maxlen ? '<span class="cnt-badge">※' + f.maxlen + '文字まで</span>' : '') + '</div>'
+    + '<textarea id="f_' + f.id + '" rows="' + (f.rows||3) + '" placeholder="' + (f.placeholder||'') + '"'
+    + (f.maxlen ? ' maxlength="' + f.maxlen + '" oninput="updCnt(this,\'' + f.id + '\')"' : '') + '></textarea>'
+    + (f.maxlen ? '<div class="charcount" id="cnt_' + f.id + '">0 / ' + f.maxlen + '文字</div>' : '')
+    + (f.hint ? '<div class="hint">' + f.hint + '</div>' : '')
+    + '<div class="emsg" id="e_' + f.id + '">' + f.id + 'を入力してください</div></div>';
+}
+
+function renderRadioGroup(f){
+  var h = '<div class="fld"><div class="lbl">' + f.id + ' ' + reqBadge(f.required) + '</div>'
+    + (f.hint ? '<div class="hint" style="margin-top:0;margin-bottom:6px;">' + f.hint + '</div>' : '')
+    + '<div class="rg" id="grp_' + f.id + '">';
+  f.options.forEach(function(opt, i){
+    var id = 'r_' + f.id + '_' + i;
+    h += '<input type="radio" class="rb" name="' + f.id + '" id="' + id + '" value="' + opt + '">'
+      + '<label class="rl" for="' + id + '">' + opt + '</label>';
+  });
+  h += '</div>';
+  if (f.options.indexOf('その他') !== -1) {
+    h += '<input type="text" class="other-input" id="other_' + f.id + '" placeholder="その他の内容を入力してください">';
+  }
+  h += '<div class="emsg" id="e_' + f.id + '">' + f.id + 'を選択してください</div></div>';
+  return h;
+}
+
+function renderCheckboxGroup(f){
+  var h = '<div class="fld"><div class="lbl">' + f.id + ' ' + reqBadge(f.required) + '</div>'
+    + (f.hint ? '<div class="hint" style="margin-top:0;margin-bottom:6px;">' + f.hint + '</div>' : '')
+    + '<div class="rg" id="grp_' + f.id + '">';
+  f.options.forEach(function(opt, i){
+    var id = 'c_' + f.id + '_' + i;
+    h += '<input type="checkbox" class="cb" name="' + f.id + '" id="' + id + '" value="' + opt + '">'
+      + '<label class="rl" for="' + id + '">' + opt + '</label>';
+  });
+  h += '</div>';
+  if (f.options.indexOf('その他') !== -1) {
+    h += '<input type="text" class="other-input" id="other_' + f.id + '" placeholder="その他の内容を入力してください">';
+  }
+  h += '<div class="emsg" id="e_' + f.id + '">' + f.id + 'を1つ以上選択してください</div></div>';
+  return h;
+}
+
+function renderField(f){
+  if (f.kind === 'text') return renderTextField(f);
+  if (f.kind === 'textarea') return renderTextareaField(f);
+  if (f.kind === 'radio') return renderRadioGroup(f);
+  if (f.kind === 'checkbox') return renderCheckboxGroup(f);
+  return '';
+}
+
+function renderStep0Extra(){
+  return '<div class="tosbox">'
+    + '<a class="tos-link" href="' + TERMS_URL + '" target="_top">' + TOS_TEXT_LINK + '</a>'
+    + '<label class="tos-check"><input type="checkbox" id="tos"><span>利用規約・各種ポリシーをすべて確認し、同意します</span></label>'
+    + '<div class="emsg" id="e_tos">利用規約への同意が必要です</div>'
+    + '</div>';
+}
+
+function renderPhotoSlot(i, label){
+  return '<div class="pslot" id="ps' + i + '" onclick="clickSlot(event,' + i + ')">'
+    + '<div class="pph"><div class="pph-ic">📷</div><div class="pph-n">' + label + '</div><div class="pph-t">タップして選択</div></div>'
+    + '<img class="pimg" id="pi' + i + '"><button class="prm" onclick="rmPhoto(event,' + i + ')">✕</button></div>';
+}
+
+function buildPage(){
+  STEP_FIELDS.forEach(function(fields, idx){
+    var html = fields.map(renderField).join('');
+    if (idx === 0) html = renderStep0Extra() + html;
+    document.getElementById('p' + idx + '-fields').innerHTML = html;
+  });
+  var photoLabels = ['写真①','写真②','写真③','写真④'];
+  document.getElementById('photoGrid').innerHTML = photoLabels.map(function(l,i){ return renderPhotoSlot(i,l); }).join('');
+
+  document.getElementById('guL-body').innerHTML =
+    '①公式LINEを友だち追加してください。<br>'
+    + '<a href="' + LINE_OA_URL + '" target="_top" style="color:#06c755;word-break:break-all;">' + LINE_OA_URL + '</a><br><br>'
+    + '②友だち追加後、トーク画面に「貴施設の事業所名」を、今回ご登録いただいた表記と<b>まったく同じ文字列</b>で送信してください。<br>'
+    + '（例：デイサービス〇〇）※今回は「<b id="fnD"></b>」<br><br>'
+    + '③自動返信で以下の2つのリンクが届きますので、それぞれご対応をお願いいたします。<br>'
+    + '・空き状況の入力フォーム<br>・送迎範囲（地図上で範囲を設定）の入力フォーム';
+  document.getElementById('guSite-body').innerHTML =
+    '<a href="' + SITE_URL + '" target="_top" style="color:#7a5000;word-break:break-all;">' + SITE_URL + '</a>';
+  document.getElementById('guContact').innerHTML =
+    'ご不明な点がございましたらご連絡ください。<br>'
+    + '📞 <a href="tel:' + ADMIN_TEL_LINK + '" style="color:var(--tm);">' + ADMIN_TEL + '</a><br>'
+    + '📧 ' + ADMIN_EMAIL;
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  buildPage();
+  setupOthers(); loadDraft(); setupDrop(); setListeners(); render();
+  var ne = document.getElementById("f_事業所名");
+  if (ne) ne.addEventListener("blur", function(){
+    var n = this.value.trim();
+    if (n) { clearTimeout(dupTimer); dupTimer = setTimeout(function(){ chkDup(n); }, 600); }
+  });
+});
+
+function setupOthers(){
+  Object.keys(RADIO_GROUPS).forEach(function(name){
+    if (RADIO_GROUPS[name].options.indexOf("その他") === -1) return;
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(r){
+      r.addEventListener("change", function(){ toggleOther(name, r.value === "その他"); });
+    });
+  });
+  Object.keys(CHECKBOX_GROUPS).forEach(function(name){
+    if (CHECKBOX_GROUPS[name].options.indexOf("その他") === -1) return;
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(c){
+      c.addEventListener("change", function(){
+        var otherBox = document.querySelector('input[name="' + name + '"][value="その他"]');
+        toggleOther(name, otherBox && otherBox.checked);
+      });
+    });
+  });
+}
+
+function toggleOther(name, show){
+  var el = document.getElementById("other_" + name);
+  if (!el) return;
+  el.style.display = show ? "block" : "none";
+  if (show) el.focus(); else el.value = "";
+}
+
+function render(){
+  document.querySelectorAll(".dot").forEach(function(d,i){ d.className = "dot" + (i<cur?" done":i===cur?" active":""); });
+  document.getElementById("sName").textContent = STEP_TITLES[cur];
+  document.getElementById("sCnt").textContent = (cur+1) + " / " + STEP_TITLES.length;
+}
+
+function nxt(){
+  if (!vld(cur)) return;
+  if (cur < STEP_TITLES.length - 1) {
+    document.getElementById("p"+cur).classList.remove("on");
+    cur++;
+    document.getElementById("p"+cur).classList.add("on");
+    render(); window.scrollTo(0,0); saveDraft();
+  }
+}
+function prv(){
+  if (cur > 0) {
+    document.getElementById("p"+cur).classList.remove("on");
+    cur--;
+    document.getElementById("p"+cur).classList.add("on");
+    render(); window.scrollTo(0,0);
+  }
+}
+
+function gfv(id){ var e = document.getElementById("f_"+id); return e ? e.value.trim() : ""; }
+function gvr(n){ var e = document.querySelector('input[name="'+n+'"]:checked'); return e ? e.value : ""; }
+function updCnt(el, id){ var c = document.getElementById("cnt_"+id); if (c) c.textContent = el.value.length + " / " + el.getAttribute("maxlength") + "文字"; }
+
+function vld(step, silent){
+  var ok = true;
+  function chkText(f){
+    var el = document.getElementById("f_"+f.id), er = document.getElementById("e_"+f.id);
+    if (f.required && !gfv(f.id)) { if(el) el.classList.add("bad"); if(er) er.classList.add("on"); ok=false; }
+    else { if(el) el.classList.remove("bad"); if(er) er.classList.remove("on"); }
+  }
+  function chkRadio(f){
+    var er = document.getElementById("e_"+f.id), grp = document.getElementById("grp_"+f.id);
+    var has = gvr(f.id) !== "";
+    if (f.required && !has) { if(er) er.classList.add("on"); if(grp) grp.classList.add("group-bad"); ok=false; }
+    else { if(er) er.classList.remove("on"); if(grp) grp.classList.remove("group-bad"); }
+  }
+  function chkCheckbox(f){
+    var er = document.getElementById("e_"+f.id), grp = document.getElementById("grp_"+f.id);
+    var has = document.querySelectorAll('input[name="'+f.id+'"]:checked').length > 0;
+    if (f.required && !has) { if(er) er.classList.add("on"); if(grp) grp.classList.add("group-bad"); ok=false; }
+    else { if(er) er.classList.remove("on"); if(grp) grp.classList.remove("group-bad"); }
+  }
+
+  if (step === 0) {
+    var tosEl = document.getElementById("tos"), tosEr = document.getElementById("e_tos");
+    if (!tosEl.checked) { if(tosEr) tosEr.classList.add("on"); ok=false; } else { if(tosEr) tosEr.classList.remove("on"); }
+    if (document.getElementById("dupW").classList.contains("on")) ok = false;
+  }
+  STEP_FIELDS[step].forEach(function(f){
+    if (f.kind==='text') chkText(f);
+    else if (f.kind==='textarea') chkText({id:f.id, required:f.required});
+    else if (f.kind==='radio') chkRadio(f);
+    else if (f.kind==='checkbox') chkCheckbox(f);
+  });
+
+  if (!ok && !silent) {
+    var fe = document.querySelector(".bad,.emsg.on");
+    if (fe) fe.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+  return ok;
+}
+
+function chkDup(name){
+  fetch(POST_URL + "?action=checkDuplicate&name=" + encodeURIComponent(name))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var w = document.getElementById("dupW"), el = document.getElementById("f_事業所名");
+      if (d.exists) { w.classList.add("on"); if(el) el.classList.add("bad"); }
+      else { w.classList.remove("on"); if(el) el.classList.remove("bad"); }
+    }).catch(function(){});
+}
+
+// ---- 写真 ----
+function clickSlot(e, i){
+  if (photos[i]) return;
+  e.stopPropagation();
+  var inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "image/jpeg,image/jpg,image/png,image/webp";
+  inp.onchange = function(ev){ addFiles(Array.from(ev.target.files)); };
+  inp.click();
+}
+function addFiles(files){
+  for (var i=0; i<files.length; i++) {
+    var f = files[i];
+    if (ATYPES.indexOf(f.type) === -1) { alert(f.name + " はJPEG/PNG/WebPのみ対応です"); continue; }
+    if (f.size > MAXSZ) { alert(f.name + " は5MBを超えています（" + (f.size/1024/1024).toFixed(1) + "MB）"); continue; }
+    var si = photos.indexOf(null);
+    if (si === -1) { alert("写真は最大4枚です"); break; }
+    (function(si2, fl){
+      var rd = new FileReader();
+      rd.onload = function(ev){
+        photos[si2] = { data: ev.target.result, type: fl.type };
+        document.getElementById("pi"+si2).src = ev.target.result;
+        document.getElementById("ps"+si2).classList.add("filled");
+      };
+      rd.readAsDataURL(fl);
+    })(si, f);
+  }
+  document.getElementById("photoInput").value = "";
+}
+function rmPhoto(e, i){
+  e.stopPropagation();
+  photos[i] = null;
+  document.getElementById("pi"+i).src = "";
+  document.getElementById("ps"+i).classList.remove("filled");
+}
+function setupDrop(){
+  var dz = document.getElementById("dropZone");
+  dz.addEventListener("dragover", function(e){ e.preventDefault(); dz.classList.add("over"); });
+  dz.addEventListener("dragleave", function(){ dz.classList.remove("over"); });
+  dz.addEventListener("drop", function(e){ e.preventDefault(); dz.classList.remove("over"); addFiles(Array.from(e.dataTransfer.files)); });
+  dz.addEventListener("click", function(){ document.getElementById("photoInput").click(); });
+  document.getElementById("photoInput").addEventListener("change", function(e){ addFiles(Array.from(e.target.files)); });
+  for (var i=0; i<4; i++) (function(idx){
+    var sl = document.getElementById("ps"+idx);
+    sl.addEventListener("dragover", function(e){ e.preventDefault(); if(!photos[idx]) sl.classList.add("over"); });
+    sl.addEventListener("dragleave", function(){ sl.classList.remove("over"); });
+    sl.addEventListener("drop", function(e){
+      e.preventDefault(); sl.classList.remove("over");
+      if (photos[idx]) return;
+      var f = Array.from(e.dataTransfer.files);
+      if (f.length) addFiles([f[0]]);
+    });
+  })(i);
+}
+
+// ---- 下書き ----
+function saveDraft(){
+  var d = {};
+  TFIELDS.forEach(function(f){ var el = document.getElementById("f_"+f.id); if(el) d["t_"+f.id] = el.value; });
+  TAFIELDS.forEach(function(f){ var el = document.getElementById("f_"+f.id); if(el) d["t_"+f.id] = el.value; });
+  Object.keys(RADIO_GROUPS).forEach(function(n){
+    d["r_"+n] = gvr(n);
+    var o = document.getElementById("other_"+n); if(o) d["ro_"+n] = o.value;
+  });
+  Object.keys(CHECKBOX_GROUPS).forEach(function(n){
+    d["c_"+n] = Array.from(document.querySelectorAll('input[name="'+n+'"]:checked')).map(function(x){ return x.value; });
+    var o = document.getElementById("other_"+n); if(o) d["co_"+n] = o.value;
+  });
+  d._ts = Date.now();
+  try {
+    localStorage.setItem(DKEY, JSON.stringify(d));
+    var now = new Date();
+    document.getElementById("draftAt").textContent = "下書き保存済み " + now.getHours() + ":" + String(now.getMinutes()).padStart(2,"0");
+  } catch(e){}
+}
+function loadDraft(){
+  try {
+    var raw = localStorage.getItem(DKEY);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    TFIELDS.forEach(function(f){ if(d["t_"+f.id]!==undefined){ var el=document.getElementById("f_"+f.id); if(el) el.value=d["t_"+f.id]; } });
+    TAFIELDS.forEach(function(f){ if(d["t_"+f.id]!==undefined){ var el=document.getElementById("f_"+f.id); if(el){ el.value=d["t_"+f.id]; updCnt(el,f.id); } } });
+    Object.keys(RADIO_GROUPS).forEach(function(n){
+      if (d["r_"+n]) {
+        document.querySelectorAll('input[name="'+n+'"]').forEach(function(el){ if(el.value===d["r_"+n]) el.checked=true; });
+        if (d["r_"+n]==="その他") { var o=document.getElementById("other_"+n); if(o && d["ro_"+n]){ o.value=d["ro_"+n]; o.style.display="block"; } }
+      }
+    });
+    Object.keys(CHECKBOX_GROUPS).forEach(function(n){
+      var vals = d["c_"+n] || [];
+      document.querySelectorAll('input[name="'+n+'"]').forEach(function(el){ if(vals.indexOf(el.value)!==-1) el.checked=true; });
+      if (vals.indexOf("その他")!==-1) { var o=document.getElementById("other_"+n); if(o && d["co_"+n]){ o.value=d["co_"+n]; o.style.display="block"; } }
+    });
+    if (d._ts) {
+      var dt = new Date(d._ts);
+      document.getElementById("draftAt").textContent = "下書き保存済み " + (dt.getMonth()+1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + String(dt.getMinutes()).padStart(2,"0");
+    }
+  } catch(e){}
+}
+function clearDraft(){
+  if (!confirm("下書きを削除しますか？入力内容が消えます。")) return;
+  try { localStorage.removeItem(DKEY); } catch(e){}
+  location.reload();
+}
+function setListeners(){
+  TFIELDS.forEach(function(f){ var el=document.getElementById("f_"+f.id); if(el) el.addEventListener("change", saveDraft); });
+  TAFIELDS.forEach(function(f){ var el=document.getElementById("f_"+f.id); if(el) el.addEventListener("change", saveDraft); });
+  document.querySelectorAll('input[type=radio],input[type=checkbox]').forEach(function(el){ if(el.id!=="tos") el.addEventListener("change", saveDraft); });
+}
+
+function collect(){
+  var d = {};
+  TFIELDS.forEach(function(f){ d[f.id] = gfv(f.id); });
+  TAFIELDS.forEach(function(f){ d[f.id] = gfv(f.id); });
+  Object.keys(RADIO_GROUPS).forEach(function(name){
+    var val = gvr(name);
+    if (val === "その他") { var ot = document.getElementById("other_"+name); val = ot ? ot.value.trim() : ""; }
+    d[name] = val;
+  });
+  Object.keys(CHECKBOX_GROUPS).forEach(function(name){
+    var boxes = document.querySelectorAll('input[name="'+name+'"]:checked'), vals = [];
+    boxes.forEach(function(b){
+      if (b.value === "その他") { var ot=document.getElementById("other_"+name); var t=ot?ot.value.trim():""; if(t) vals.push(t); }
+      else vals.push(b.value);
+    });
+    d[name] = vals.join("、");
+  });
+  return d;
+}
+
+async function doSub(){
+  if (sending) return;
+  for (var s=0; s<4; s++) {
+    if (!vld(s, true)) {
+      document.getElementById("p"+cur).classList.remove("on");
+      cur = s;
+      document.getElementById("p"+cur).classList.add("on");
+      render(); window.scrollTo(0,0); vld(s);
+      return;
+    }
+  }
+  sending = true;
+  var btn = document.getElementById("subBtn"), lbl = document.getElementById("subLbl");
+  btn.disabled = true; lbl.innerHTML = '<span class="spin"></span>送信しています...';
+  var data = collect();
+  var pData = photos.filter(function(p){ return p!==null; }).map(function(p){ return {data:p.data, type:p.type}; });
+  var hp = document.getElementById("_hp") ? document.getElementById("_hp").value : "";
+  var tos = document.getElementById("tos").checked;
+  try {
+    var res = await fetch(POST_URL, {
+      method: "POST",
+      body: JSON.stringify({ action:"facilityRegist", data:data, photos:pData, tos:tos, _hp:hp, _ts:startTs }),
+      headers: { "Content-Type": "text/plain;charset=utf-8" }
+    });
+    var result = await res.json();
+    if (result.status === "ok") {
+      try { localStorage.removeItem(DKEY); } catch(e){}
+      var m = data["連絡方法"];
+      document.getElementById("guL").style.display = m==="LINE" ? "block" : "none";
+      document.getElementById("guM").style.display = m==="メール" ? "block" : "none";
+      var fnD = document.getElementById("fnD"); if (fnD) fnD.textContent = data["事業所名"];
+      document.getElementById("ov").classList.add("on");
+    } else if (result.status === "duplicate") {
+      alert(result.message || "この事業所名はすでに登録されています。");
+      document.getElementById("p"+cur).classList.remove("on"); cur = 0;
+      document.getElementById("p0").classList.add("on"); render(); window.scrollTo(0,0);
+      document.getElementById("dupW").classList.add("on");
+      var ne = document.getElementById("f_事業所名"); if (ne) ne.classList.add("bad");
+    } else {
+      alert("送信に失敗しました。\n\n" + (result.message||"不明なエラー") + "\n\nケアナビ運営（" + ADMIN_TEL + "）にご連絡ください。");
+    }
+  } catch (err) {
+    alert("通信エラーが発生しました。\n\n" + err.message + "\n\nケアナビ運営（" + ADMIN_TEL + "）にご連絡ください。");
+  } finally {
+    sending = false; btn.disabled = false; lbl.innerHTML = "✅ この内容で登録する";
+  }
+}
+</script>
+</body>
+</html>
