@@ -203,10 +203,28 @@ function buildMedicalChips(){
   document.getElementById('medicalChips').innerHTML = html;
 }
 
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ★fetch + JSON解析をまとめたヘルパー。GASのURLが間違っている場合、
+//   JSONの代わりにHTML（GitHub Pagesの404ページなど）が返ってくることがあり、
+//   その場合は「JSONではなくHTMLが返ってきている」ことが一目で分かるメッセージにする。
+async function fetchJson(url){
+  const res = await fetch(url);
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    var snippet = escHtml(text.slice(0, 60).replace(/\s+/g, ' '));
+    if (text.trim().indexOf('<') === 0) {
+      throw new Error('POST_URLが正しいGASのURLになっていない可能性があります（JSONの代わりにHTMLページが返ってきました： ' + snippet + '…）');
+    }
+    throw new Error('サーバーの応答を読み取れませんでした（内容： ' + snippet + '…）');
+  }
+}
+
 async function loadFacilities(){
   try {
-    const res = await fetch(POST_URL + '?action=allSokeiHani');
-    const data = await res.json();
+    const data = await fetchJson(POST_URL + '?action=allSokeiHani');
     if (!Array.isArray(data)) throw new Error(data && data.error ? data.error : '不明なエラー');
     facilities = data;
     drawAllPolygons();
@@ -257,8 +275,6 @@ function drawAllPolygons(){
   });
 }
 
-function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
 async function doSearch(){
   var addr = document.getElementById('addrInput').value.trim();
   var resultBox = document.getElementById('searchResult');
@@ -268,8 +284,7 @@ async function doSearch(){
   resultBox.className = 'search-result'; resultBox.textContent = '';
 
   try {
-    const res = await fetch(POST_URL + '?action=geocode&address=' + encodeURIComponent(addr));
-    const geo = await res.json();
+    const geo = await fetchJson(POST_URL + '?action=geocode&address=' + encodeURIComponent(addr));
     if (!geo || geo.error || typeof geo.lat !== 'number') {
       resultBox.className = 'search-result show error';
       resultBox.textContent = searchMode === 'address'
