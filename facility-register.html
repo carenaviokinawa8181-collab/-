@@ -34,7 +34,7 @@
 <style>
 :root{
   --s:#4a7a5a; --sd:#3a6a4a; --sp:#e8f2ec; --sc:#c8dcc8; --g:#c8b860;
-  --t:#1a2a1f; --tm:#5a6a5f; --tl:#9aaa9f; --bg:#eef4f0; --er:#c03020; --eb:#fff0ee;
+  --t:#1a2a1f; --tm:#5a6a5f; --tl:#5f7065; --bg:#eef4f0; --er:#c03020; --eb:#fff0ee;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -44,8 +44,10 @@ body {
 }
 .hdr { background: linear-gradient(135deg, var(--sd), var(--s)); padding: 14px 18px 16px; border-bottom: 4px solid var(--g); }
 .logo { font-size: 12px; color: rgba(255,255,255,.75); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.logo img { width: 26px; height: 26px; border-radius: 50%; display: block; }
 .hdr-ttl { font-size: 19px; font-weight: 700; color: #fff; }
 .dbar { display: flex; justify-content: space-between; align-items: center; padding: 6px 14px; background: var(--sp); border-bottom: 1px solid var(--sc); font-size: 11px; color: var(--tl); }
+#draftAt.saved { color: var(--s); font-weight: 700; }
 .clr { background: none; border: none; color: var(--er); font-size: 11px; cursor: pointer; }
 .prog { background: #fff; padding: 14px 16px 10px; border-bottom: 1px solid var(--sc); }
 .prog-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -62,7 +64,7 @@ body {
 .req { background: var(--er); color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
 .opt { background: var(--sc); color: var(--tm); font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
 .cnt-badge { color: var(--tl); font-size: 11px; font-weight: 400; }
-.hint { font-size: 11px; color: var(--tl); margin-top: 4px; line-height: 1.5; }
+.hint { font-size: 12px; color: var(--tm); margin-top: 4px; line-height: 1.6; }
 .emsg { font-size: 11px; color: var(--er); margin-top: 4px; display: none; }
 .emsg.on { display: block; }
 input[type=text], input[type=email], input[type=tel], textarea {
@@ -124,7 +126,7 @@ textarea { resize: vertical; min-height: 70px; line-height: 1.6; }
 <div class="hp"><input type="text" id="_hp" tabindex="-1" autocomplete="off"></div>
 
 <div class="hdr">
-  <div class="logo"><span>🍀</span><span>ケアナビ沖縄</span></div>
+  <div class="logo"><img src="logo.png" alt="ケアナビ沖縄"><span>ケアナビ沖縄</span></div>
   <div class="hdr-ttl">事業所情報登録フォーム</div>
 </div>
 
@@ -237,6 +239,7 @@ var STEP_TITLES = ["規約・連絡先", "営業情報", "対応状況", "施設
 // id: 項目名。スプレッドシートの列名としてもそのまま使われるので、
 //     変更する場合はスプレッドシート側の列名も合わせて変える必要があります。
 // required: false を書かなければ自動的に必須項目になります
+// maxlength: textarea項目に文字数の上限を設定できます（入力中にカウンター表示、超過入力も防止）
 // options に 'その他' を含めると、選んだ時に自由記述欄が自動で出ます
 //
 // STEP_FIELDS は5つの配列（ステップ0〜4）でできています。
@@ -264,20 +267,20 @@ var STEP_FIELDS = [
     { kind:'text', id:'１回利用時の費用', type:'text', placeholder:'例：1,500円〜',
       hint:'昼食代など毎回かかる費用。空白にすると「お問い合わせください」と表示されます。',
       required:false },
-    { kind:'checkbox', id:'送迎の有無', options:['あり','なし','その他'] },
-    { kind:'radio', id:'車椅子対応', options:['対応可能','不可','その他'] },
+    { kind:'checkbox', id:'送迎の有無', options:['あり','なし','要相談'] },
+    { kind:'radio', id:'車椅子対応', options:['対応可能','不可','要相談'] },
   ],
 
   // ── ステップ2: 対応状況 ──
   [
     { kind:'checkbox', id:'利用可能な利用者',
-      options:['要支援','要介護1','要介護2','要介護3','要介護4','要介護5','その他'],
+      options:['要支援','要介護1','要介護2','要介護3','要介護4','要介護5'],
       hint:'対象介護度を全て選択お願いします。' },
     { kind:'checkbox', id:'入浴の有無',
       options:['ストレッチャー可能','シャワーチェアー可能','入浴対応不可','その他'] },
-    { kind:'radio', id:'認知症対応', options:['可能','不可','その他'] },
-    { kind:'radio', id:'精神疾患の利用者', options:['可能','不可','その他'] },
-    { kind:'radio', id:'食事提供', options:['あり（嚥下食）対応可能','なし','その他'] },
+    { kind:'radio', id:'認知症対応', options:['可能','不可','要相談'] },
+    { kind:'radio', id:'精神疾患の利用者', options:['可能','不可','要相談'] },
+    { kind:'radio', id:'食事提供', options:['あり（嚥下食）対応可能','なし','要相談'] },
     { kind:'checkbox', id:'対応可能な医療行為',
       options:['吸引','胃ろう・経鼻経管栄養','気切ケア','在宅酸素','人工肛門',
                'インスリン・血糖測定','導尿・膀胱留置カテーテル管理','医療行為対応なし','その他'] },
@@ -340,10 +343,10 @@ function renderTextField(f){
 
 function renderTextareaField(f){
   return '<div class="fld"><div class="lbl">' + f.id + ' ' + reqBadge(f.required)
-    + (f.maxlen ? '<span class="cnt-badge">※' + f.maxlen + '文字まで</span>' : '') + '</div>'
+    + (f.maxlength ? '<span class="cnt-badge">※' + f.maxlength + '文字まで</span>' : '') + '</div>'
     + '<textarea id="f_' + f.id + '" rows="' + (f.rows||3) + '" placeholder="' + (f.placeholder||'') + '"'
-    + (f.maxlen ? ' maxlength="' + f.maxlen + '" oninput="updCnt(this,\'' + f.id + '\')"' : '') + '></textarea>'
-    + (f.maxlen ? '<div class="charcount" id="cnt_' + f.id + '">0 / ' + f.maxlen + '文字</div>' : '')
+    + (f.maxlength ? ' maxlength="' + f.maxlength + '" oninput="updCnt(this,\'' + f.id + '\')"' : '') + '></textarea>'
+    + (f.maxlength ? '<div class="charcount" id="cnt_' + f.id + '">0 / ' + f.maxlength + '文字</div>' : '')
     + (f.hint ? '<div class="hint">' + f.hint + '</div>' : '')
     + '<div class="emsg" id="e_' + f.id + '">' + f.id + 'を入力してください</div></div>';
 }
@@ -611,7 +614,8 @@ function saveDraft(){
   try {
     localStorage.setItem(DKEY, JSON.stringify(d));
     var now = new Date();
-    document.getElementById("draftAt").textContent = "下書き保存済み " + now.getHours() + ":" + String(now.getMinutes()).padStart(2,"0");
+    document.getElementById("draftAt").textContent = "✓ 下書き保存済み " + now.getHours() + ":" + String(now.getMinutes()).padStart(2,"0");
+    document.getElementById("draftAt").classList.add("saved");
   } catch(e){}
 }
 function loadDraft(){
@@ -634,7 +638,8 @@ function loadDraft(){
     });
     if (d._ts) {
       var dt = new Date(d._ts);
-      document.getElementById("draftAt").textContent = "下書き保存済み " + (dt.getMonth()+1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + String(dt.getMinutes()).padStart(2,"0");
+      document.getElementById("draftAt").textContent = "✓ 下書き保存済み " + (dt.getMonth()+1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + String(dt.getMinutes()).padStart(2,"0");
+      document.getElementById("draftAt").classList.add("saved");
     }
   } catch(e){}
 }
