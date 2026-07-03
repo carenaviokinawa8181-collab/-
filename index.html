@@ -60,6 +60,22 @@
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
   .legend-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; }
 
+  /* 送迎範囲マップ導線 */
+  .map-cta-section { max-width: 900px; margin: 14px auto 0; padding: 0 16px; }
+  .map-cta-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, #1a6eb5, #2c8fd6);
+    border-radius: 14px; padding: 14px 16px;
+    text-decoration: none; box-shadow: 0 2px 12px rgba(26,110,181,0.25);
+    transition: opacity 0.2s;
+  }
+  .map-cta-btn:hover { opacity: 0.9; }
+  .map-cta-icon { font-size: 26px; flex-shrink: 0; }
+  .map-cta-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .map-cta-title { font-size: 14px; font-weight: 900; color: #fff; }
+  .map-cta-sub { font-size: 11.5px; color: rgba(255,255,255,0.85); line-height: 1.4; }
+  .map-cta-arrow { font-size: 22px; color: rgba(255,255,255,0.8); flex-shrink: 0; }
+
   /* MAIN */
   main { max-width: 900px; margin: 0 auto; padding: 20px 16px 60px; }
 
@@ -213,6 +229,18 @@
     <div class="legend-item"><div class="legend-badge" style="background:#fecaca;color:#b91c1c;">×</div><span style="color:#dc2626;">満員</span></div>
     <div class="legend-item"><div class="legend-badge" style="background:#f1f5f9;color:#94a3b8;">休</div><span style="color:#718096;">休業日</span></div>
   </div>
+</div>
+
+<!-- 送迎範囲マップへの導線 -->
+<div class="map-cta-section">
+  <a href="facility-map.html" target="_blank" class="map-cta-btn">
+    <span class="map-cta-icon">🗺️</span>
+    <span class="map-cta-text">
+      <span class="map-cta-title">送迎範囲マップで施設を探す</span>
+      <span class="map-cta-sub">住所や地域名を入れて、送迎できる施設をまとめて検索</span>
+    </span>
+    <span class="map-cta-arrow">›</span>
+  </a>
 </div>
 
 <!-- お知らせ -->
