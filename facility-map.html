@@ -59,6 +59,18 @@ body {
 .search-row button { padding: 12px 18px; background: var(--s); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .search-row button:disabled { background: #aac4b4; cursor: not-allowed; }
 .search-hint { font-size: 11px; color: var(--tl); margin-top: 6px; }
+.mode-toggle { display: flex; gap: 6px; margin-bottom: 10px; }
+.mode-btn { flex: 1; padding: 9px 8px; border: 2px solid var(--sc); border-radius: 8px; background: #fff; color: var(--tm); font-size: 13px; font-weight: 700; cursor: pointer; }
+.mode-btn.active { background: var(--s); border-color: var(--sd); color: #fff; }
+.vac-row { display: flex; gap: 3px; margin-top: 8px; }
+.vac-day { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
+.vac-dlabel { font-size: 9px; color: var(--tl); }
+.vac-badge { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 1.5px solid; }
+.vac-maru { background: #e6f5ee; color: #2e7d52; border-color: #a8d8bc; }
+.vac-tri  { background: #fdf6e3; color: #9a7c10; border-color: #dfc96a; }
+.vac-batu { background: #fcecea; color: #b83228; border-color: #f0b0aa; }
+.vac-kyu  { background: #eee; color: #999; border-color: #ddd; }
+.vac-unknown { font-size: 11px; color: var(--tl); margin-top: 6px; }
 .search-result { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; display: none; line-height: 1.6; }
 .search-result.show { display: block; }
 .search-result.ok { background: #eef5ea; color: var(--sd); border: 2px solid var(--s); }
@@ -99,11 +111,15 @@ body {
 </div>
 
 <div class="search-wrap">
+  <div class="mode-toggle" id="modeToggle">
+    <button class="mode-btn active" id="modeAddrBtn" onclick="setSearchMode('address')">📍 住所で探す</button>
+    <button class="mode-btn" id="modeAreaBtn" onclick="setSearchMode('area')">🗺️ 地域名で探す</button>
+  </div>
   <div class="search-row">
     <input type="text" id="addrInput" placeholder="例：那覇市首里当蔵町1-2-3">
     <button id="searchBtn" onclick="doSearch()">検索</button>
   </div>
-  <div class="search-hint">💡 住所の一部だけでも検索できます（町名だけでもOK）</div>
+  <div class="search-hint" id="searchHint">💡 住所の一部だけでも検索できます（町名だけでもOK）</div>
   <div class="search-result" id="searchResult"></div>
 </div>
 
@@ -142,7 +158,8 @@ var POLYGON_COLORS = ['#4a7a5a','#C9A24B','#3a7aaa','#a85a8a','#8a6a40','#5a7a48
    ▲▲▲▲▲  編集ここまで。この下は表示・検索の仕組みなので基本さわらなくてOK  ▲▲▲▲▲
    ================================================================ */
 
-var map, facilities = [], polygonLayers = {}, searchMarker = null;
+var map, facilities = [], polygonLayers = {}, searchMarker = null, boundsRect = null;
+var searchMode = 'address';
 var activeFilters = { medical: [] };
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -159,6 +176,22 @@ function initMap(){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors', maxZoom: 18
   }).addTo(map);
+}
+
+function setSearchMode(mode){
+  searchMode = mode;
+  document.getElementById('modeAddrBtn').classList.toggle('active', mode === 'address');
+  document.getElementById('modeAreaBtn').classList.toggle('active', mode === 'area');
+  var input = document.getElementById('addrInput');
+  var hint = document.getElementById('searchHint');
+  if (mode === 'address') {
+    input.placeholder = '例：那覇市首里当蔵町1-2-3';
+    hint.textContent = '💡 住所の一部だけでも検索できます（町名だけでもOK）';
+  } else {
+    input.placeholder = '例：首里、小禄、おもろまち';
+    hint.textContent = '💡 地域名を入れると、そのエリアと送迎範囲が重なる事業所を探します';
+  }
+  document.getElementById('searchResult').className = 'search-result';
 }
 
 function buildMedicalChips(){
@@ -199,6 +232,21 @@ function pointInPolygon(lat, lng, polygon){
   return inside;
 }
 
+// ---- 「地域名」の範囲(bounds)と施設の送迎ポリゴンが重なっているか判定 ----
+//   ①ポリゴンの頂点がどれかbounds内にある、または②boundsの四隅がどれかポリゴン内にある、
+//   のどちらかが成り立てば「重なっている」とみなす簡易判定
+function boundsPolygonOverlap(bounds, polygon){
+  for (var i = 0; i < polygon.length; i++){
+    var lat = polygon[i][0], lng = polygon[i][1];
+    if (lat <= bounds.north && lat >= bounds.south && lng <= bounds.east && lng >= bounds.west) return true;
+  }
+  var corners = [[bounds.north, bounds.west], [bounds.north, bounds.east], [bounds.south, bounds.east], [bounds.south, bounds.west]];
+  for (var j = 0; j < corners.length; j++){
+    if (pointInPolygon(corners[j][0], corners[j][1], polygon)) return true;
+  }
+  return false;
+}
+
 function drawAllPolygons(){
   facilities.forEach(function(f, i){
     if (!f.polygon || f.polygon.length < 3) return;
@@ -224,29 +272,54 @@ async function doSearch(){
     const geo = await res.json();
     if (!geo || geo.error || typeof geo.lat !== 'number') {
       resultBox.className = 'search-result show error';
-      resultBox.textContent = '⚠️ この住所が見つかりませんでした。町名など、少し短くして試してみてください。';
+      resultBox.textContent = searchMode === 'address'
+        ? '⚠️ この住所が見つかりませんでした。町名など、少し短くして試してみてください。'
+        : '⚠️ この地域名が見つかりませんでした。別の言い方で試してみてください。';
       return;
     }
 
-    if (searchMarker) map.removeLayer(searchMarker);
-    searchMarker = L.marker([geo.lat, geo.lng]).addTo(map).bindPopup('検索した住所').openPopup();
-    map.setView([geo.lat, geo.lng], 14);
+    if (searchMarker) { map.removeLayer(searchMarker); searchMarker = null; }
+    if (boundsRect) { map.removeLayer(boundsRect); boundsRect = null; }
 
-    var matched = facilities.filter(function(f){
-      return f.polygon && f.polygon.length >= 3 && pointInPolygon(geo.lat, geo.lng, f.polygon);
-    });
+    var matched;
+    if (searchMode === 'address') {
+      searchMarker = L.marker([geo.lat, geo.lng]).addTo(map).bindPopup('検索した住所').openPopup();
+      map.setView([geo.lat, geo.lng], 14);
+      matched = facilities.filter(function(f){
+        return f.polygon && f.polygon.length >= 3 && pointInPolygon(geo.lat, geo.lng, f.polygon);
+      });
+    } else {
+      if (geo.bounds) {
+        boundsRect = L.rectangle(
+          [[geo.bounds.south, geo.bounds.west], [geo.bounds.north, geo.bounds.east]],
+          { color: '#C9A24B', weight: 2, fillOpacity: 0.08, dashArray: '6,6' }
+        ).addTo(map);
+        map.fitBounds(boundsRect.getBounds());
+        matched = facilities.filter(function(f){
+          return f.polygon && f.polygon.length >= 3 && boundsPolygonOverlap(geo.bounds, f.polygon);
+        });
+      } else {
+        // viewportが取得できなかった場合は住所検索と同じ点判定にフォールバック
+        searchMarker = L.marker([geo.lat, geo.lng]).addTo(map).bindPopup('検索した地域').openPopup();
+        map.setView([geo.lat, geo.lng], 13);
+        matched = facilities.filter(function(f){
+          return f.polygon && f.polygon.length >= 3 && pointInPolygon(geo.lat, geo.lng, f.polygon);
+        });
+      }
+    }
 
     Object.keys(polygonLayers).forEach(function(name){
       var isMatch = matched.some(function(f){ return f.name === name; });
       polygonLayers[name].setStyle({ fillOpacity: isMatch ? 0.55 : 0.1, weight: isMatch ? 3 : 1 });
     });
 
+    var subject = searchMode === 'address' ? 'この住所' : 'このエリア';
     if (matched.length > 0) {
       resultBox.className = 'search-result show ok';
-      resultBox.innerHTML = '✅ この住所は <b>' + matched.length + '件</b> の事業所が送迎できます。';
+      resultBox.innerHTML = '✅ ' + subject + 'は <b>' + matched.length + '件</b> の事業所が送迎できます。';
     } else {
       resultBox.className = 'search-result show none';
-      resultBox.textContent = '😥 この住所を送迎範囲としている事業所は見つかりませんでした。';
+      resultBox.textContent = '😥 ' + subject + 'を送迎範囲としている事業所は見つかりませんでした。';
     }
     renderResults(facilities, matched.map(function(f){ return f.name; }));
   } catch (err) {
@@ -275,6 +348,18 @@ function applyFilters(){
   renderResults(filtered, null);
 }
 
+function renderVacancyRow(vacancy){
+  if (!vacancy) return '<div class="vac-unknown">空き状況：まだ入力がありません</div>';
+  var days = [['月','月'],['火','火'],['水','水'],['木','木'],['金','金'],['土','土'],['日','日']];
+  var symClass = { '○':'vac-maru', '△':'vac-tri', '×':'vac-batu', '休':'vac-kyu' };
+  var html = days.map(function(d){
+    var sym = vacancy[d[1]] || '休';
+    var cls = symClass[sym] || 'vac-kyu';
+    return '<div class="vac-day"><span class="vac-dlabel">' + d[0] + '</span><span class="vac-badge ' + cls + '">' + sym + '</span></div>';
+  }).join('');
+  return '<div class="vac-row">' + html + '</div>';
+}
+
 function renderResults(list, matchedNames){
   var countEl = document.getElementById('resultsCount');
   countEl.textContent = list.length + '件';
@@ -290,6 +375,7 @@ function renderResults(list, matchedNames){
       + (f.address ? '<div class="fcard-row"><b>住所</b>' + escHtml(f.address) + '</div>' : '')
       + (f.medical ? '<div class="fcard-row"><b>医療行為</b>' + escHtml(f.medical) + '</div>' : '')
       + (f.wheelchair ? '<div class="fcard-row"><b>車椅子</b>' + escHtml(f.wheelchair) + '</div>' : '')
+      + renderVacancyRow(f.vacancy)
       + (f.pdfUrl ? '<a class="fcard-link" href="' + f.pdfUrl + '" target="_top">📄 施設紹介PDFを見る</a>' : '')
       + '</div>';
   }).join('');
