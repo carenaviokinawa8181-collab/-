@@ -1,402 +1,362 @@
-<!--
-  ============================================================
-  送迎範囲マップ（GitHub Pages配置用・静的HTML版）
-  ケアナビ沖縄
-
-  【できること】
-  - 掲載中の全事業所の送迎範囲をまとめて地図に表示
-  - 住所を入力するとピンが立ち、そこを送迎できる事業所を自動判定
-  - 対応医療行為で絞り込み検索
-
-  【編集したいとき】
-  ページ下部のスクリプト部分、「編集はここだけでOK」の範囲に
-  ・GASのURL
-  ・対応医療行為の選択肢
-  がまとまっています。
-
-  【デプロイ方法】
-  1. このファイルをGitHub Pagesのリポジトリに追加する
-  2. POST_URL を、GASの「デプロイを管理」で確認できる有効な
-     ウェブアプリURL（末尾が /exec）に書き換える
-  3. git push すれば公開される
-
-  【裏側の仕組み】
-  - fetch(POST_URL + "?action=allSokeiHani") で全事業所の送迎範囲・
-    住所・対応医療行為を取得（GAS側 getAllSokeiHaniPolygons_）
-  - fetch(POST_URL + "?action=geocode&address=...") で入力住所を
-    緯度経度に変換（GAS側 geocodeAddress_、Maps.newGeocoder使用）
-  - どの事業所が送迎できるかの判定（点が多角形の中にあるか）は
-    このページのJS内で計算しており、GASには問い合わせません
--->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<title>送迎範囲マップ | ケアナビ沖縄</title>
+<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>送迎範囲の登録 | ケアナビ沖縄</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Zen+Maru+Gothic:wght@700;900&display=swap');
 :root{
-  --s:#4a7a5a; --sd:#3a6a4a; --sp:#e8f2ec; --sc:#c8dcc8; --g:#c8b860;
-  --t:#1a2a1f; --tm:#5a6a5f; --tl:#5f7065; --bg:#eef4f0; --er:#c03020; --eb:#fff0ee;
+  --green:#35604a;--green2:#4f8363;--green-pale:#e9f3ed;--gold:#c9a852;--gold-deep:#a5842e;
+  --ink:#1f2d26;--ink-m:#5c6c63;--ink-l:#93a29a;--bg:#f3f6f3;--red:#c23b2c;
+  --shadow:0 1px 2px rgba(16,40,26,.05),0 6px 20px rgba(16,40,26,.07);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-  background: var(--bg); color: var(--t);
-  max-width: 560px; margin: 0 auto; padding-bottom: 40px;
-}
-.hdr { background: linear-gradient(135deg, var(--sd), var(--s)); padding: 14px 18px 16px; border-bottom: 4px solid var(--g); }
-.logo { font-size: 12px; color: rgba(255,255,255,.75); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-.logo img { width: 26px; height: 26px; border-radius: 50%; display: block; }
-.hdr-ttl { font-size: 19px; font-weight: 700; color: #fff; }
-.hdr-sub { font-size: 12px; color: rgba(255,255,255,.85); margin-top: 2px; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);max-width:560px;margin:0 auto;padding-bottom:28px;font-size:1rem;line-height:1.65}
 
-.search-wrap { padding: 14px; background: #fff; border-bottom: 1px solid var(--sc); }
-.search-row { display: flex; gap: 8px; }
-.search-row input { flex: 1; padding: 12px 14px; border: 2px solid var(--sc); border-radius: 8px; font-size: 15px; }
-.search-row input:focus { outline: none; border-color: var(--s); }
-.search-row button { padding: 12px 18px; background: var(--s); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-.search-row button:disabled { background: #aac4b4; cursor: not-allowed; }
-.search-hint { font-size: 11px; color: var(--tl); margin-top: 6px; }
-.mode-toggle { display: flex; gap: 6px; margin-bottom: 10px; }
-.mode-btn { flex: 1; padding: 9px 8px; border: 2px solid var(--sc); border-radius: 8px; background: #fff; color: var(--tm); font-size: 13px; font-weight: 700; cursor: pointer; }
-.mode-btn.active { background: var(--s); border-color: var(--sd); color: #fff; }
-.vac-row { display: flex; gap: 3px; margin-top: 8px; }
-.vac-day { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
-.vac-dlabel { font-size: 9px; color: var(--tl); }
-.vac-badge { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 1.5px solid; }
-.vac-maru { background: #e6f5ee; color: #2e7d52; border-color: #a8d8bc; }
-.vac-tri  { background: #fdf6e3; color: #9a7c10; border-color: #dfc96a; }
-.vac-batu { background: #fcecea; color: #b83228; border-color: #f0b0aa; }
-.vac-kyu  { background: #eee; color: #999; border-color: #ddd; }
-.vac-unknown { font-size: 11px; color: var(--tl); margin-top: 6px; }
-.search-result { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; display: none; line-height: 1.6; }
-.search-result.show { display: block; }
-.search-result.ok { background: #eef5ea; color: var(--sd); border: 2px solid var(--s); }
-.search-result.none { background: #fdeceb; color: #a8321f; border: 2px solid #d9564a; }
-.search-result.error { background: #fff7e6; color: #8a6d1f; border: 1px solid var(--g); }
+header{background:linear-gradient(160deg,var(--green) 0%,var(--green2) 100%);color:#fff;padding:18px 20px 16px;border-bottom:4px solid var(--gold);border-radius:0 0 22px 22px;box-shadow:var(--shadow)}
+.logo-row{display:flex;align-items:center;gap:9px}
+.logo-badge{width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.18);overflow:hidden}
+.logo-badge svg{width:26px;height:26px}
+.logo-text{font-family:'Zen Maru Gothic',sans-serif;font-size:20px;font-weight:900;color:#fff;letter-spacing:.04em}
+.logo-sub{font-size:14px;color:var(--gold);margin-left:2px}
+header h1{font-family:'Zen Maru Gothic',sans-serif;margin:9px 0 0;font-size:24px;font-weight:900;letter-spacing:.02em}
+header p{margin:9px 0 0;font-size:14px}
+.facility-name{background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.4);border-radius:22px;padding:5px 14px;font-weight:700;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 
-.filters { padding: 12px 14px; background: var(--sp); border-bottom: 1px solid var(--sc); }
-.filter-group { margin-bottom: 10px; }
-.filter-group:last-child { margin-bottom: 0; }
-.filter-label { font-size: 12px; font-weight: 700; color: var(--sd); margin-bottom: 6px; display: block; }
-.filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip-input { display: none; }
-.chip-label { padding: 6px 12px; border: 2px solid var(--sc); border-radius: 20px; font-size: 12px; cursor: pointer; background: #fff; color: var(--tm); user-select: none; }
-.chip-input:checked + .chip-label { background: var(--s); border-color: var(--sd); color: #fff; font-weight: 700; }
+/* ============ ステップ表示 ============ */
+.stepper{display:flex;gap:10px;padding:14px 14px 0}
+.step-pill{flex:1;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e0e9e3;border-radius:15px;padding:11px 13px;opacity:.5;box-shadow:var(--shadow)}
+.step-pill.active{opacity:1;border-color:var(--green2)}
+.step-pill.done{opacity:1;border-color:#a8dfc2;background:var(--green-pale)}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--green2);color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Zen Maru Gothic',sans-serif}
+.step-pill.done .step-num{background:#1a8a52}
+.step-txt{font-size:13.5px;font-weight:700;line-height:1.35}
+.step-txt small{display:block;font-size:11px;color:var(--ink-l);font-weight:500}
 
-#map { height: 50vh; width: 100%; }
+.step{display:none}
+.step.active{display:block}
 
-.results { padding: 14px; }
-.results-title { font-size: 14px; font-weight: 700; color: var(--sd); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-.results-count { font-size: 12px; color: var(--tl); font-weight: 400; }
-.fcard { background: #fff; border: 1.5px solid var(--sc); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
-.fcard.match { border-color: var(--s); border-width: 2px; background: var(--sp); }
-.fcard-name { font-size: 14px; font-weight: 700; color: var(--t); margin-bottom: 4px; }
-.fcard-match-badge { display: inline-block; background: var(--s); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-bottom: 6px; }
-.fcard-row { font-size: 12px; color: var(--tm); line-height: 1.6; }
-.fcard-row b { color: var(--tl); font-weight: 700; margin-right: 4px; }
-.fcard-link { display: inline-block; margin-top: 6px; font-size: 12px; color: var(--s); font-weight: 700; text-decoration: none; }
-.empty-msg { text-align: center; padding: 30px 20px; color: var(--tl); font-size: 13px; }
-.loading-msg { text-align: center; padding: 30px 20px; color: var(--tm); font-size: 13px; }
-</style>
-</head>
-<body>
+/* ============ 説明カード ============ */
+.instructions{background:#fff;margin:12px 14px;padding:15px 17px;border-radius:16px;box-shadow:var(--shadow);font-size:15px;line-height:1.8}
+.instructions b{color:var(--green)}
+.warn{background:#fffaef;border:2px solid #ecd28a}
+.mini-steps{margin-top:10px;display:flex;flex-direction:column;gap:9px}
+.mini-step{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.55}
+.mini-dot{width:24px;height:24px;border-radius:50%;background:var(--green-pale);color:var(--green);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-family:'Zen Maru Gothic',sans-serif}
 
-<div class="hdr">
-  <div class="logo"><img src="logo.png" alt="ケアナビ沖縄"><span>ケアナビ沖縄</span></div>
-  <div class="hdr-ttl">送迎範囲マップ</div>
-  <div class="hdr-sub">住所を入力すると、送迎できるデイサービスが分かります</div>
-</div>
+/* 「点→線→囲み」の図解 */
+.howto-figure{display:flex;align-items:center;gap:4px;background:var(--green-pale);border-radius:12px;padding:10px 8px 9px;margin-top:12px}
+.fig{flex:1;text-align:center;min-width:0}
+.fig svg{width:100%;height:50px;display:block}
+.fig span{font-size:10.5px;font-weight:700;color:var(--green);line-height:1.45;display:block;margin-top:3px}
+.fig-arrow{color:#9fb3a7;font-weight:900;font-size:14px;flex-shrink:0}
 
-<div class="search-wrap">
-  <div class="mode-toggle" id="modeToggle">
-    <button class="mode-btn active" id="modeAddrBtn" onclick="setSearchMode('address')">📍 住所で探す</button>
-    <button class="mode-btn" id="modeAreaBtn" onclick="setSearchMode('area')">🗺️ 地域名で探す</button>
+#mapPin,#map{height:54vh;min-height:340px;margin:0 14px;border-radius:16px;border:2px solid #cfdad2;box-shadow:var(--shadow)}
+
+.controls{display:flex;gap:10px;margin:14px;flex-wrap:wrap}
+button{flex:1;min-width:140px;min-height:58px;padding:14px 10px;font-size:16px;font-weight:800;border:none;border-radius:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:transform .1s}
+button:active{opacity:.88;transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;box-shadow:0 4px 14px rgba(53,96,74,.35)}
+.btn-secondary{background:#fff;color:var(--green);border:2.5px solid var(--green2)}
+.btn-finish{background:var(--red);color:#fff;box-shadow:0 4px 14px rgba(194,59,44,.35)}
+.btn-save{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#fff;font-weight:900;font-size:17px;box-shadow:0 4px 14px rgba(201,168,82,.4);min-height:62px}
+button:disabled{background:#dfe6e1;color:#a5b1a9;border-color:#dfe6e1;box-shadow:none;cursor:not-allowed;transform:none}
+.hidden{display:none!important}
+
+.status{margin:0 14px 10px;padding:14px 16px;border-radius:14px;font-size:15px;display:none;line-height:1.75;font-weight:600}
+.status.show{display:block}
+.status.ok{background:#e5f6ec;color:#135e39;border:2.5px solid #1a8a52}
+.status.info{background:#fffaef;color:#755b10;border:2px solid #ecd28a}
+.status.error{background:#fdeae7;color:#98301f;border:2.5px solid #d9564a}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+
+<header>
+  <div class="logo-row">
+    <span class="logo-badge" id="logoBadge"><svg viewBox="0 0 32 32"><path d="M26 4C14 6 6 12 6 22c0 3 1 5 2.2 6.4.8-6.4 3.8-11.4 8.8-15.4-4 5-6 10-6.2 15.8 1 .5 2.1.8 3.2.8C22.5 29.6 28 19 26 4z" fill="#0B8E43"/></svg></span>
+    <span class="logo-text">ケアナビ<span class="logo-sub">沖縄</span></span>
   </div>
-  <div class="search-row">
-    <input type="text" id="addrInput" placeholder="例：那覇市首里当蔵町1-2-3">
-    <button id="searchBtn" onclick="doSearch()">検索</button>
-  </div>
-  <div class="search-hint" id="searchHint">💡 住所の一部だけでも検索できます（町名だけでもOK）</div>
-  <div class="search-result" id="searchResult"></div>
-</div>
+  <h1>送迎範囲の登録</h1>
+  <p><span class="facility-name" id="facilityNameEl"></span> さま</p>
+</header>
 
-<div class="filters">
-  <div class="filter-group">
-    <span class="filter-label">対応可能な医療行為で絞り込み</span>
-    <div class="filter-chips" id="medicalChips"></div>
+<div class="stepper">
+  <div class="step-pill active" id="pill1">
+    <div class="step-num">1</div>
+    <div class="step-txt">場所の確認<small>施設のピンを合わせる</small></div>
+  </div>
+  <div class="step-pill" id="pill2">
+    <div class="step-num">2</div>
+    <div class="step-txt">範囲を囲む<small>送迎エリアを指で描く</small></div>
   </div>
 </div>
 
-<div id="map"></div>
+<!-- ステップ1: 施設位置の確認 -->
+<div class="step active" id="step1">
+  <div class="instructions warn">
+    📍 地図の<b>緑のピン</b>が、住所から自動で調べた貴施設の場所です。<br>
+    ずれていたら、<b>ピンを押したまま指を動かして</b>正しい場所に置いてください。<br>
+    合っていれば、そのまま下の緑のボタンを押してください。
+  </div>
+  <div id="mapPin"></div>
+  <div class="controls">
+    <button id="btnNext" class="btn-primary">✓ この場所で合っています（次へ）</button>
+  </div>
+</div>
 
-<div class="results">
-  <div class="results-title"><span>事業所一覧</span><span class="results-count" id="resultsCount"></span></div>
-  <div id="resultsList"><div class="loading-msg">読み込み中...</div></div>
+<!-- ステップ2: 範囲を描く -->
+<div class="step" id="step2">
+  <div class="instructions">
+    🗺️ 送迎に行ける範囲を、地図の上で囲みます。<br>
+    <b>タップして置いた点は自動で線でつながり、囲むと色がついて「送迎範囲」になります。</b>
+    <div class="howto-figure">
+      <div class="fig">
+        <svg viewBox="0 0 72 56">
+          <circle cx="12" cy="42" r="5.5" fill="#c23b2c" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="26" cy="12" r="5" fill="#35604a" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="56" cy="16" r="5" fill="#35604a" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="60" cy="44" r="5" fill="#35604a" stroke="#fff" stroke-width="2.5"/>
+        </svg>
+        <span>かどをタップして<br>点を置く</span>
+      </div>
+      <div class="fig-arrow">▶</div>
+      <div class="fig">
+        <svg viewBox="0 0 72 56">
+          <path d="M12 42 L26 12 L56 16 L60 44" fill="none" stroke="#c9a852" stroke-width="3" stroke-dasharray="5 4" stroke-linecap="round"/>
+          <circle cx="12" cy="42" r="5.5" fill="#c23b2c" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="26" cy="12" r="5" fill="#35604a" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="56" cy="16" r="5" fill="#35604a" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="60" cy="44" r="5" fill="#35604a" stroke="#fff" stroke-width="2.5"/>
+        </svg>
+        <span>点が線で<br>つながる</span>
+      </div>
+      <div class="fig-arrow">▶</div>
+      <div class="fig">
+        <svg viewBox="0 0 72 56">
+          <path d="M12 42 L26 12 L56 16 L60 44 Z" fill="#c9a852" fill-opacity=".45" stroke="#a5842e" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+        <span>囲むと色がつき<br>完成！</span>
+      </div>
+    </div>
+    <div class="mini-steps">
+      <div class="mini-step"><div class="mini-dot">1</div><div>下の<b>「範囲を描き始める」</b>を押す</div></div>
+      <div class="mini-step"><div class="mini-dot">2</div><div>範囲の<b>かどを1つずつタップ</b>して点を置く（点は自動で線でつながります。指でなぞらず、点を置くイメージ）</div></div>
+      <div class="mini-step"><div class="mini-dot">3</div><div>囲み終わったら<b style="color:#c23b2c">「囲みを完成させる」</b>を押す</div></div>
+      <div class="mini-step"><div class="mini-dot">4</div><div>形を見て、よければ<b style="color:#a5842e">「この範囲で保存する」</b>を押す</div></div>
+    </div>
+  </div>
+  <div id="statusBox" class="status"></div>
+  <div id="map"></div>
+  <div class="controls">
+    <button id="btnDraw" class="btn-primary">✏️ 範囲を描き始める</button>
+    <button id="btnFinish" class="btn-finish hidden" disabled>✓ 囲みを完成させる</button>
+    <button id="btnUndo" class="btn-secondary hidden">↩ 最初からやり直す</button>
+  </div>
+  <div class="controls" style="margin-top:0">
+    <button id="btnSave" class="btn-save hidden" disabled>💾 この範囲で保存する</button>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
-/* ================================================================
-   ▼▼▼▼▼  編集はここだけでOK（この先、「編集ここまで」まで）  ▼▼▼▼▼
-   ================================================================ */
+/* ===== CONFIG（GAS版ではサーバー側で差し込まれます） ===== */
+var POST_URL = '';
+var TOKEN = 'demo';
+var FACILITY = 'デモデイサービスあおぞら';
+var FACILITY_LAT = 26.2125;
+var FACILITY_LNG = 127.6809;
+var EXISTING = null;
+var LOGO_SRC = 'data:image/jpeg;base64,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'; /* ケアナビ沖縄ロゴ(Base64埋め込み済み) */
+/* ======================================================== */
 
-// GASウェブアプリのURL（GASエディタ→デプロイ→デプロイを管理、で確認できる
-// 「/exec」で終わるURL）。ここが古いと地図が表示されません。
-var POST_URL = "https://script.google.com/macros/s/AKfycbznQzAMIPkNaG5QVkUIZXiYLvqCERKqS0ZpmD3ZmpDMGbv3gR2xKs8299z1qNadVTyN/exec";
+document.getElementById('facilityNameEl').textContent = FACILITY;
+if (LOGO_SRC){
+  document.getElementById('logoBadge').innerHTML = '<img src="' + LOGO_SRC + '" alt="ケアナビ沖縄ロゴ" style="width:100%;height:100%;object-fit:contain;">';
+}
+var facilityLatLng = [FACILITY_LAT, FACILITY_LNG];
 
-// 対応可能な医療行為の選択肢（事業所登録フォームと同じ並び）
-var MEDICAL_OPTIONS = ['吸引', '胃ろう・経鼻経管栄養', '気切ケア', '在宅酸素', '人工肛門',
-                        'インスリン・血糖測定', '導尿・膀胱留置カテーテル管理'];
+function goToStep(n){
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('step' + n).classList.add('active');
+  if (n === 2){
+    document.getElementById('pill1').className = 'step-pill done';
+    document.getElementById('pill2').className = 'step-pill active';
+    if (!mapInited2) initStep2();
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
-// 地図上のポリゴンの色（事業所ごとに順番に割り当て。足りなければ繰り返し使用）
-var POLYGON_COLORS = ['#4a7a5a','#C9A24B','#3a7aaa','#a85a8a','#8a6a40','#5a7a48','#b83228','#2e7d52'];
+function facilityIcon(){
+  return L.divIcon({className:'',html:'<div style="background:#35604a;width:24px;height:24px;border-radius:50%;border:3.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.45);"></div>',iconSize:[24,24],iconAnchor:[12,12]});
+}
 
-/* ================================================================
-   ▲▲▲▲▲  編集ここまで。この下は表示・検索の仕組みなので基本さわらなくてOK  ▲▲▲▲▲
-   ================================================================ */
-
-var map, facilities = [], polygonLayers = {}, searchMarker = null, boundsRect = null;
-var searchMode = 'address';
-var activeFilters = { medical: [] };
-
-document.addEventListener('DOMContentLoaded', function () {
-  initMap();
-  buildMedicalChips();
-  loadFacilities();
-  document.getElementById('addrInput').addEventListener('keydown', function(e){
-    if (e.key === 'Enter') doSearch();
-  });
+/* ---- ステップ1: ピン位置調整 ---- */
+var mapPin = L.map('mapPin').setView(facilityLatLng, 15);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'&copy; OpenStreetMap contributors', maxZoom:18 }).addTo(mapPin);
+var pinMarker = L.marker(facilityLatLng, {icon: facilityIcon(), draggable: true}).addTo(mapPin)
+  .bindPopup('このピンを押したまま動かすと<br>場所を直せます').openPopup();
+pinMarker.on('dragend', function(e){
+  facilityLatLng = [e.target.getLatLng().lat, e.target.getLatLng().lng];
 });
 
-function initMap(){
-  map = L.map('map').setView([26.2125, 127.6809], 12); // 那覇市役所付近を初期表示
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors', maxZoom: 18
-  }).addTo(map);
-}
-
-function setSearchMode(mode){
-  searchMode = mode;
-  document.getElementById('modeAddrBtn').classList.toggle('active', mode === 'address');
-  document.getElementById('modeAreaBtn').classList.toggle('active', mode === 'area');
-  var input = document.getElementById('addrInput');
-  var hint = document.getElementById('searchHint');
-  if (mode === 'address') {
-    input.placeholder = '例：那覇市首里当蔵町1-2-3';
-    hint.textContent = '💡 住所の一部だけでも検索できます（町名だけでもOK）';
-  } else {
-    input.placeholder = '例：首里、小禄、おもろまち';
-    hint.textContent = '💡 地域名を入れると、そのエリアと送迎範囲が重なる事業所を探します';
+document.getElementById('btnNext').addEventListener('click', function(){
+  if (POST_URL){
+    fetch(POST_URL, { method:'POST', body: JSON.stringify({ action:'updatePin', token: TOKEN, lat: facilityLatLng[0], lng: facilityLatLng[1] }), headers:{'Content-Type':'text/plain;charset=utf-8'} })
+      .catch(function(err){ console.error(err); });
   }
-  document.getElementById('searchResult').className = 'search-result';
-}
+  goToStep(2);
+});
 
-function buildMedicalChips(){
-  var html = MEDICAL_OPTIONS.map(function(m, i){
-    var id = 'med_' + i;
-    return '<input type="checkbox" class="chip-input" id="' + id + '" value="' + m + '" onchange="applyFilters()">'
-      + '<label class="chip-label" for="' + id + '">' + m + '</label>';
-  }).join('');
-  document.getElementById('medicalChips').innerHTML = html;
-}
+/* ---- ステップ2: 範囲を描く ---- */
+var mapInited2 = false;
+function initStep2(){
+  mapInited2 = true;
+  var map2 = L.map('map').setView(facilityLatLng, 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'&copy; OpenStreetMap contributors', maxZoom:18 }).addTo(map2);
+  L.marker(facilityLatLng, { icon: facilityIcon() }).addTo(map2).bindPopup('貴施設の場所');
 
-function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var drawnItems = new L.FeatureGroup();
+  map2.addLayer(drawnItems);
+  var existingLayer = null;
+  var points = [], vertexMarkers = [], tempLine = null, polygonLayer = null, drawing = false;
+  var FIRST_COLOR = '#c23b2c', VERTEX_COLOR = '#35604a', CLOSE_PIXEL_TOLERANCE = 28;
 
-// ★fetch + JSON解析をまとめたヘルパー。GASのURLが間違っている場合、
-//   JSONの代わりにHTML（GitHub Pagesの404ページなど）が返ってくることがあり、
-//   その場合は「JSONではなくHTMLが返ってきている」ことが一目で分かるメッセージにする。
-async function fetchJson(url){
-  const res = await fetch(url);
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    var snippet = escHtml(text.slice(0, 60).replace(/\s+/g, ' '));
-    if (text.trim().indexOf('<') === 0) {
-      throw new Error('POST_URLが正しいGASのURLになっていない可能性があります（JSONの代わりにHTMLページが返ってきました： ' + snippet + '…）');
+  var btnDraw = document.getElementById('btnDraw');
+  var btnFinish = document.getElementById('btnFinish');
+  var btnUndo = document.getElementById('btnUndo');
+  var btnSave = document.getElementById('btnSave');
+  var statusBox = document.getElementById('statusBox');
+
+  function showStatus(msg, type){
+    statusBox.innerHTML = msg;
+    statusBox.className = 'status show ' + type;
+  }
+  function show(btn){ btn.classList.remove('hidden'); }
+  function hide(btn){ btn.classList.add('hidden'); }
+
+  if (EXISTING && EXISTING.length >= 3){
+    existingLayer = L.polygon(EXISTING, { color:'#1a8a52', weight:3, fillColor:'#1a8a52', fillOpacity:0.25, dashArray:'6,6' });
+    map2.addLayer(existingLayer);
+    map2.fitBounds(existingLayer.getBounds().pad(0.2));
+    btnDraw.innerHTML = '✏️ 範囲を描き直す';
+    showStatus('✅ 緑の点線が<b>いま登録されている送迎範囲</b>です。<br>変えたいときは「範囲を描き直す」を押してください。', 'ok');
+  }
+
+  function vertexIcon(color, isFirst){
+    var size = isFirst ? 24 : 16;
+    return L.divIcon({className:'',html:'<div style="background:' + color + ';width:' + size + 'px;height:' + size + 'px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.5);"></div>',iconSize:[size,size],iconAnchor:[size/2,size/2]});
+  }
+
+  function resetDrawing(){
+    drawnItems.clearLayers();
+    points = []; vertexMarkers = []; tempLine = null; polygonLayer = null;
+    btnFinish.disabled = true;
+    btnSave.disabled = true;
+  }
+
+  function redrawTempLine(){
+    if (tempLine) drawnItems.removeLayer(tempLine);
+    tempLine = null;
+    if (points.length >= 3){
+      /* 3点そろったら、うすい色の「囲みプレビュー」を表示（点がつながって範囲になるのが一目で分かる） */
+      tempLine = L.polygon(points, {color:'#c9a852', weight:3, dashArray:'6,6', fillColor:'#c9a852', fillOpacity:0.18});
+      drawnItems.addLayer(tempLine);
+    } else if (points.length >= 2){
+      tempLine = L.polyline(points, {color:'#c9a852', weight:3.5, dashArray:'6,6'});
+      drawnItems.addLayer(tempLine);
     }
-    throw new Error('サーバーの応答を読み取れませんでした（内容： ' + snippet + '…）');
   }
-}
 
-async function loadFacilities(){
-  try {
-    const data = await fetchJson(POST_URL + '?action=allSokeiHani');
-    if (!Array.isArray(data)) throw new Error(data && data.error ? data.error : '不明なエラー');
-    facilities = data;
-    drawAllPolygons();
-    renderResults(facilities, null);
-  } catch (err) {
-    document.getElementById('resultsList').innerHTML =
-      '<div class="empty-msg">地図データの読み込みに失敗しました。<br>' +
-      (err && err.message ? err.message : String(err)) +
-      '<br><br>POST_URLが正しいか確認してください。</div>';
+  function finishPolygon(){
+    if (points.length < 3) return;
+    vertexMarkers.forEach(function(m){ drawnItems.removeLayer(m); });
+    if (tempLine) drawnItems.removeLayer(tempLine);
+    polygonLayer = L.polygon(points, { color:'#a5842e', weight:3.5, fillColor:'#c9a852', fillOpacity:0.45 });
+    drawnItems.addLayer(polygonLayer);
+    drawing = false;
+    map2.off('click', onMapClick);
+    hide(btnFinish); show(btnSave); show(btnUndo);
+    btnSave.disabled = false;
+    showStatus('✅ 範囲が描けました！ 形を見て、よければ下の<b style="color:#a5842e">「この範囲で保存する」</b>を押してください。<br>形を変えたいときは「最初からやり直す」を押してください。', 'ok');
+    btnSave.scrollIntoView({behavior:'smooth', block:'center'});
   }
-}
 
-// ---- 点が多角形の内側にあるか判定（レイキャスティング法） ----
-function pointInPolygon(lat, lng, polygon){
-  var inside = false;
-  for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++){
-    var yi = polygon[i][0], xi = polygon[i][1];
-    var yj = polygon[j][0], xj = polygon[j][1];
-    var intersect = ((yi > lat) !== (yj > lat)) &&
-      (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
+  function onMapClick(e){
+    var clickPoint = map2.latLngToContainerPoint(e.latlng);
+    if (points.length >= 3){
+      var firstPoint = map2.latLngToContainerPoint(points[0]);
+      if (clickPoint.distanceTo(firstPoint) <= CLOSE_PIXEL_TOLERANCE){ finishPolygon(); return; }
+    }
+    points.push(e.latlng);
+    var isFirst = points.length === 1;
+    var marker = L.marker(e.latlng, { icon: vertexIcon(isFirst ? FIRST_COLOR : VERTEX_COLOR, isFirst) });
+    drawnItems.addLayer(marker);
+    vertexMarkers.push(marker);
+    redrawTempLine();
 
-// ---- 「地域名」の範囲(bounds)と施設の送迎ポリゴンが重なっているか判定 ----
-//   ①ポリゴンの頂点がどれかbounds内にある、または②boundsの四隅がどれかポリゴン内にある、
-//   のどちらかが成り立てば「重なっている」とみなす簡易判定
-function boundsPolygonOverlap(bounds, polygon){
-  for (var i = 0; i < polygon.length; i++){
-    var lat = polygon[i][0], lng = polygon[i][1];
-    if (lat <= bounds.north && lat >= bounds.south && lng <= bounds.east && lng >= bounds.west) return true;
+    if (points.length >= 3){
+      btnFinish.disabled = false;
+      showStatus('点が <b>' + points.length + '個</b> つながって、地図に<b>うすい色の囲み</b>ができています。この形でよければ、下の<b style="color:#c23b2c">「囲みを完成させる」</b>を押してください。<br>まだ広げたいときは、続けてかどをタップしてください。', 'info');
+    } else if (points.length === 1){
+      showStatus('1点目（<b style="color:#c23b2c">赤い点</b>）が置けました。続けて、範囲のかどをタップしてください。', 'info');
+    } else {
+      showStatus('点が <b>' + points.length + '個</b>。続けて範囲のかどをタップしてください（3点以上で囲めます）。', 'info');
+    }
   }
-  var corners = [[bounds.north, bounds.west], [bounds.north, bounds.east], [bounds.south, bounds.east], [bounds.south, bounds.west]];
-  for (var j = 0; j < corners.length; j++){
-    if (pointInPolygon(corners[j][0], corners[j][1], polygon)) return true;
-  }
-  return false;
-}
 
-function drawAllPolygons(){
-  facilities.forEach(function(f, i){
-    if (!f.polygon || f.polygon.length < 3) return;
-    var color = POLYGON_COLORS[i % POLYGON_COLORS.length];
-    var layer = L.polygon(f.polygon, { color: color, weight: 2, fillColor: color, fillOpacity: 0.25 }).addTo(map);
-    layer.bindPopup('<b>' + escHtml(f.name) + '</b>' + (f.address ? '<br>' + escHtml(f.address) : ''));
-    polygonLayers[f.name] = layer;
+  btnDraw.addEventListener('click', function(){
+    if (existingLayer){ map2.removeLayer(existingLayer); existingLayer = null; }
+    resetDrawing();
+    drawing = true;
+    hide(btnDraw); show(btnFinish); show(btnUndo); hide(btnSave);
+    map2.on('click', onMapClick);
+    showStatus('地図を<b>1点ずつタップ</b>して、送迎範囲のかどに点を置いてください。', 'info');
   });
-}
 
-async function doSearch(){
-  var addr = document.getElementById('addrInput').value.trim();
-  var resultBox = document.getElementById('searchResult');
-  if (!addr) return;
-  var btn = document.getElementById('searchBtn');
-  btn.disabled = true; btn.textContent = '検索中...';
-  resultBox.className = 'search-result'; resultBox.textContent = '';
+  btnFinish.addEventListener('click', finishPolygon);
 
-  try {
-    const geo = await fetchJson(POST_URL + '?action=geocode&address=' + encodeURIComponent(addr));
-    if (!geo || geo.error || typeof geo.lat !== 'number') {
-      resultBox.className = 'search-result show error';
-      resultBox.textContent = searchMode === 'address'
-        ? '⚠️ この住所が見つかりませんでした。町名など、少し短くして試してみてください。'
-        : '⚠️ この地域名が見つかりませんでした。別の言い方で試してみてください。';
-      return;
+  btnUndo.addEventListener('click', function(){
+    resetDrawing();
+    hide(btnFinish); hide(btnUndo); hide(btnSave); show(btnDraw);
+    btnDraw.innerHTML = '✏️ 範囲を描き始める';
+    map2.off('click', onMapClick);
+    drawing = false;
+    statusBox.className = 'status';
+  });
+
+  btnSave.addEventListener('click', function(){
+    if (!polygonLayer) return;
+    var latlngs = polygonLayer.getLatLngs()[0].map(function(p){ return [p.lat, p.lng]; });
+    btnSave.disabled = true;
+    btnSave.textContent = '保存しています…';
+
+    function onSaved(){
+      showStatus('🎉 <b>保存できました！</b> ご協力ありがとうございました。<br>このページはもう閉じて大丈夫です。変えたいときは、<b>同じリンク</b>からいつでも描き直せます。', 'ok');
+      statusBox.scrollIntoView({behavior:'smooth', block:'center'});
+      btnSave.textContent = '✅ 保存済み';
+      hide(btnUndo);
     }
 
-    if (searchMarker) { map.removeLayer(searchMarker); searchMarker = null; }
-    if (boundsRect) { map.removeLayer(boundsRect); boundsRect = null; }
+    /* プレビュー（POST_URL未設定）のときは送信せず完了表示だけ */
+    if (!POST_URL){ setTimeout(onSaved, 600); return; }
 
-    var matched;
-    if (searchMode === 'address') {
-      searchMarker = L.marker([geo.lat, geo.lng]).addTo(map).bindPopup('検索した住所').openPopup();
-      map.setView([geo.lat, geo.lng], 14);
-      matched = facilities.filter(function(f){
-        return f.polygon && f.polygon.length >= 3 && pointInPolygon(geo.lat, geo.lng, f.polygon);
+    fetch(POST_URL, { method:'POST', body: JSON.stringify({ action:'savePolygon', token: TOKEN, polygon: latlngs }), headers:{'Content-Type':'text/plain;charset=utf-8'} })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data && data.status === 'ok'){
+          onSaved();
+        } else {
+          showStatus('❌ 保存できませんでした。お手数ですが、もう一度「この範囲で保存する」を押してください。', 'error');
+          btnSave.disabled = false;
+          btnSave.textContent = '💾 この範囲で保存する';
+        }
+      })
+      .catch(function(err){
+        showStatus('❌ 通信エラーが発生しました: ' + (err && err.name ? err.name + ': ' : '') + (err && err.message ? err.message : String(err)), 'error');
+        btnSave.disabled = false;
+        btnSave.textContent = '💾 この範囲で保存する';
       });
-    } else {
-      if (geo.bounds) {
-        boundsRect = L.rectangle(
-          [[geo.bounds.south, geo.bounds.west], [geo.bounds.north, geo.bounds.east]],
-          { color: '#C9A24B', weight: 2, fillOpacity: 0.08, dashArray: '6,6' }
-        ).addTo(map);
-        map.fitBounds(boundsRect.getBounds());
-        matched = facilities.filter(function(f){
-          return f.polygon && f.polygon.length >= 3 && boundsPolygonOverlap(geo.bounds, f.polygon);
-        });
-      } else {
-        // viewportが取得できなかった場合は住所検索と同じ点判定にフォールバック
-        searchMarker = L.marker([geo.lat, geo.lng]).addTo(map).bindPopup('検索した地域').openPopup();
-        map.setView([geo.lat, geo.lng], 13);
-        matched = facilities.filter(function(f){
-          return f.polygon && f.polygon.length >= 3 && pointInPolygon(geo.lat, geo.lng, f.polygon);
-        });
-      }
-    }
-
-    Object.keys(polygonLayers).forEach(function(name){
-      var isMatch = matched.some(function(f){ return f.name === name; });
-      polygonLayers[name].setStyle({ fillOpacity: isMatch ? 0.55 : 0.1, weight: isMatch ? 3 : 1 });
-    });
-
-    var subject = searchMode === 'address' ? 'この住所' : 'このエリア';
-    if (matched.length > 0) {
-      resultBox.className = 'search-result show ok';
-      resultBox.innerHTML = '✅ ' + subject + 'は <b>' + matched.length + '件</b> の事業所が送迎できます。';
-    } else {
-      resultBox.className = 'search-result show none';
-      resultBox.textContent = '😥 ' + subject + 'を送迎範囲としている事業所は見つかりませんでした。';
-    }
-    renderResults(facilities, matched.map(function(f){ return f.name; }));
-  } catch (err) {
-    resultBox.className = 'search-result show error';
-    resultBox.textContent = '通信エラーが発生しました: ' + (err && err.message ? err.message : String(err));
-  } finally {
-    btn.disabled = false; btn.textContent = '検索';
-  }
-}
-
-function applyFilters(){
-  activeFilters.medical = Array.from(document.querySelectorAll('#medicalChips .chip-input:checked')).map(function(el){ return el.value; });
-
-  var filtered = facilities.filter(function(f){
-    if (activeFilters.medical.length > 0 && !activeFilters.medical.every(function(m){ return (f.medical||'').indexOf(m) !== -1; })) return false;
-    return true;
   });
-
-  Object.keys(polygonLayers).forEach(function(name){
-    var visible = filtered.some(function(f){ return f.name === name; });
-    var layer = polygonLayers[name];
-    if (visible) { if (!map.hasLayer(layer)) layer.addTo(map); }
-    else { if (map.hasLayer(layer)) map.removeLayer(layer); }
-  });
-
-  renderResults(filtered, null);
 }
-
-function renderVacancyRow(vacancy){
-  if (!vacancy) return '<div class="vac-unknown">空き状況：まだ入力がありません</div>';
-  var days = [['月','月'],['火','火'],['水','水'],['木','木'],['金','金'],['土','土'],['日','日']];
-  var symClass = { '○':'vac-maru', '△':'vac-tri', '×':'vac-batu', '休':'vac-kyu' };
-  var html = days.map(function(d){
-    var sym = vacancy[d[1]] || '休';
-    var cls = symClass[sym] || 'vac-kyu';
-    return '<div class="vac-day"><span class="vac-dlabel">' + d[0] + '</span><span class="vac-badge ' + cls + '">' + sym + '</span></div>';
-  }).join('');
-  return '<div class="vac-row">' + html + '</div>';
-}
-
-function renderResults(list, matchedNames){
-  var countEl = document.getElementById('resultsCount');
-  countEl.textContent = list.length + '件';
-  if (list.length === 0) {
-    document.getElementById('resultsList').innerHTML = '<div class="empty-msg">条件に合う事業所が見つかりませんでした。</div>';
-    return;
-  }
-  var html = list.map(function(f){
-    var isMatch = matchedNames && matchedNames.indexOf(f.name) !== -1;
-    return '<div class="fcard' + (isMatch ? ' match' : '') + '">'
-      + (isMatch ? '<div class="fcard-match-badge">✅ 送迎範囲内</div><br>' : '')
-      + '<div class="fcard-name">' + escHtml(f.name) + '</div>'
-      + (f.address ? '<div class="fcard-row"><b>住所</b>' + escHtml(f.address) + '</div>' : '')
-      + (f.medical ? '<div class="fcard-row"><b>医療行為</b>' + escHtml(f.medical) + '</div>' : '')
-      + (f.wheelchair ? '<div class="fcard-row"><b>車椅子</b>' + escHtml(f.wheelchair) + '</div>' : '')
-      + renderVacancyRow(f.vacancy)
-      + (f.pdfUrl ? '<a class="fcard-link" href="' + f.pdfUrl + '" target="_top">📄 施設紹介PDFを見る</a>' : '')
-      + '</div>';
-  }).join('');
-  document.getElementById('resultsList').innerHTML = html;
-}
-
 </script>
-</body>
-</html>
+</body></html>
