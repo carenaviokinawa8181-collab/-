@@ -355,9 +355,9 @@
   </div>
 </div>
 
-<!-- 送迎範囲マップへの導線 -->
+<!-- 送迎範囲マップ導線：テスト完了まで非表示にしています。復活させる場合は下記コメントを外してください。
 <div class="map-cta-section">
-  <a href="facility-map.html" target="_blank" class="map-cta-btn">
+  <a href="facility-search-map.html" target="_blank" class="map-cta-btn">
     <span class="map-cta-icon">🗺️</span>
     <span class="map-cta-text">
       <span class="map-cta-title display">送迎範囲マップで施設を探す</span>
@@ -366,9 +366,79 @@
     <span class="map-cta-arrow">›</span>
   </a>
 </div>
+-->
 
 <!-- お知らせ -->
 <div class="notices-section" id="notices-section"></div>
+
+  <!-- ガイド -->
+  <div class="guide-section" id="guide-section" style="margin-top:16px;">
+    <button class="guide-toggle-btn" id="guide-btn" onclick="toggleGuide()">
+      <span>📱 スマホをもっと便利に使う方法（ホーム画面追加・辞書登録）</span>
+      <span class="arr">▼</span>
+    </button>
+    <div class="guide-content" id="guide-content">
+      <div class="guide-tabs">
+        <button class="gtab active" onclick="switchGTab(0)">🏠 ホーム画面に追加</button>
+        <button class="gtab" onclick="switchGTab(1)">📖 辞書登録</button>
+        <button class="gtab" onclick="switchGTab(2)">💡 便利なコツ</button>
+      </div>
+
+      <!-- ホーム画面 -->
+      <div class="gpanel active" id="gp0">
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">このページをホーム画面に追加するとアプリのようにすぐ開けます。</p>
+        <div class="ostabs">
+          <button class="ostab active" onclick="switchOs('h','ios')">🍎 iPhone</button>
+          <button class="ostab" onclick="switchOs('h','android')">🤖 Android</button>
+        </div>
+        <div class="ospanel active" id="h-ios">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">Safariでこのページを開く</div><div class="gdesc"><b>SafariのみiPhoneはホーム画面への追加が可能です。</b>Chromeでは追加できません。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">画面下の「共有」ボタンをタップ</div><div class="gdesc">画面下中央の <b>□に↑のマーク</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「ホーム画面に追加」を選ぶ</div><div class="gdesc">メニューをスクロールして <b>「ホーム画面に追加」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">4</div><div class="gbody"><div class="gtitle">「追加」をタップして完了</div><div class="gdesc">ホーム画面にアイコンが追加されます！次回からワンタップで開けます。</div></div></div>
+        </div>
+        <div class="ospanel" id="h-android">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">Chromeでこのページを開く</div><div class="gdesc">AndroidのChromeブラウザでこのページを開いてください。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">右上の「︙」メニューをタップ</div><div class="gdesc">画面右上の <b>「︙（縦三点）」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「ホーム画面に追加」を選ぶ</div><div class="gdesc"><b>「ホーム画面に追加」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">4</div><div class="gbody"><div class="gtitle">「追加」をタップして完了</div><div class="gdesc">ホーム画面にアイコンが追加されます！</div></div></div>
+        </div>
+      </div>
+
+      <!-- 辞書登録 -->
+      <div class="gpanel" id="gp1">
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">よみがなを入力するだけでメールアドレスや施設名が変換できるようになります。</p>
+        <div class="ostabs">
+          <button class="ostab active" onclick="switchOs('d','ios')">🍎 iPhone</button>
+          <button class="ostab" onclick="switchOs('d','android')">🤖 Android</button>
+        </div>
+        <div class="ospanel active" id="d-ios">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">設定アプリを開く</div><div class="gdesc">ホーム画面の <b>「設定」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">「一般」→「キーボード」→「ユーザ辞書」</div><div class="gdesc">順番に進んで <b>「ユーザ辞書」</b> を開きます。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">右上の「＋」をタップして登録</div><div class="gdesc">「単語」に変換後の文字、「よみ」にひらがなを入力して保存します。</div></div></div>
+        </div>
+        <div class="ospanel" id="d-android">
+          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">キーボードの設定を開く</div><div class="gdesc">文字入力中に <b>「⚙️設定アイコン」</b> をタップします。</div></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">「単語リスト」または「ユーザー辞書」を選ぶ</div><div class="gdesc">機種によって名前が異なります。</div></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「＋」をタップして単語を追加</div><div class="gdesc">「単語」と「よみ」を入力して保存します。</div></div></div>
+        </div>
+        <p style="font-size:12.5px;font-weight:700;color:var(--ink);margin:14px 0 8px;">📌 おすすめの登録ワード</p>
+        <div class="dicword"><span class="dicread">よみ：めあど</span><span class="dicval">carenaviokinawa8181@gmail.com</span></div>
+        <div class="dicword"><span class="dicread">よみ：でい</span><span class="dicval">デイサービス</span></div>
+        <div class="dicword"><span class="dicread">よみ：けあなび</span><span class="dicval">ケアナビ沖縄</span></div>
+        <div class="dicword"><span class="dicread">よみ：でんわ</span><span class="dicval">050-1791-8181</span></div>
+      </div>
+
+      <!-- 便利なコツ -->
+      <div class="gpanel" id="gp2">
+        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">文字を大きくする（iPhone）</div><div class="gdesc">設定 → 画面表示と明るさ → テキストサイズ で調整できます。</div></div></div>
+        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">文字を大きくする（Android）</div><div class="gdesc">設定 → ユーザー補助 → フォントサイズ で調整できます。</div></div></div>
+        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">電話番号をタップして発信</div><div class="gdesc">このページ下部の電話番号をタップするとそのまま発信できます。</div></div></div>
+        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">空き状況は自動更新されます</div><div class="gdesc">ページを開いたまま置いておくと5分ごとに自動で最新情報に更新されます。</div></div></div>
+        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">メールアドレスをタップして送信</div><div class="gdesc">フッターのメールアドレスをタップするとメール作成画面が開きます。</div></div></div>
+      </div>
+    </div>
+  </div>
 
 <!-- 検索・絞り込み -->
 <div class="toolbar" id="toolbar">
@@ -436,74 +506,6 @@
 
   <div class="facilities-grid" id="facilities-grid"></div>
 
-  <!-- ガイド -->
-  <div class="guide-section" id="guide-section" style="margin-top:26px;">
-    <button class="guide-toggle-btn" id="guide-btn" onclick="toggleGuide()">
-      <span>📱 スマホをもっと便利に使う方法（ホーム画面追加・辞書登録）</span>
-      <span class="arr">▼</span>
-    </button>
-    <div class="guide-content" id="guide-content">
-      <div class="guide-tabs">
-        <button class="gtab active" onclick="switchGTab(0)">🏠 ホーム画面に追加</button>
-        <button class="gtab" onclick="switchGTab(1)">📖 辞書登録</button>
-        <button class="gtab" onclick="switchGTab(2)">💡 便利なコツ</button>
-      </div>
-
-      <!-- ホーム画面 -->
-      <div class="gpanel active" id="gp0">
-        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">このページをホーム画面に追加するとアプリのようにすぐ開けます。</p>
-        <div class="ostabs">
-          <button class="ostab active" onclick="switchOs('h','ios')">🍎 iPhone</button>
-          <button class="ostab" onclick="switchOs('h','android')">🤖 Android</button>
-        </div>
-        <div class="ospanel active" id="h-ios">
-          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">Safariでこのページを開く</div><div class="gdesc"><b>SafariのみiPhoneはホーム画面への追加が可能です。</b>Chromeでは追加できません。</div></div></div>
-          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">画面下の「共有」ボタンをタップ</div><div class="gdesc">画面下中央の <b>□に↑のマーク</b> をタップします。</div></div></div>
-          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「ホーム画面に追加」を選ぶ</div><div class="gdesc">メニューをスクロールして <b>「ホーム画面に追加」</b> をタップします。</div></div></div>
-          <div class="gstep"><div class="gnum">4</div><div class="gbody"><div class="gtitle">「追加」をタップして完了</div><div class="gdesc">ホーム画面にアイコンが追加されます！次回からワンタップで開けます。</div></div></div>
-        </div>
-        <div class="ospanel" id="h-android">
-          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">Chromeでこのページを開く</div><div class="gdesc">AndroidのChromeブラウザでこのページを開いてください。</div></div></div>
-          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">右上の「︙」メニューをタップ</div><div class="gdesc">画面右上の <b>「︙（縦三点）」</b> をタップします。</div></div></div>
-          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「ホーム画面に追加」を選ぶ</div><div class="gdesc"><b>「ホーム画面に追加」</b> をタップします。</div></div></div>
-          <div class="gstep"><div class="gnum">4</div><div class="gbody"><div class="gtitle">「追加」をタップして完了</div><div class="gdesc">ホーム画面にアイコンが追加されます！</div></div></div>
-        </div>
-      </div>
-
-      <!-- 辞書登録 -->
-      <div class="gpanel" id="gp1">
-        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">よみがなを入力するだけでメールアドレスや施設名が変換できるようになります。</p>
-        <div class="ostabs">
-          <button class="ostab active" onclick="switchOs('d','ios')">🍎 iPhone</button>
-          <button class="ostab" onclick="switchOs('d','android')">🤖 Android</button>
-        </div>
-        <div class="ospanel active" id="d-ios">
-          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">設定アプリを開く</div><div class="gdesc">ホーム画面の <b>「設定」</b> をタップします。</div></div></div>
-          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">「一般」→「キーボード」→「ユーザ辞書」</div><div class="gdesc">順番に進んで <b>「ユーザ辞書」</b> を開きます。</div></div></div>
-          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">右上の「＋」をタップして登録</div><div class="gdesc">「単語」に変換後の文字、「よみ」にひらがなを入力して保存します。</div></div></div>
-        </div>
-        <div class="ospanel" id="d-android">
-          <div class="gstep"><div class="gnum">1</div><div class="gbody"><div class="gtitle">キーボードの設定を開く</div><div class="gdesc">文字入力中に <b>「⚙️設定アイコン」</b> をタップします。</div></div></div>
-          <div class="gstep"><div class="gnum">2</div><div class="gbody"><div class="gtitle">「単語リスト」または「ユーザー辞書」を選ぶ</div><div class="gdesc">機種によって名前が異なります。</div></div></div>
-          <div class="gstep"><div class="gnum">3</div><div class="gbody"><div class="gtitle">「＋」をタップして単語を追加</div><div class="gdesc">「単語」と「よみ」を入力して保存します。</div></div></div>
-        </div>
-        <p style="font-size:12.5px;font-weight:700;color:var(--ink);margin:14px 0 8px;">📌 おすすめの登録ワード</p>
-        <div class="dicword"><span class="dicread">よみ：めあど</span><span class="dicval">carenaviokinawa8181@gmail.com</span></div>
-        <div class="dicword"><span class="dicread">よみ：でい</span><span class="dicval">デイサービス</span></div>
-        <div class="dicword"><span class="dicread">よみ：けあなび</span><span class="dicval">ケアナビ沖縄</span></div>
-        <div class="dicword"><span class="dicread">よみ：でんわ</span><span class="dicval">050-1791-8181</span></div>
-      </div>
-
-      <!-- 便利なコツ -->
-      <div class="gpanel" id="gp2">
-        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">文字を大きくする（iPhone）</div><div class="gdesc">設定 → 画面表示と明るさ → テキストサイズ で調整できます。</div></div></div>
-        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">文字を大きくする（Android）</div><div class="gdesc">設定 → ユーザー補助 → フォントサイズ で調整できます。</div></div></div>
-        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">電話番号をタップして発信</div><div class="gdesc">このページ下部の電話番号をタップするとそのまま発信できます。</div></div></div>
-        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">空き状況は自動更新されます</div><div class="gdesc">ページを開いたまま置いておくと5分ごとに自動で最新情報に更新されます。</div></div></div>
-        <div class="gstep"><div class="gnum tip">💡</div><div class="gbody"><div class="gtitle">メールアドレスをタップして送信</div><div class="gdesc">フッターのメールアドレスをタップするとメール作成画面が開きます。</div></div></div>
-      </div>
-    </div>
-  </div>
 </main>
 
 <footer>
