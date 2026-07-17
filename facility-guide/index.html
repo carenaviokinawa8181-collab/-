@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>事業所向け使い方ガイド | ケアナビ沖縄</title>
+<style>
+  :root{
+    --forest: #2F5D4C;
+    --forest-dark: #21453A;
+    --mint-bg: #F1F6F2;
+    --card: #FFFFFF;
+    --ink: #1E2B24;
+    --ink-soft: #4B5B53;
+    --line: #DCE6DF;
+    --amber: #B8860B;
+    --amber-soft: #F4E9D3;
+    --ok-green: #3F8F5D;
+    --ok-green-bg: #E4F3E9;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--mint-bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif;
+    line-height:1.8;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* ---- Header ---- */
+  header.hero{
+    background:linear-gradient(160deg, var(--forest) 0%, var(--forest-dark) 100%);
+    color:#fff;
+    padding:38px 20px 30px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-60px;
+    width:220px; height:220px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+  }
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:.14em;
+    color:#B9D8C7;
+    font-weight:600;
+    margin:0 0 8px;
+  }
+  h1.title{
+    font-size:26px;
+    font-weight:800;
+    margin:0 0 10px;
+    letter-spacing:.01em;
+  }
+  .hero-sub{
+    font-size:14.5px;
+    color:#D9EAE0;
+    margin:0;
+    max-width:520px;
+  }
+
+  /* ---- Sticky quick nav ---- */
+  nav.quicknav{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(241,246,242,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:10px 14px;
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  nav.quicknav::-webkit-scrollbar{display:none;}
+  nav.quicknav a{
+    flex:0 0 auto;
+    font-size:13px;
+    font-weight:700;
+    color:var(--forest-dark);
+    background:#fff;
+    border:1px solid var(--line);
+    padding:8px 14px;
+    border-radius:999px;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+  }
+
+  section.block{
+    margin-bottom:46px;
+    scroll-margin-top:64px;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:6px;
+  }
+  .section-badge{
+    flex:0 0 auto;
+    width:34px; height:34px;
+    border-radius:10px;
+    background:var(--forest);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:15px;
+  }
+  h2.section-title{
+    font-size:19px;
+    font-weight:800;
+    margin:0;
+    color:var(--forest-dark);
+  }
+  .section-desc{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin:6px 0 20px 46px;
+  }
+
+  /* ---- Step cards ---- */
+  .step{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px 18px 8px;
+    margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(33,69,58,0.04);
+  }
+  .step-head{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .step-num{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:var(--amber-soft);
+    color:var(--amber);
+    font-weight:800;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:2px;
+  }
+  .step-text{
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .step-note{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin:0 0 12px 36px;
+  }
+  .step-list{
+    margin:0 0 14px 36px;
+    padding-left:18px;
+    font-size:14px;
+    color:var(--ink-soft);
+    line-height:2;
+  }
+  .step-list li{margin-bottom:2px;}
+  .step img{
+    display:block;
+    width:100%;
+    border-radius:10px;
+    border:1px solid var(--line);
+    margin:0 0 14px;
+  }
+  .step img.thumb{
+    width:auto;
+    max-width:320px;
+    height:auto;
+    margin:0 auto 14px;
+  }
+
+  .tip{
+    display:flex;
+    gap:10px;
+    background:var(--ok-green-bg);
+    border:1px solid #CDE7D6;
+    color:#245B3B;
+    font-size:13.5px;
+    font-weight:600;
+    padding:12px 14px;
+    border-radius:12px;
+    margin:0 0 8px;
+  }
+  .tip .mark{flex:0 0 auto;}
+
+  .caption{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin:-6px 0 14px;
+  }
+
+  /* ---- legend chips (matches app's own ○△✕ language) ---- */
+  .legend{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:0 0 18px 46px;
+  }
+  .legend span{
+    font-size:12.5px;
+    font-weight:700;
+    padding:5px 11px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .legend .o{color:#1F8A4C;}
+  .legend .t{color:#B8860B;}
+  .legend .x{color:#C0392B;}
+
+  /* ---- FAQ (no screenshots yet) ---- */
+  .faq{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:4px 18px;
+    margin-bottom:12px;
+  }
+  details{
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  details:last-child{border-bottom:none;}
+  summary{
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+    list-style:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{
+    content:"+";
+    font-size:20px;
+    color:var(--forest);
+    font-weight:400;
+    margin-left:10px;
+  }
+  details[open] summary::after{content:"–";}
+  .faq-body{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+
+  /* ---- Contact footer ---- */
+  .contact-card{
+    background:var(--forest);
+    color:#fff;
+    border-radius:18px;
+    padding:26px 22px;
+    text-align:center;
+  }
+  .contact-card h3{
+    margin:0 0 8px;
+    font-size:17px;
+    font-weight:800;
+  }
+  .contact-card p{
+    margin:0 0 18px;
+    font-size:13.5px;
+    color:#D9EAE0;
+  }
+  .contact-btn{
+    display:inline-block;
+    background:#fff;
+    color:var(--forest-dark);
+    font-weight:800;
+    font-size:14px;
+    padding:12px 26px;
+    border-radius:999px;
+    text-decoration:none;
+  }
+  .contact-btn-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .contact-btn-outline{
+    background:transparent;
+    color:#fff;
+    border:1.5px solid rgba(255,255,255,0.6);
+  }
+
+  footer.page-footer{
+    text-align:center;
+    font-size:12px;
+    color:#8A968F;
+    padding:24px 0 8px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <p class="eyebrow">ケアナビ沖縄 ｜ FACILITY GUIDE</p>
+  <h1 class="title">事業所向け<br>使い方ガイド</h1>
+  <p class="hero-sub">空き状況の更新と、送迎範囲の登録方法をまとめました。画面の流れどおりに進めば迷いません。</p>
+</header>
+
+<nav class="quicknav">
+  <a href="#vacancy">① 空き状況の更新</a>
+  <a href="#area">② 送迎範囲の登録</a>
+  <a href="#faq">よくある質問</a>
+  <a href="#contact">お問い合わせ</a>
+</nav>
+
+<main>
+
+  <!-- ============ 1. 空き状況更新 ============ -->
+  <section class="block" id="vacancy">
+    <div class="section-head">
+      <div class="section-badge">1</div>
+      <h2 class="section-title">空き状況を更新する</h2>
+    </div>
+    <p class="section-desc">お送りしている個別リンクを開くと、そのまま更新画面が表示されます。ログインの必要はありません。</p>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div class="step-text">曜日ごとに状況を選び、送信する</div>
+      </div>
+      <ul class="step-list">
+        <li>月〜日それぞれ、その週の空き状況をタップして選ぶ</li>
+        <li>全曜日が同じ状況なら「全日○／全日△／全日×」で一括入力（あとから個別に直せる）</li>
+        <li>必要があれば「ひとことメモ」を添える（よく使う文章はタップで入力可）</li>
+        <li>最後に「この内容で送信する」を押して完了</li>
+      </ul>
+      <img src="images/vacancy_all.jpg" alt="空き状況の更新画面。全日一括ボタン、曜日ごとの空き・残少・満員・休業日の選択、ひとことメモ欄、この内容で送信するボタン" class="thumb">
+      <div class="legend">
+        <span class="o">○ 空きあり</span>
+        <span class="t">△ 残りわずか</span>
+        <span class="x">✕ 満員</span>
+      </div>
+      <div class="tip"><span class="mark">✅</span><span>送信するとすぐに反映されます。入力にかかる時間はおよそ30秒です。</span></div>
+    </div>
+  </section>
+
+  <!-- ============ 2. 送迎範囲登録 ============ -->
+  <section class="block" id="area">
+    <div class="section-head">
+      <div class="section-badge">2</div>
+      <h2 class="section-title">送迎範囲・施設の位置を登録する</h2>
+    </div>
+    <p class="section-desc">初回登録時、またはお引越し・送迎エリア変更のときに行います。地図をタップしていくだけで完了します。</p>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div class="step-text">施設の位置を確認する</div>
+      </div>
+      <p class="step-note">住所から自動でピンが立ちます。位置がずれている場合は、ピンを正しい場所までドラッグしてください。合っていれば「この位置で次へ進む」を押します。</p>
+      <img src="images/pin.jpg" alt="住所から自動でピンが立った地図画面。貴施設の位置というラベルが表示されている" class="thumb">
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">2</div>
+        <div class="step-text">送迎できる範囲の角を、順番にタップする</div>
+      </div>
+      <p class="step-note">指でなぞるのではなく、1点ずつタップして頂点を置いていきます。最初にタップした点だけ赤色になります。</p>
+      <img src="images/area_pts.jpg" alt="送迎範囲の頂点をタップして囲んでいる途中の地図画面" class="thumb">
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">3</div>
+        <div class="step-text">最後に、最初の赤い点をもう一度タップする</div>
+      </div>
+      <p class="step-note">これで範囲が閉じます。途中で間違えても「やり直す」でいつでもリセットできます。</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">4</div>
+        <div class="step-text">範囲を確認して保存する</div>
+      </div>
+      <p class="step-note">囲んだ範囲が黄色く表示されます。問題なければ「この範囲で保存する」を押して完了です。</p>
+      <img src="images/area_done.jpg" alt="送迎範囲が黄色く塗りつぶされた完成画面" class="thumb">
+      <div class="tip"><span class="mark">✅</span><span>保存した範囲は、ケアマネさんが施設を探すときの検索に使われます。</span></div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="block" id="faq">
+    <div class="section-head">
+      <div class="section-badge">?</div>
+      <h2 class="section-title">よくある質問</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>施設情報（連絡先・受入条件など）を変更したい</summary>
+        <p class="faq-body">なりすまし防止のため、情報の変更は自動では反映されません。お手数ですが公式LINEのトークにご連絡ください。確認の上、担当が変更いたします。</p>
+      </details>
+      <details>
+        <summary>個別の更新リンクが分からなくなった</summary>
+        <p class="faq-body">お手数ですが、公式LINEのトークにメッセージをお送りください。本人確認のうえ、リンクを再送いたします。</p>
+      </details>
+      <details>
+        <summary>紹介用PDFはどこで見られますか</summary>
+        <p class="faq-body">紹介用PDFは施設カードの「施設紹介PDF」ボタンから確認できます。内容の変更をご希望の場合はLINEでご連絡ください。</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ Contact ============ -->
+  <section class="block" id="contact" style="margin-bottom:0;">
+    <div class="contact-card">
+      <h3>このガイドで解決しない場合</h3>
+      <p>公式LINEのトーク、またはメールでそのままご質問ください。<br>担当者が個別にご案内します。</p>
+      <div class="contact-btn-row">
+        <a class="contact-btn" href="https://lin.ee/UowOQ6D">LINEで質問する</a>
+        <a class="contact-btn contact-btn-outline" href="mailto:carenaviokinawa8181@gmail.com?subject=%E3%82%B1%E3%82%A2%E3%83%8A%E3%83%93%E6%B2%96%E7%B8%84%E3%81%B8%E3%81%AE%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B">メールで質問する</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="page-footer">ケアナビ沖縄 事業所向けガイド</footer>
+
+</body>
+</html>
