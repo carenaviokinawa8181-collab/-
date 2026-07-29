@@ -205,13 +205,6 @@
     margin-top: 3px;
   }
 
-  .terms-label {
-    display: block;
-    font-weight: 700;
-    margin-bottom: 2px;
-    color: var(--text-main);
-  }
-
   ul.terms-list {
     list-style: none;
     margin: 12px 0 16px;
@@ -249,38 +242,6 @@
     line-height: 1.85;
   }
 
-  /* ===== CONTACT SECTION ===== */
-  .contact-section {
-    background: var(--navy);
-    color: white;
-    border-radius: 14px;
-    padding: 28px 32px;
-    margin-top: 48px;
-  }
-  .contact-section h3 {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.05em;
-    margin-bottom: 16px;
-    font-weight: 600;
-    opacity: 0.9;
-  }
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .contact-item .label {
-    font-size: 0.75em;
-    opacity: 0.6;
-    letter-spacing: 0.1em;
-    margin-bottom: 3px;
-  }
-  .contact-item .value {
-    font-size: 0.9em;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-  }
-
   /* ===== DIVIDER ===== */
   .divider {
     border: none;
@@ -304,7 +265,6 @@
 
   @media (max-width: 600px) {
     .toc ol { grid-template-columns: 1fr; }
-    .contact-grid { grid-template-columns: 1fr; }
     .page-hero { padding: 32px 20px 24px; }
     .page-hero h1 { font-size: 1.5em; }
     .container { padding: 32px 16px 60px; }
@@ -338,8 +298,9 @@
       <li><a href="#s3">第3条　情報の正確性</a></li>
       <li><a href="#s4">第4条　免責事項</a></li>
       <li><a href="#s5">第5条　禁止事項</a></li>
-      <li><a href="#s7">第6条　施設情報の掲載</a></li>
-      <li><a href="#s8">第7条　規約の変更</a></li>
+      <li><a href="#s6">第6条　個人情報の取り扱い</a></li>
+      <li><a href="#s7">第7条　施設情報の掲載</a></li>
+      <li><a href="#s8">第8条　規約の変更</a></li>
       <li><a href="#privacy">プライバシーポリシー</a></li>
       <li><a href="#listing">掲載規約</a></li>
       <li><a href="#tokusho">特定商取引法に基づく表記</a></li>
@@ -368,7 +329,7 @@
     <p>本サービスは以下の方を対象としています。</p>
     <ul class="terms-list">
       <li>ケアマネージャーおよび介護関係者</li>
-      <li>掲載施設のスタッフ</li>
+      <li>掲載施設のスタッフ（情報入力・管理目的）</li>
     </ul>
   </section>
 
@@ -401,6 +362,7 @@
       <li>施設との契約・利用に関するトラブル</li>
       <li>システムの障害・メンテナンスによるサービス停止</li>
       <li>掲載施設が提供するサービスの内容・品質</li>
+      <li>第三者による不正アクセス・情報漏洩</li>
       <li>外部リンク先（各施設サイト等）のコンテンツ</li>
     </ul>
     <div class="highlight-box">
@@ -426,6 +388,22 @@
   </section>
 
   <!-- ===== 第6条 ===== -->
+  <section class="terms-section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>個人情報の取り扱い</h2>
+    </div>
+    <p>本サービスでは、施設登録フォームの入力を通じて施設担当者の連絡先等を取得することがあります。</p>
+    <ol class="terms-list">
+      <li>取得した情報はサービス運営・施設への連絡のみに使用し、第三者への提供は行いません。</li>
+      <li>仮予約フォームでは、利用者の性別・年代（個人を特定しない属性情報）を収集することがあります。これらは施設の受け入れ判断のみに使用します。</li>
+      <li>本サービスはGoogle Analytics を使用してアクセス解析を行っています。個人を特定する情報は収集していません。</li>
+      <li>Cookieを利用して閲覧の利便性向上を図っています。ブラウザの設定で無効化することができます。</li>
+      <li>個人情報の開示・修正・削除については、下記連絡先までお問い合わせください。</li>
+    </ol>
+  </section>
+
+  <!-- ===== 第7条 ===== -->
   <section class="terms-section" id="s7">
     <div class="section-header">
       <div class="section-num">7</div>
@@ -440,7 +418,7 @@
     </ol>
   </section>
 
-  <!-- ===== 第7条 ===== -->
+  <!-- ===== 第8条 ===== -->
   <section class="terms-section" id="s8">
     <div class="section-header">
       <div class="section-num">8</div>
@@ -461,15 +439,15 @@
       <div class="section-num" style="font-size:0.7em;">PP</div>
       <h2>プライバシーポリシー</h2>
     </div>
-    <p>本サービスは、ご提供いただいた個人情報を以下の方針に基づき適切に管理します。</p>
+    <p>ケアナビ沖縄（以下「当運営」）は、ご提供いただいた個人情報を以下の方針に基づき適切に管理します。</p>
     <ol class="terms-list">
-      <li><div><span class="terms-label">収集する情報</span>施設登録フォームで入力された施設名・担当者名・メールアドレス・電話番号・住所などの情報。仮予約フォームで入力された利用者の性別・年代（個人を特定しない属性情報）。</div></li>
-      <li><div><span class="terms-label">利用目的</span>サービスの提供・維持・改善、新機能の検討・運営連絡・掲載内容の確認・施設の受け入れ判断支援・システムの改善・その他、上記利用目的に付随する目的のみに使用します。</div></li>
-      <li><div><span class="terms-label">第三者提供</span>法令に基づく場合を除き、ご本人の同意なく第三者に提供することはありません。</div></li>
-      <li><div><span class="terms-label">アクセス解析</span>Google Analytics（G-HM2ZV5WPTP）を使用しており、Cookieにより匿名のアクセス情報を収集しています。個人を特定する情報は含まれません。</div></li>
-      <li><div><span class="terms-label">情報の管理</span>不正アクセス・紛失・漏洩を防ぐため適切な安全対策を実施します。</div></li>
-      <li><div><span class="terms-label">開示・訂正・削除</span>ご自身の情報の開示・訂正・削除をご希望の場合は、下記お問い合せ先までお申し出ください。</div></li>
-      <li><div><span class="terms-label">Cookieの無効化</span>ブラウザの設定によりCookieを無効化できますが、一部機能が利用できなくなる場合があります。</div></li>
+      <li><strong>収集する情報：</strong>施設登録フォームで入力された施設名・担当者名・メールアドレス・電話番号・住所などの情報。仮予約フォームで入力された利用者の性別・年代（個人を特定しない属性情報）。</li>
+      <li><strong>利用目的：</strong>サービスの提供・運営連絡・掲載内容の確認・施設の受け入れ判断支援・システムの改善のみに使用します。</li>
+      <li><strong>第三者提供：</strong>法令に基づく場合を除き、ご本人の同意なく第三者に提供することはありません。</li>
+      <li><strong>アクセス解析：</strong>Google Analytics（G-HM2ZV5WPTP）を使用しており、Cookieにより匿名のアクセス情報を収集しています。個人を特定する情報は含まれません。</li>
+      <li><strong>情報の管理：</strong>不正アクセス・紛失・漏洩を防ぐため適切な安全対策を実施します。</li>
+      <li><strong>開示・訂正・削除：</strong>ご自身の情報の開示・訂正・削除をご希望の場合は、下記連絡先までお申し出ください。</li>
+      <li><strong>Cookieの無効化：</strong>ブラウザの設定によりCookieを無効化できますが、一部機能が利用できなくなる場合があります。</li>
     </ol>
   </section>
 
@@ -482,32 +460,35 @@
     <p>本サービスに施設情報を掲載する事業者（以下「掲載施設」）は、以下の規約に同意の上でご利用ください。</p>
     <ol class="terms-list">
       <li>掲載施設は、登録する情報（施設名・住所・営業時間・料金・サービス内容等）がすべて正確かつ最新であることを保証します。</li>
-      <li>空き状況の入力は各施設の責任において行うものとし、入力内容に起因するトラブルについて本サービスは責任を負いません。</li>
+      <li>空き状況の入力は各施設の責任において行うものとし、入力内容に起因するトラブルについて当運営は責任を負いません。</li>
       <li>掲載された情報はウェブサイト上で一般公開されることに同意します。</li>
-      <li>虚偽の情報を登録した場合、本サービスは予告なく掲載を停止または削除できるものとします。</li>
-      <li>掲載内容の変更・削除を希望する場合は、本サービス（carenaviokinawa8181@gmail.com）までご連絡ください。</li>
-      <li>本サービスは掲載施設に対し、掲載内容の変更を伴わない経緯な修正をを行う場合があります。</li>
-      <li>掲載に関する費用については、現状無料です。有料移行の際には別途ご案内いたします。</li>
+      <li>虚偽の情報を登録した場合、当運営は予告なく掲載を停止または削除できるものとします。</li>
+      <li>掲載内容の変更・削除を希望する場合は、当運営（carenaviokinawa8181@gmail.com）までご連絡ください。</li>
+      <li>当運営は掲載施設に対し、事前の通知なく掲載内容の修正・削除を行う場合があります。</li>
+      <li>掲載に関する費用については、別途ご案内いたします。</li>
     </ol>
   </section>
 
-  <!-- ===== 企業概要 ===== -->
+  <!-- ===== 特定商取引法 ===== -->
   <section class="terms-section" id="tokusho">
     <div class="section-header">
-      <div class="section-num" style="font-size:0.55em;"></div>
-      <h2>企業概要</h2>
+      <div class="section-num" style="font-size:0.55em;">特商法</div>
+      <h2>特定商取引法に基づく表記</h2>
+    </div>
+    <div class="highlight-box">
+      現在、本サービスは無料にて情報掲載を提供しており、有料サービスについては別途ご案内しております。有料プランをご利用の場合は以下が適用されます。
     </div>
     <ol class="terms-list">
-      <li><div><span class="terms-label">販売事業者</span>ケアナビ沖縄</div></li>
-      <li><div><span class="terms-label">所在地</span>沖縄県那覇市（詳細はお問い合わせください）</div></li>
-      <li><div><span class="terms-label">電話番号</span>050-1792-8181（お問い合わせ受付：平日9:00〜17:00）</div></li>
-      <li><div><span class="terms-label">メールアドレス</span>carenaviokinawa8181@gmail.com</div></li>
-      <li><div><span class="terms-label">サービス内容</span>デイサービス空き状況掲載プラットフォーム</div></li>
-      <li><div><span class="terms-label">料金</span>別途お見積もり・ご案内いたします</div></li>
-      <li><div><span class="terms-label">支払方法</span>銀行振込（詳細はお申し込み時にご案内）</div></li>
-      <li><div><span class="terms-label">サービス提供時期</span>お申し込み・お支払い確認後、速やかに提供開始</div></li>
-      <li><div><span class="terms-label">キャンセル・解約</span>月単位でのご契約とし、翌月分の解約は前月末日までにご連絡ください</div></li>
-      <li><div><span class="terms-label">返金ポリシー</span>提供済みのサービス期間分については原則として返金いたしません</div></li>
+      <li><strong>販売事業者：</strong>ケアナビ沖縄</li>
+      <li><strong>所在地：</strong>沖縄県那覇市</li>
+      <li><strong>電話番号：</strong>050-1792-8181（お問い合わせ受付：平日10:00〜18:00）</li>
+      <li><strong>メールアドレス：</strong>carenaviokinawa8181@gmail.com</li>
+      <li><strong>サービス内容：</strong>デイサービス空き状況掲載プラットフォームの有料掲載プラン</li>
+      <li><strong>料金：</strong>別途お見積もり・ご案内いたします</li>
+      <li><strong>支払方法：</strong>銀行振込（詳細はお申し込み時にご案内）</li>
+      <li><strong>サービス提供時期：</strong>お申し込み・お支払い確認後、速やかに提供開始</li>
+      <li><strong>キャンセル・解約：</strong>月単位でのご契約とし、翌月分の解約は前月末日までにご連絡ください</li>
+      <li><strong>返金ポリシー：</strong>提供済みのサービス期間分については原則として返金いたしません</li>
     </ol>
   </section>
 
@@ -522,8 +503,8 @@
       <li>登録する施設名・住所・電話番号・営業時間・料金・サービス内容はすべて事実であり、現在有効な情報です。</li>
       <li>入力内容に虚偽・誤りがないことを責任をもって確認しました。</li>
       <li>情報に変更が生じた場合は速やかに更新・修正することに同意します。</li>
-      <li>掲載情報に起因して第三者（ケアマネージャー・ご家族等）との間でトラブルが発生した場合、本サービスは一切の責任を負いません。</li>
-      <li>本サービスが必要と判断した場合、掲載内容の確認のためご連絡させていただくことがあります。</li>
+      <li>掲載情報に起因して第三者（ケアマネージャー・ご家族等）との間でトラブルが発生した場合、当運営は一切の責任を負いません。</li>
+      <li>当運営が必要と判断した場合、掲載内容の確認のためご連絡させていただくことがあります。</li>
     </ol>
     <div class="alert-box">
       フォーム送信をもって、上記すべての規約・ポリシーに同意いただいたものとみなします。ご不明な点は送信前に carenaviokinawa8181@gmail.com までお問い合わせください。
@@ -536,7 +517,7 @@
       <div class="section-num" style="font-size:0.65em;">©</div>
       <h2>著作権・コンテンツの利用について</h2>
     </div>
-    <p>本サービスのウェブサイト・PDFに掲載されているすべてのコンテンツ（文章・デザイン・レイアウト・画像・ロゴ等）の著作権は、ケアナビ沖縄または各施設に帰属します。</p>
+    <p>本サービスのウェブサイト・PDFブックレットに掲載されているすべてのコンテンツ（文章・デザイン・レイアウト・画像・ロゴ等）の著作権は、ケアナビ沖縄または各施設に帰属します。</p>
 
     <h3 style="font-family:'Noto Serif JP',serif;font-size:1em;font-weight:700;color:var(--navy);margin:20px 0 10px;">ウェブサイトのコンテンツ</h3>
     <ol class="terms-list">
@@ -547,44 +528,20 @@
 
     <h3 style="font-family:'Noto Serif JP',serif;font-size:1em;font-weight:700;color:var(--navy);margin:20px 0 10px;">施設紹介PDFブックレット</h3>
     <div class="highlight-box">
-      PDFは各施設の紹介を目的として作成されています。以下の範囲内でご自由にお使いいただけます。
+      PDFブックレットは各施設の紹介を目的として作成されています。以下の範囲内でご自由にお使いいただけます。
     </div>
     <ol class="terms-list">
-      <li><strong>利用OK</strong>掲載施設が自施設の紹介・広報のために印刷・配布・SNS掲載・ホームページ掲載に使用すること</li>
-      <li><strong>利用OK</strong>ケアマネージャーが利用者・ご家族への施設紹介資料として使用すること</li>
-      <li><strong>利用OK</strong>介護関係者が業務上の情報共有・比較検討のために使用すること</li>
-      <li><strong>利用NG</strong>PDFの内容を無断で改ざん・編集・加工して再配布すること</li>
-      <li><strong>利用NG</strong>ケアナビ沖縄または施設の許可なく商業目的で販売・転用すること</li>
-      <li><strong>利用NG</strong>PDFのデザイン・レイアウトを他サービスで無断使用すること</li>
+      <li><strong>利用OK：</strong>掲載施設が自施設の紹介・広報のために印刷・配布・SNS掲載・ホームページ掲載に使用すること</li>
+      <li><strong>利用OK：</strong>ケアマネージャーが利用者・ご家族への施設紹介資料として使用すること</li>
+      <li><strong>利用OK：</strong>介護関係者が業務上の情報共有・比較検討のために使用すること</li>
+      <li><strong>利用NG：</strong>PDFの内容を無断で改ざん・編集・加工して再配布すること</li>
+      <li><strong>利用NG：</strong>ケアナビ沖縄または施設の許可なく商業目的で販売・転用すること</li>
+      <li><strong>利用NG：</strong>PDFのデザイン・レイアウトを他サービスで無断使用すること</li>
     </ol>
     <div class="alert-box">
       上記の範囲を超えた利用を希望される場合は、事前に carenaviokinawa8181@gmail.com までご相談ください。
     </div>
   </section>
-
-  <hr class="divider">
-
-  <div class="contact-section">
-    <h3>お問い合わせ先</h3>
-    <div class="contact-grid">
-      <div class="contact-item">
-        <div class="label">サービス名</div>
-        <div class="value">ケアナビ沖縄</div>
-      </div>
-      <div class="contact-item">
-        <div class="label">所在地</div>
-        <div class="value">沖縄県那覇市（請求があった場合開示します）</div>
-      </div>
-      <div class="contact-item">
-        <div class="label">メールアドレス</div>
-        <div class="value">carenaviokinawa8181@gmail.com</div>
-      </div>
-      <div class="contact-item">
-        <div class="label">電話番号</div>
-        <div class="value">050-1792-8181</div>
-      </div>
-    </div>
-  </div>
 
 </div>
 
