@@ -196,8 +196,12 @@ input.rb, input.cb { display: none; }
 .dupw { display: none; background: var(--gl); border: 1.5px solid var(--g); border-radius: 10px; padding: 10px 13px; font-size: 12.5px; font-weight: 700; color: #7a5a10; margin-top: 8px; line-height: 1.7; }
 .dupw.on { display: block; }
 .tosbox { background: #fff; border: 1.5px solid var(--sc); border-radius: var(--radius); padding: 15px; margin-bottom: 12px; box-shadow: var(--shadow-sm); }
-.tos-link { display: block; font-size: 12.5px; font-weight: 600; color: var(--bd); background: var(--bp); padding: 11px 13px; border-radius: 10px; margin-bottom: 12px; text-decoration: none; word-break: break-all; line-height: 1.7; border: 1px solid var(--sc); }
+.tos-desc { font-size: 13.5px; color: var(--tm); line-height: 1.75; margin-bottom: 12px; }
+.tos-link { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; color: var(--bd); background: var(--bp); padding: 12px 14px; border-radius: 10px; margin-bottom: 12px; text-decoration: none; border: 1px solid var(--sc); transition: background .15s; }
 .tos-link:active { opacity: .8; }
+.tos-link-ic { font-size: 17px; flex-shrink: 0; }
+.tos-link-txt { flex: 1; }
+.tos-link-arrow { font-size: 16px; color: var(--b); flex-shrink: 0; }
 .tos-check { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 4px 2px; }
 .tos-check input { margin-top: 2px; width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--s); }
 .tos-check span { font-size: 14px; font-weight: 700; line-height: 1.6; }
@@ -434,7 +438,8 @@ var STEP_FIELDS = [
 <script>
 /* ---- ここから下は表示・送信の仕組み。編集は非推奨 --------------------- */
 
-var TOS_TEXT_LINK = '掲載登録の前に、以下の規約をご確認ください。【規約・ポリシー確認ページ】<br>' + TERMS_URL;
+var TOS_DESC_TEXT = '掲載登録の前に、以下の規約をご確認ください。';
+var TOS_LINK_TEXT = '規約・ポリシーを確認する';
 
 var ATYPES = ["image/jpeg","image/jpg","image/png","image/webp"];
 var MAXSZ = 5 * 1024 * 1024;
@@ -539,7 +544,12 @@ function renderField(f){
 
 function renderStep0Extra(){
   return '<div class="tosbox">'
-    + '<a class="tos-link" href="' + TERMS_URL + '" target="_top">' + TOS_TEXT_LINK + '</a>'
+    + '<div class="tos-desc">' + TOS_DESC_TEXT + '</div>'
+    + '<a class="tos-link" href="' + TERMS_URL + '" target="_top">'
+    +   '<span class="tos-link-ic">📄</span>'
+    +   '<span class="tos-link-txt">' + TOS_LINK_TEXT + '</span>'
+    +   '<span class="tos-link-arrow">›</span>'
+    + '</a>'
     + '<label class="tos-check"><input type="checkbox" id="tos"><span>利用規約・各種ポリシーをすべて確認し、同意します</span></label>'
     + '<div class="emsg" id="e_tos">利用規約への同意が必要です</div>'
     + '</div>';
